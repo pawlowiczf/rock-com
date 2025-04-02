@@ -4,6 +4,9 @@ on:
     push:
         branches:
         - main 
+    pull_request:
+        branches:
+        - main 
 
 jobs:
 
@@ -20,15 +23,7 @@ jobs:
                 with:
                     java-version: '21'
                     distribution: 'oracle'
-
-            - 
-                name: Cache Maven dependencies
-                uses: actions/cache@v3  # Cache'owanie zależności Maven
-                with:
-                    path: ~/.m2/repository  # Cache'owanie repozytorium Maven
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: |
-                        ${{ runner.os }}-maven-
+                    cache: 'maven'
             
             - 
                 name: Run tests with Maven
