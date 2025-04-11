@@ -1,13 +1,13 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2025-04-08 14:28:21.013
+-- Last modification date: 2025-04-11 13:27:37.367
 
 -- tables
--- Table: bracket
-CREATE TABLE bracket (
+-- Table: brackets
+CREATE TABLE brackets (
     bracket_id int  NOT NULL,
     match_id int  NOT NULL,
     next_match_id int  NOT NULL,
-    CONSTRAINT bracket_pk PRIMARY KEY (bracket_id)
+    CONSTRAINT brackets_pk PRIMARY KEY (bracket_id)
 );
 
 -- Table: competition_dates
@@ -121,20 +121,20 @@ VALUES
     ('Participant'),
     ('Referee');
 
--- Table: user
-CREATE TABLE "user" (
-    user_id serial  NOT NULL,
-    firstname varchar(50)  NOT NULL,
-    lastname varchar(50)  NOT NULL,
-    email varchar(50)  NOT NULL,
-    CONSTRAINT user_pk PRIMARY KEY (user_id)
-);
-
 -- Table: user_roles
 CREATE TABLE user_roles (
     user_id int  NOT NULL,
     role_id int  NOT NULL,
     CONSTRAINT user_roles_pk PRIMARY KEY (user_id,role_id)
+);
+
+-- Table: users
+CREATE TABLE users (
+    user_id serial  NOT NULL,
+    firstname varchar(50)  NOT NULL,
+    lastname varchar(50)  NOT NULL,
+    email varchar(50)  NOT NULL,
+    CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
 
 -- foreign keys
@@ -149,21 +149,21 @@ ALTER TABLE competition_referees ADD CONSTRAINT Table_14_competitions
 -- Reference: Table_14_user (table: competition_referees)
 ALTER TABLE competition_referees ADD CONSTRAINT Table_14_user
     FOREIGN KEY (referee_id)
-    REFERENCES "user" (user_id)  
+    REFERENCES users (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: bracket_matches_1 (table: bracket)
-ALTER TABLE bracket ADD CONSTRAINT bracket_matches_1
+-- Reference: bracket_matches_1 (table: brackets)
+ALTER TABLE brackets ADD CONSTRAINT bracket_matches_1
     FOREIGN KEY (match_id)
     REFERENCES matches (match_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: bracket_matches_2 (table: bracket)
-ALTER TABLE bracket ADD CONSTRAINT bracket_matches_2
+-- Reference: bracket_matches_2 (table: brackets)
+ALTER TABLE brackets ADD CONSTRAINT bracket_matches_2
     FOREIGN KEY (next_match_id)
     REFERENCES matches (match_id)  
     NOT DEFERRABLE 
@@ -197,7 +197,7 @@ ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_par
 -- Reference: competition_participants_user (table: competition_participants)
 ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_user
     FOREIGN KEY (participant_id)
-    REFERENCES "user" (user_id)  
+    REFERENCES users (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -221,7 +221,7 @@ ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_competition_types
 -- Reference: judge_licences_user (table: referee_licences)
 ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_user
     FOREIGN KEY (user_id)
-    REFERENCES "user" (user_id)  
+    REFERENCES users (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -285,7 +285,7 @@ ALTER TABLE user_roles ADD CONSTRAINT user_roles_roles
 -- Reference: user_roles_user (table: user_roles)
 ALTER TABLE user_roles ADD CONSTRAINT user_roles_user
     FOREIGN KEY (user_id)
-    REFERENCES "user" (user_id)  
+    REFERENCES users (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
