@@ -17,9 +17,9 @@ public class UserService {
         return userRepository.findAll().stream().map(user ->
                 new UserResponseDto(
                         user.getUserId(),
-                        user.getEmail(),
                         user.getFirstName(),
-                        user.getLastName()
+                        user.getLastName(),
+                        user.getEmail()
                 )
         ).collect(Collectors.toList());
     }
