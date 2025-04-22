@@ -1,27 +1,69 @@
 # rock-com
+**rock-com** is a web-based system designed to support the organization and management of racket sport tournaments, including tennis, table tennis, and badminton.
 
-## Powiadomienia o błędach podczas uruchamiania testów w GithubActions 
-Akcje, które zakończyły się niepowodzeniem, powodują wysłanie ostrzegawczego maila na pocztę. Aby to wyłączyć:
-- kliknij w swój avatar w prawym górnym rogu, następnie *Settings*
-- po lewej stronie wybierz *Notifications* i zjedź do sekcji *Actions*
-- odznacz opcję *Email*
+The platform allows organizers to configure competitions, referees to manage match data, and participants to register and track their progress.
+
+## Workflow
+- **Branch naming convention:** `feature/<JIRA-TICKET-ID>`, `bugfix/<JIRA-TICKET-ID>`, etc.
+- **Pull Request naming convention:** `[<JIRA-TICKET-ID>] - <JIRA task title>`
+- **Merging:** The person who opened the PR is responsible for merging it.
+- **Approval:** At least one team member must approve the PR before it can be merged.
+- **Communication:** Share a link to your PR in the team Discord channel to keep everyone informed.
+
+## Definition of Done
+- Existing functionality remains unaffected (nothing that worked before is broken)
+- Necessary tests are created and passing
+- All merge conflicts are resolved
+- Code has been reviewed and approved
+- Requested changes from the review are applied
+- Pull request is merged
+- Feature branch is deleted after merge
+- Corresponding JIRA ticket is marked as done/closed
+
+## How to run the project
+
+### Frontend
 
 ---
+### Database
 
-## Rockcom database
-
-A guide on how to set up container with postgresql database.
-
-Some instructions might use relative paths.
-With that in mind, you might have to adjust them (or change directory).
-
-### Prerequisites
+#### Prerequisites
 - Docker
 - Docker desktop running
 
-### How to set up
-- Run `docker compose -f db/docker-compose.yml up --build -d`
+#### First-Time Setup
+To build and start the PostgreSQL container for the first time, run:
+```bash
+docker compose -f backned/db/docker-compose.yml up --build -d
+```
 
-Now, you can run it via docker desktop.
+#### Updating the Schema
+If you modify the database schema (e.g., by changing .sql files used during initialization), you need to **reset** the database:
+```bash
+docker compose -f backned/db/docker-compose.yml down -v
+```
+This command shuts down the containers and removes any associated volumes, including the database data.
 
-Keep in mind, if database schema has been changed, you will need to run above command again.
+Then, start it again:
+```bash
+docker compose -f backned/db/docker-compose.yml up --build -d
+```
+
+---
+### Backend
+#### Prerequisites
+- Java 21 or newer
+- Make sure the PostgreSQL container is up and running before starting the backend
+
+#### Setup
+1. Navigate to the `backend` directory. 
+2. Ensure that the file `mvnw` is executable. If not, run:
+```bash
+chmod u+x mvnw
+```
+
+#### Running the Backend
+Start the Spring Boot app from `backend` directory with:
+```
+./mvnw spring-boot:run
+```
