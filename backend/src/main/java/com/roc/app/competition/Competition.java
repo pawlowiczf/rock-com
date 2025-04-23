@@ -2,6 +2,8 @@ package com.roc.app.competition;
 
 import jakarta.persistence.*;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = Competition.FieldNames.TABLE_NAME)
@@ -14,10 +16,6 @@ public class Competition {
 
     @Column(name = FieldNames.TYPE_ID, nullable = false)
     private Integer typeId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = FieldNames.TYPE_ID, insertable = false, updatable = false)
-    private CompetitionType type;
 
     @Column(name = FieldNames.MATCH_DURATION, nullable = false)
     private Integer matchDurationMinutes;
@@ -39,6 +37,9 @@ public class Competition {
 
     @Column(name = FieldNames.REGISTRATION_OPEN, nullable = false)
     private Boolean registrationOpen;
+
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CompetitionDate> competitionDates = new ArrayList<>();
 
     public Competition() {}
 
