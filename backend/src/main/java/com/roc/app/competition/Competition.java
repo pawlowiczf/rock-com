@@ -1,5 +1,55 @@
 package com.roc.app.competition;
 
+import com.roc.app.competitionType.CompetitionType;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "competitions")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Competition {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "competition_id")
+    private Long competitionId;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id", nullable = false)
+    private CompetitionType competitionType;
+
+    @Column(name = "match_duration_minutes", nullable = false)
+    private Integer matchDurationMinutes;
+
+    @Column(name = "available_courts", nullable = false)
+    private Integer availableCourts;
+
+    @Column(name = "participants_limit")
+    private Integer participantsLimit;
+
+    @Column(name = "street_address", nullable = false)
+    private String streetAddress;
+
+    @Column(name = "city", nullable = false)
+    private String city;
+
+    @Column(name = "postal_code", nullable = false)
+    private String postalCode;
+
+    @Column(name = "registration_open", nullable = false)
+    private Boolean registrationOpen;
+
+}
+
+package com.roc.app.competition;
+
 import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.ArrayList;
