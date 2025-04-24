@@ -24,6 +24,8 @@ The platform allows organizers to configure competitions, referees to manage mat
 
 ### Frontend
 
+*Coming soon.*
+
 ---
 ### Database
 
@@ -34,19 +36,19 @@ The platform allows organizers to configure competitions, referees to manage mat
 #### First-Time Setup
 To build and start the PostgreSQL container for the first time, run:
 ```bash
-docker compose -f backned/db/docker-compose.yml up --build -d
+docker compose -f backend/db/docker-compose.yml up --build -d
 ```
 
 #### Updating the Schema
-If you modify the database schema (e.g., by changing .sql files used during initialization), you need to **reset** the database:
+If you modify the database schema (e.g., by changing .sql files used during initialization), or if the schema has changed in the repository (e.g., after pulling updates made by others), you need to **reset** the database:
 ```bash
-docker compose -f backned/db/docker-compose.yml down -v
+docker compose -f backend/db/docker-compose.yml down -v
 ```
 This command shuts down the containers and removes any associated volumes, including the database data.
 
 Then, start it again:
 ```bash
-docker compose -f backned/db/docker-compose.yml up --build -d
+docker compose -f backend/db/docker-compose.yml up --build -d
 ```
 
 ---
