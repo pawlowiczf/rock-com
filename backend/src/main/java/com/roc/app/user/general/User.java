@@ -1,4 +1,4 @@
-package com.roc.app.user;
+package com.roc.app.user.general;
 
 import jakarta.persistence.*;
 
@@ -10,7 +10,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = FieldNames.ID)
-    private Integer userId;
+    private Long userId;
 
     @Column(name = FieldNames.FIRST_NAME, nullable = false, length = 50)
     private String firstName;
@@ -21,20 +21,28 @@ public class User {
     @Column(name = FieldNames.EMAIL, nullable = false, length = 50, unique = true)
     private String email;
 
+    @Column(name = FieldNames.CITY, nullable = false, length = 50)
+    private String city;
+
+    @Column(name = FieldNames.PHONE_NUMBER, nullable = false)
+    private String phoneNumber;
+
     public User() {
     }
 
-    public User(String firstName, String lastName, String email) {
+    public User(String firstName, String lastName, String email, String city, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.city = city;
+        this.phoneNumber = phoneNumber;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -62,6 +70,22 @@ public class User {
         this.email = email;
     }
 
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -71,12 +95,14 @@ public class User {
         return Objects.equals(userId, user.userId) &&
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email);
+                Objects.equals(email, user.email) &&
+                Objects.equals(city, user.city) &&
+                Objects.equals(phoneNumber, user.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, email);
+        return Objects.hash(userId, firstName, lastName, email, city, phoneNumber);
     }
 
     public static final class FieldNames {
@@ -84,5 +110,7 @@ public class User {
         public static final String FIRST_NAME = "firstname";
         public static final String LAST_NAME = "lastname";
         public static final String EMAIL = "email";
+        public static final String CITY = "city";
+        public static final String PHONE_NUMBER = "phone_number";
     }
 }

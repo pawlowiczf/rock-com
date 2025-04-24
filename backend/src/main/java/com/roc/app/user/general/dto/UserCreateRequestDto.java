@@ -1,0 +1,18 @@
+package com.roc.app.user.general.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+
+public record UserCreateRequestDto(
+        @NotBlank @Max(50)
+        String firstName,
+        @NotBlank @Max(50)
+        String lastName,
+        @NotBlank @Max(50)
+        String email,
+        @NotBlank @Max(50)
+        String city,
+        @NotBlank @Max(12)
+        String phoneNumber
+) {
+}

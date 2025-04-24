@@ -1,4 +1,4 @@
-package com.roc.app.user;
+package com.roc.app.user.general;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
