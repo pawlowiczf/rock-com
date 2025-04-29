@@ -33,7 +33,7 @@ public class ParticipantService {
     }
 
     @Transactional
-    public ParticipantResponseDto create(ParticipantCreateRequestDto requestDto) {
+    public ParticipantResponseDto createParticipant(ParticipantCreateRequestDto requestDto) {
         UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto(
                 requestDto.firstName(),
                 requestDto.lastName(),
