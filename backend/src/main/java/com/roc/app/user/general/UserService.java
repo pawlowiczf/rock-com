@@ -1,12 +1,12 @@
 package com.roc.app.user.general;
 
+import com.roc.app.user.general.dto.UserCreateRequestDto;
 import com.roc.app.user.general.dto.UserResponseDto;
 import com.roc.app.user.general.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +24,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto createUser(String firstName, String lastName, String email, String city, String phoneNumber) {
-        User user = new User(firstName, lastName, email, city, phoneNumber);
+    public UserResponseDto createUser(UserCreateRequestDto requestDto) {
+        User user = new User(
+                requestDto.firstName(),
+                requestDto.lastName(),
+                requestDto.email(),
+                requestDto.city(),
+                requestDto.phoneNumber()
+        );
         userRepository.save(user);
         return UserResponseDto.fromModel(user);
     }

@@ -20,15 +20,7 @@ public class ParticipantController {
 
     @PostMapping
     public ResponseEntity<ParticipantResponseDto> createParticipant(@RequestBody ParticipantCreateRequestDto requestDto) {
-        ParticipantResponseDto participant = participantService.create(
-                requestDto.firstName(),
-                requestDto.lastName(),
-                requestDto.email(),
-                requestDto.city(),
-                requestDto.phoneNumber(),
-                requestDto.birthDate()
-        );
-
+        ParticipantResponseDto participant = participantService.create(requestDto);
         return ResponseEntity.ok(participant);
     }
 }

@@ -20,13 +20,7 @@ public class UserController {
         /*
         Not sure whether we want to keep this endpoint or not, or even the whole controller.
          */
-        UserResponseDto user = userService.createUser(
-                requestDto.firstName(),
-                requestDto.lastName(),
-                requestDto.email(),
-                requestDto.city(),
-                requestDto.phoneNumber()
-        );
+        UserResponseDto user = userService.createUser(requestDto);
 
         return ResponseEntity.ok(user);
     }
