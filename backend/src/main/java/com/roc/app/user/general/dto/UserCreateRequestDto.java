@@ -18,6 +18,12 @@ public record UserCreateRequestDto(
         String phoneNumber
 ) {
     public User toModel() {
-        return new User(firstName, lastName, email, city, phoneNumber);
+        return User.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .city(city)
+                .phoneNumber(phoneNumber)
+                .build();
     }
 }

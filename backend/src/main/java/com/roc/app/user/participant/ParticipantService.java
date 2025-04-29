@@ -7,7 +7,6 @@ import com.roc.app.user.general.dto.UserResponseDto;
 import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
 import com.roc.app.user.participant.dto.ParticipantResponseDto;
 import com.roc.app.user.participant.exception.ParticipantNotFoundException;
-import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +39,11 @@ public class ParticipantService {
 
         User user = userService.getUserByUserId(userResponseDto.userId());
 
-        Participant participant = new Participant(user, requestDto.birthDate());
+        Participant participant = Participant.builder()
+                .userDetails(user)
+                .birthDate(requestDto.birthDate())
+                .build();
+
         participantRepository.save(participant);
 
         return ParticipantResponseDto.fromModel(participant);

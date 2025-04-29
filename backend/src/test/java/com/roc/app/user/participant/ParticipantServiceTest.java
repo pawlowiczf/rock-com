@@ -47,17 +47,14 @@ class ParticipantServiceTest {
                 LocalDate.ofEpochDay(735)
         );
 
-        savedUser = new User(
-                validRequestDto.firstName(),
-                validRequestDto.lastName(),
-                validRequestDto.email(),
-                validRequestDto.city(),
-                validRequestDto.phoneNumber()
-        );
+        savedUser = validRequestDto.toUserCreateRequestDto().toModel();
 
         savedUser.setUserId(1L);
 
-        savedParticipant = new Participant(savedUser, validRequestDto.birthDate());
+        savedParticipant = Participant.builder()
+                .userDetails(savedUser)
+                .birthDate(validRequestDto.birthDate())
+                .build();
 
         expectedUserResponseDto = UserResponseDto.fromModel(savedUser);
         expectedParticipantResponseDto = ParticipantResponseDto.fromModel(savedParticipant);

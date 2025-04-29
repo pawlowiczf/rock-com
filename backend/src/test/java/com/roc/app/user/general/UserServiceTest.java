@@ -39,13 +39,7 @@ class UserServiceTest {
                 "1234567890"
         );
 
-        savedUser = new User(
-                validRequestDto.firstName(),
-                validRequestDto.lastName(),
-                validRequestDto.email(),
-                validRequestDto.city(),
-                validRequestDto.phoneNumber()
-        );
+        savedUser = validRequestDto.toModel();
 
         savedUser.setUserId(1L);
 
