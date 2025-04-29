@@ -25,13 +25,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto createUser(UserCreateRequestDto requestDto) {
-        User user = new User(
-                requestDto.firstName(),
-                requestDto.lastName(),
-                requestDto.email(),
-                requestDto.city(),
-                requestDto.phoneNumber()
-        );
+        User user = requestDto.toModel();
         userRepository.save(user);
         return UserResponseDto.fromModel(user);
     }

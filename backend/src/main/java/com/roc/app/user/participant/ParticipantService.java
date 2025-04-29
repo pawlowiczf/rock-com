@@ -7,6 +7,7 @@ import com.roc.app.user.general.dto.UserResponseDto;
 import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
 import com.roc.app.user.participant.dto.ParticipantResponseDto;
 import com.roc.app.user.participant.exception.ParticipantNotFoundException;
+import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -34,13 +35,7 @@ public class ParticipantService {
 
     @Transactional
     public ParticipantResponseDto createParticipant(ParticipantCreateRequestDto requestDto) {
-        UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto(
-                requestDto.firstName(),
-                requestDto.lastName(),
-                requestDto.email(),
-                requestDto.city(),
-                requestDto.phoneNumber()
-        );
+        UserCreateRequestDto userCreateRequestDto = requestDto.toUserCreateRequestDto();
         UserResponseDto userResponseDto = userService.createUser(userCreateRequestDto);
 
         User user = userService.getUserByUserId(userResponseDto.userId());
