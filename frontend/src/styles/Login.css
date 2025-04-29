@@ -1,0 +1,97 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    padding: 1rem;
+}
+
+.login-window {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.login-header {
+    color: #A020F0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-input-group {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.login-input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.login-button {
+    background-color: #A020F0;
+    color: white;
+    border-radius: 4px;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #8A1DD8;
+}
+
+.login-bottom-text {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #333;
+}
+
+.login-link {
+    color: #A020F0;
+    text-decoration: none;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive tweaks */
+@media (max-width: 500px) {
+    .login-window {
+        padding: 1.5rem;
+    }
+
+    .login-header {
+        font-size: 1.3rem;
+    }
+
+    .login-button {
+        font-size: 0.95rem;
+        padding: 0.6rem;
+    }
+
+    .login-input-group input {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+}

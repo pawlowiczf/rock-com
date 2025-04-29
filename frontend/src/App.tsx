@@ -1,14 +1,21 @@
-import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TopBar from './pages/TopBar';
-import RockGrid from './pages/RockGrid';
-import './App.css';
+import Login from './pages/Login';
 
 function App() {
   return (
-    <div className="App">
-      <TopBar />
-      <RockGrid />
-    </div>
+    <>
+    <Router>
+      <div className="App">
+        <TopBar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Login />} /> {/* Fallback */}
+
+        </Routes>
+      </div>
+    </Router>
+    </>
   );
 }
 
