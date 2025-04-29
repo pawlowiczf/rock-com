@@ -1,0 +1,17 @@
+.selected-button {
+    background-color: transparent;
+    color: #A020F0;
+    border: 2px solid #A020F0;
+}
+
+
+.auth-user-type-button-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+}
+.auth-user-type-button-group .auth-button {
+    width: 100%;
+}

@@ -1,0 +1,22 @@
+.auth-terms{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.auth-terms-button{
+    background-color: #A020F0;
+    color: white;
+    border-radius: 4px;
+    width: 35%;
+    margin-left: auto;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.auth-button:hover {
+    background-color: #8A1DD8;
+}
