@@ -9,7 +9,7 @@ public record ParticipantCreateRequestDto(
         String firstName,
         @NotBlank @Max(50)
         String lastName,
-        @NotBlank @Max(50)
+        @NotBlank @Max(50) @Email
         String email,
         @NotBlank @Max(50)
         String city,

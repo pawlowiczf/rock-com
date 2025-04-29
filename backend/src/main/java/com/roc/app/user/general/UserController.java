@@ -2,6 +2,7 @@ package com.roc.app.user.general;
 
 import com.roc.app.user.general.dto.UserCreateRequestDto;
 import com.roc.app.user.general.dto.UserResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UserController {
     }
 
 //    @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateRequestDto requestDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateRequestDto requestDto) {
         /*
         Not sure whether we want to keep this endpoint or not, or even the whole controller.
          */

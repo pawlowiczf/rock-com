@@ -1,5 +1,6 @@
 package com.roc.app.user.general.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 
@@ -8,7 +9,7 @@ public record UserCreateRequestDto(
         String firstName,
         @NotBlank @Max(50)
         String lastName,
-        @NotBlank @Max(50)
+        @NotBlank @Max(50) @Email
         String email,
         @NotBlank @Max(50)
         String city,

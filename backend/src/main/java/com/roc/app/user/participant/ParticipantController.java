@@ -3,6 +3,7 @@ package com.roc.app.user.participant;
 
 import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
 import com.roc.app.user.participant.dto.ParticipantResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,8 @@ public class ParticipantController {
     }
 
     @PostMapping
-    public ResponseEntity<ParticipantResponseDto> createParticipant(@RequestBody ParticipantCreateRequestDto requestDto) {
-        ParticipantResponseDto participant = participantService.create(requestDto);
+    public ResponseEntity<ParticipantResponseDto> createParticipant(@Valid @RequestBody ParticipantCreateRequestDto requestDto) {
+        ParticipantResponseDto participant = participantService.createParticipant(requestDto);
         return ResponseEntity.ok(participant);
     }
 }
