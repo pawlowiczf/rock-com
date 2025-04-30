@@ -2,6 +2,7 @@ package com.roc.app.competition;
 
 
 import com.roc.app.competition.dto.CompetitionDTO;
+import com.roc.app.competition.dto.CreateCompetitionDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,9 +23,8 @@ public class CompetitionMapper {
     }
 
 
-    Competition mapToEntity(CompetitionDTO dto) {
+    Competition mapToEntity(CreateCompetitionDto dto) {
         return Competition.builder()
-                .competitionId(dto.competitionId())
                 .type(dto.type())
                 .matchDurationMinutes(dto.matchDurationMinutes())
                 .availableCourts(dto.availableCourts())

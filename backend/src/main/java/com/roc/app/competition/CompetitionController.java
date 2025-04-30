@@ -1,6 +1,7 @@
 package com.roc.app.competition;
 
 import com.roc.app.competition.dto.CompetitionDTO;
+import com.roc.app.competition.dto.CreateCompetitionDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class CompetitionController {
     }
 
     @PostMapping
-    public ResponseEntity<CompetitionDTO> createCompetition(@Valid @RequestBody CompetitionDTO competitionDTO) {
+    public ResponseEntity<CompetitionDTO> createCompetition(@Valid @RequestBody CreateCompetitionDto competitionDTO) {
         CompetitionDTO createdCompetition = competitionService.createCompetition(competitionDTO);
         return new ResponseEntity<>(createdCompetition, HttpStatus.CREATED);
     }

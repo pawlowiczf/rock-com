@@ -1,6 +1,7 @@
 package com.roc.app.competition;
 
 import com.roc.app.competition.dto.CompetitionDTO;
+import com.roc.app.competition.dto.CreateCompetitionDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
@@ -57,10 +58,10 @@ public class CompetitionService {
     }
 
     @Transactional
-    public CompetitionDTO createCompetition(CompetitionDTO competitionDTO) {
+    public CompetitionDTO createCompetition(CreateCompetitionDto competitionDTO) {
+
         if (competitionDTO.registrationOpen() == null) {
-            competitionDTO = new CompetitionDTO(
-                    competitionDTO.competitionId(),
+            competitionDTO = new CreateCompetitionDto(
                     competitionDTO.type(),
                     competitionDTO.matchDurationMinutes(),
                     competitionDTO.availableCourts(),
