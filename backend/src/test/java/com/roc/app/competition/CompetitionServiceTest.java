@@ -37,7 +37,7 @@ class CompetitionServiceTest {
     void setUp() {
         testCompetition = new Competition();
         testCompetition.setCompetitionId(1);
-        testCompetition.setType(CompetitionType.badminton);
+        testCompetition.setType(CompetitionType.BADMINTON);
         testCompetition.setMatchDurationMinutes(60);
         testCompetition.setAvailableCourts(4);
         testCompetition.setParticipantsLimit(16);
@@ -58,7 +58,7 @@ class CompetitionServiceTest {
 
         // Then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCompetitionId()).isEqualTo(1L);
+        assertThat(result.get(0).competitionId()).isEqualTo(1);
         verify(competitionRepository, times(1)).findAll();
     }
 
@@ -70,7 +70,7 @@ class CompetitionServiceTest {
         CompetitionDTO result = competitionService.getCompetitionById(1L);
 
         assertThat(result).isNotNull();
-        assertThat(result.getCompetitionId()).isEqualTo(1);
+        assertThat(result.competitionId()).isEqualTo(1);
         verify(competitionRepository, times(1)).findById(1L);
     }
 

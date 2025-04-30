@@ -7,47 +7,38 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CompetitionDTO {
+public record CompetitionDTO(
 
-    private Integer competitionId;
+        Integer competitionId,
 
-    @NotNull(message = "Competition type is required")
-    @Enumerated(EnumType.STRING)
-    private CompetitionType type;
+        @NotNull(message = "Competition type is required")
+        @Enumerated(EnumType.STRING)
+        CompetitionType type,
 
-    @NotNull(message = "Match duration is required")
-    @Min(value = 1, message = "Match duration must be at least 1 minute")
-    private Integer matchDurationMinutes;
+        @NotNull(message = "Match duration is required")
+        @Min(value = 1, message = "Match duration must be at least 1 minute")
+        Integer matchDurationMinutes,
 
-    @NotNull(message = "Available courts is required")
-    @Min(value = 1, message = "At least one court must be available")
-    private Integer availableCourts;
+        @NotNull(message = "Available courts is required")
+        @Min(value = 1, message = "At least one court must be available")
+        Integer availableCourts,
 
-    @Min(value = 2, message = "Participants limit must be at least 2")
-    private Integer participantsLimit;
+        @Min(value = 2, message = "Participants limit must be at least 2")
+        Integer participantsLimit,
 
-    @NotBlank(message = "Street address is required")
-    @Size(max = 255, message = "Street address must not exceed 255 characters")
-    private String streetAddress;
+        @NotBlank(message = "Street address is required")
+        @Size(max = 255, message = "Street address must not exceed 255 characters")
+        String streetAddress,
 
-    @NotBlank(message = "City is required")
-    @Size(max = 100, message = "City must not exceed 100 characters")
-    private String city;
+        @NotBlank(message = "City is required")
+        @Size(max = 100, message = "City must not exceed 100 characters")
+        String city,
 
-    @NotBlank(message = "Postal code is required")
-    @Size(max = 20, message = "Postal code must not exceed 20 characters")
-    private String postalCode;
+        @NotBlank(message = "Postal code is required")
+        @Size(max = 20, message = "Postal code must not exceed 20 characters")
+        String postalCode,
 
-    private Boolean registrationOpen;
+        Boolean registrationOpen
 
-
-}
+) {}

@@ -58,37 +58,47 @@ public class CompetitionService {
 
     @Transactional
     public CompetitionDTO createCompetition(CompetitionDTO competitionDTO) {
-
-        if (competitionDTO.getRegistrationOpen() == null) {
-            competitionDTO.setRegistrationOpen(false);
+        if (competitionDTO.registrationOpen() == null) {
+            competitionDTO = new CompetitionDTO(
+                    competitionDTO.competitionId(),
+                    competitionDTO.type(),
+                    competitionDTO.matchDurationMinutes(),
+                    competitionDTO.availableCourts(),
+                    competitionDTO.participantsLimit(),
+                    competitionDTO.streetAddress(),
+                    competitionDTO.city(),
+                    competitionDTO.postalCode(),
+                    false
+            );
         }
-
 
         Competition competition = competitionMapper.mapToEntity(competitionDTO);
         Competition savedCompetition = competitionRepository.save(competition);
         return competitionMapper.mapToDto(savedCompetition);
     }
 
+
     @Transactional
     public CompetitionDTO updateCompetition(Long id, CompetitionDTO competitionDTO) {
         Competition competition = competitionRepository.findById(id)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
 
-        competition.setType(competitionDTO.getType());
-        competition.setMatchDurationMinutes(competitionDTO.getMatchDurationMinutes());
-        competition.setAvailableCourts(competitionDTO.getAvailableCourts());
-        competition.setParticipantsLimit(competitionDTO.getParticipantsLimit());
-        competition.setStreetAddress(competitionDTO.getStreetAddress());
-        competition.setCity(competitionDTO.getCity());
-        competition.setPostalCode(competitionDTO.getPostalCode());
+        competition.setType(competitionDTO.type());
+        competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
+        competition.setAvailableCourts(competitionDTO.availableCourts());
+        competition.setParticipantsLimit(competitionDTO.participantsLimit());
+        competition.setStreetAddress(competitionDTO.streetAddress());
+        competition.setCity(competitionDTO.city());
+        competition.setPostalCode(competitionDTO.postalCode());
 
-        if (competitionDTO.getRegistrationOpen() != null) {
-            competition.setRegistrationOpen(competitionDTO.getRegistrationOpen());
+        if (competitionDTO.registrationOpen() != null) {
+            competition.setRegistrationOpen(competitionDTO.registrationOpen());
         }
 
         Competition updatedCompetition = competitionRepository.save(competition);
         return competitionMapper.mapToDto(updatedCompetition);
     }
+
 
 
     @Transactional
