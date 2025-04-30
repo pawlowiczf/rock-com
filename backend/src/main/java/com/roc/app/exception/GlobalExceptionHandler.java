@@ -1,8 +1,7 @@
 package com.roc.app.exception;
 
 import com.roc.app.competition.exception.CompetitionNotFoundException;
-import com.roc.app.competitionType.exception.CompetitionTypeNotFoundException;
-import com.roc.app.competitionType.exception.DuplicateCompetitionTypeException;
+import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,17 +39,6 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(DuplicateCompetitionTypeException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateCompetitionTypeException(DuplicateCompetitionTypeException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                "Duplicate resource",
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

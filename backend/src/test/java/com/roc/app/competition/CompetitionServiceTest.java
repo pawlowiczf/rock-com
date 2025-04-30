@@ -2,13 +2,12 @@ package com.roc.app.competition;
 
 import com.roc.app.competition.dto.CompetitionDTO;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
-import com.roc.app.competitionType.CompetitionType;
-import com.roc.app.competitionType.CompetitionTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -24,25 +23,21 @@ class CompetitionServiceTest {
 
     @Mock
     private CompetitionRepository competitionRepository;
-
     @Mock
-    private CompetitionTypeRepository typeRepository;
+    private CompetitionDateRepository competitionDateRepository;
+    @Spy
+    private CompetitionMapper competitionMapper = new CompetitionMapper();
 
     @InjectMocks
     private CompetitionService competitionService;
 
     private Competition testCompetition;
-    private CompetitionType testType;
 
     @BeforeEach
     void setUp() {
-        testType = new CompetitionType();
-        testType.setTypeId(1);
-        testType.setTypeLabel("Tennis");
-
         testCompetition = new Competition();
-        testCompetition.setCompetitionId(1L);
-        testCompetition.setCompetitionType(testType);
+        testCompetition.setCompetitionId(1);
+        testCompetition.setType(CompetitionType.badminton);
         testCompetition.setMatchDurationMinutes(60);
         testCompetition.setAvailableCourts(4);
         testCompetition.setParticipantsLimit(16);

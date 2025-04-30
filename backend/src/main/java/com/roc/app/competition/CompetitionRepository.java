@@ -1,18 +1,16 @@
 package com.roc.app.competition;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
-    List<Competition> findByCompetitionTypeTypeId(Integer typeId);
+    List<Competition> findByType(CompetitionType type);
 
-    @Query("SELECT c FROM Competition c WHERE c.registrationOpen = true")
-    List<Competition> findAllOpenCompetitions();
+    List<Competition> findByRegistrationOpen(boolean registrationOpen);
 
-    @Query("SELECT c FROM Competition c WHERE c.city = :city")
-    List<Competition> findCompetitionsByCity(String city);
+    List<Competition> findByCity(String city);
+
 }

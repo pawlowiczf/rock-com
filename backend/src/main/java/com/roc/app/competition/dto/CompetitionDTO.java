@@ -1,5 +1,8 @@
 package com.roc.app.competition.dto;
 
+import com.roc.app.competition.CompetitionType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,12 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompetitionDTO {
 
-    private Long competitionId;
+    private Integer competitionId;
 
     @NotNull(message = "Competition type is required")
-    private Integer typeId;
-
-    private String typeLabel;
+    @Enumerated(EnumType.STRING)
+    private CompetitionType type;
 
     @NotNull(message = "Match duration is required")
     @Min(value = 1, message = "Match duration must be at least 1 minute")

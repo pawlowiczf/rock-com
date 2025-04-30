@@ -1,10 +1,9 @@
 package com.roc.app.competition;
 
 import com.roc.app.competition.dto.CompetitionDTO;
+import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
-import com.roc.app.competitionType.CompetitionType;
-import com.roc.app.competitionType.CompetitionTypeRepository;
-import com.roc.app.competitionType.exception.CompetitionTypeNotFoundException;
+import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,36 +16,44 @@ import java.util.stream.Collectors;
 public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
-    private final CompetitionTypeRepository competitionTypeRepository;
+    private final CompetitionDateRepository competitionDateRepository;
+    private final CompetitionMapper competitionMapper;
 
     public List<CompetitionDTO> getAllCompetitions() {
         return competitionRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<CompetitionDTO> getCompetitionsByType(Integer typeId) {
-        return competitionRepository.findByCompetitionTypeTypeId(typeId).stream()
-                .map(this::mapToDto)
+    public List<CompetitionDTO> getCompetitionsByType(String competitionType) {
+        CompetitionType competitionTypeEnum;
+        try{
+            competitionTypeEnum = CompetitionType.valueOf(competitionType);
+        }catch (IllegalArgumentException e){
+            throw new CompetitionTypeNotFoundException(competitionType);
+        }
+
+        return competitionRepository.findByType(competitionTypeEnum).stream()
+                .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<CompetitionDTO> getOpenCompetitions() {
-        return competitionRepository.findAllOpenCompetitions().stream()
-                .map(this::mapToDto)
+        return competitionRepository.findByRegistrationOpen(true).stream()
+                .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<CompetitionDTO> getCompetitionsByCity(String city) {
-        return competitionRepository.findCompetitionsByCity(city).stream()
-                .map(this::mapToDto)
+        return competitionRepository.findByCity(city).stream()
+                .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public CompetitionDTO getCompetitionById(Long id) {
         return competitionRepository.findById(id)
-                .map(this::mapToDto)
-                .orElseThrow(() -> new CompetitionNotFoundException("Competition not found with id: " + id));
+                .map(competitionMapper::mapToDto)
+                .orElseThrow(() -> new CompetitionNotFoundException(id));
     }
 
     @Transactional
@@ -56,20 +63,18 @@ public class CompetitionService {
             competitionDTO.setRegistrationOpen(false);
         }
 
-        Competition competition = mapToEntity(competitionDTO);
+
+        Competition competition = competitionMapper.mapToEntity(competitionDTO);
         Competition savedCompetition = competitionRepository.save(competition);
-        return mapToDto(savedCompetition);
+        return competitionMapper.mapToDto(savedCompetition);
     }
 
     @Transactional
     public CompetitionDTO updateCompetition(Long id, CompetitionDTO competitionDTO) {
         Competition competition = competitionRepository.findById(id)
-                .orElseThrow(() -> new CompetitionNotFoundException("Competition not found with id: " + id));
+                .orElseThrow(() -> new CompetitionNotFoundException(id));
 
-        CompetitionType competitionType = competitionTypeRepository.findById(competitionDTO.getTypeId())
-                .orElseThrow(() -> new CompetitionTypeNotFoundException("Competition type not found with id: " + competitionDTO.getTypeId()));
-
-        competition.setCompetitionType(competitionType);
+        competition.setType(competitionDTO.getType());
         competition.setMatchDurationMinutes(competitionDTO.getMatchDurationMinutes());
         competition.setAvailableCourts(competitionDTO.getAvailableCourts());
         competition.setParticipantsLimit(competitionDTO.getParticipantsLimit());
@@ -82,49 +87,18 @@ public class CompetitionService {
         }
 
         Competition updatedCompetition = competitionRepository.save(competition);
-        return mapToDto(updatedCompetition);
+        return competitionMapper.mapToDto(updatedCompetition);
     }
 
 
     @Transactional
     public void deleteCompetition(Long id) {
         if (!competitionRepository.existsById(id)) {
-            throw new CompetitionNotFoundException("Competition not found with id: " + id);
+            throw new CompetitionNotFoundException(id);
         }
         competitionRepository.deleteById(id);
     }
-
-    private CompetitionDTO mapToDto(Competition competition) {
-        return CompetitionDTO.builder()
-                .competitionId(competition.getCompetitionId())
-                .typeId(competition.getCompetitionType().getTypeId())
-                .typeLabel(competition.getCompetitionType().getTypeLabel())
-                .matchDurationMinutes(competition.getMatchDurationMinutes())
-                .availableCourts(competition.getAvailableCourts())
-                .participantsLimit(competition.getParticipantsLimit())
-                .streetAddress(competition.getStreetAddress())
-                .city(competition.getCity())
-                .postalCode(competition.getPostalCode())
-                .registrationOpen(competition.getRegistrationOpen())
-                .build();
+    public List<UpcomingCompetitionDto> getUpcomingCompetitions() {
+        return competitionDateRepository.findUpcomingCompetitions();
     }
-
-    private Competition mapToEntity(CompetitionDTO dto) {
-
-        CompetitionType competitionType = competitionTypeRepository.findById(dto.getTypeId())
-                .orElseThrow(() -> new CompetitionTypeNotFoundException("Competition type not found with id: " + dto.getTypeId()));
-
-        return Competition.builder()
-                .competitionId(dto.getCompetitionId())
-                .competitionType(competitionType)
-                .matchDurationMinutes(dto.getMatchDurationMinutes())
-                .availableCourts(dto.getAvailableCourts())
-                .participantsLimit(dto.getParticipantsLimit())
-                .streetAddress(dto.getStreetAddress())
-                .city(dto.getCity())
-                .postalCode(dto.getPostalCode())
-                .registrationOpen(dto.getRegistrationOpen())
-                .build();
-    }
-
 }
