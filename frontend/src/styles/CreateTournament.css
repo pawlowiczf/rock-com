@@ -1,0 +1,158 @@
+.create-tournament-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0.5rem;
+}
+
+.create-tournament-window {
+    width: 100%;
+    max-width: 400px;
+    background-color: #f7eafd;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    padding: 2rem 2.5rem;
+    box-sizing: border-box;
+}
+
+.create-tournament-header {
+    color: #A020F0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.create-tournament-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2;
+}
+
+
+.create-tournament-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.create-tournament-input-group {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.create-tournament-input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.create-tournament-button {
+    background-color: #A020F0;
+    color: white;
+    border-radius: 4px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-tournament-button:hover {
+    background-color: #8A1DD8;
+}
+
+.create-tournament-bottom-text {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #333;
+}
+
+.create-tournament-link {
+    color: #A020F0;
+    text-decoration: none;
+}
+
+.create-tournament-link:hover {
+    text-decoration: underline;
+}
+
+.create-tournament-input-group {
+    position: relative;
+}
+
+.discipline-icons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.discipline-icon-button {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: transparent;
+    cursor: pointer;
+    transition: filter 0.2s ease, border-color 0.2s ease;
+}
+
+.discipline-icon-button img {
+    width: 2.5rem;
+    height: 2.5rem;
+    filter: none;
+
+}
+
+.discipline-icon-button.selected img {
+    filter: grayscale(100%) brightness(0) saturate(100%) invert(19%) sepia(84%) saturate(7476%) hue-rotate(268deg) brightness(94%) contrast(108%);
+
+}
+
+.location-modal {
+    background: white;
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    margin: auto;
+    border-radius: 10px;
+    position: relative;
+}
+
+.location-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 500px) {
+    .create-tournament-window {
+        padding: 1.5rem;
+    }
+
+    .create-tournament-header {
+        font-size: 1.3rem;
+    }
+
+    .create-tournament-button {
+        font-size: 0.95rem;
+        padding: 0.6rem;
+    }
+
+    .create-tournament-input-group input {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+}
