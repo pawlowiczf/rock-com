@@ -11,13 +11,17 @@ Modal.setAppElement("#root");
 
 const CreateTournament: React.FC = () => {
     const [formData, setFormData] = useState({
-        discipline: "",
+        typeId: 0, 
         name: "",
-        date: "",
+        fromDate: "",
+        toDate: "",
         location: "",
         courts: "",
         participants: "",
-        matchTime: ""
+        matchTime: "",
+        streetAddress: "",
+        city: "",
+        postalCode: ""
     });
 
     const [autocomplete, setAutocomplete] = useState<any>(null);
@@ -27,30 +31,98 @@ const CreateTournament: React.FC = () => {
         if (autocomplete !== null) {
             const place = autocomplete.getPlace();
             if (place.formatted_address) {
-                setFormData(prev => ({ ...prev, location: place.formatted_address }));
+                const components = place.address_components;
+                let country = '';
+                let city = '';
+                let postalCode = '';
+    
+                components.forEach((component: any) => {
+                    const types = component.types;
+                    if (types.includes('country')) {
+                        country = component.long_name;
+                    }
+                    if (types.includes('locality')) {
+                        city = component.long_name;
+                    }
+                    if (types.includes('postal_code')) {
+                        postalCode = component.long_name;
+                    }
+                });
+    
+                setFormData(prev => ({
+                    ...prev,
+                    location: place.formatted_address,
+                    streetAddress: place.address_components.find((component: any) => component.types.includes('route'))?.long_name || '',
+                    city,
+                    postalCode
+                }));
+    
                 setLocationModalOpen(false);
             }
         }
     };
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = () => {
-        console.log("Tworzenie turnieju:", formData);
+    const handleDisciplineSelect = (discipline: number) => {
+        setFormData(prev => ({ ...prev, typeId: discipline }));
     };
 
-    const handleDisciplineSelect = (discipline: string) => {
-        setFormData(prev => ({ ...prev, discipline }));
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Tworzenie obiektu danych do wysłania
+        const competitionData = {
+            competitionId: null, // Brak ID, gdy tworzymy nowy
+            type: formData.typeId,  // Przekazanie typu dyscypliny (np. "BADMINTON")
+            matchDurationMinutes: timeToMinutes(formData.matchTime),
+            availableCourts: Number(formData.courts),
+            participantsLimit: Number(formData.participants),
+            streetAddress: formData.streetAddress,
+            city: formData.city,
+            postalCode: formData.postalCode,
+            registrationOpen: false // Domyślnie ustawiamy jako "false"
+        };
+
+        // Wysłanie zapytania POST do backendu
+        try {
+            const response = await fetch("/api/competitions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(competitionData), // Przesyłanie danych w formacie JSON
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Turniej stworzony", result);
+                alert("Turniej został pomyślnie stworzony!");
+            } else {
+                const error = await response.json();
+                console.error("Błąd przy tworzeniu turnieju", error);
+                alert("Wystąpił błąd przy tworzeniu turnieju.");
+            }
+        } catch (error) {
+            console.error("Błąd połączenia", error);
+            alert("Błąd połączenia z serwerem.");
+        }
     };
-    
+
     const disciplines = [
-        { name: "tennis", src: TennisIcon, alt: "Baseball" },
-        { name: "pingpong", src: PingPongIcon, alt: "Ping Pong" },
-        { name: "badminton", src: BadmintonIcon, alt: "Badminton" },
+        { name: 1, src: TennisIcon, alt: "Tennis" },
+        { name: 2, src: PingPongIcon, alt: "Ping Pong" },
+        { name: 3, src: BadmintonIcon, alt: "Badminton" },
     ];
+
+    const timeToMinutes = (time: string): number => {
+        const [hours, minutes] = time.split(":").map(Number); 
+        return hours * 60 + minutes; 
+    };
 
     return (
         <div className="create-tournament-container">
@@ -63,14 +135,14 @@ const CreateTournament: React.FC = () => {
                             key={name}
                             type="button"
                             onClick={() => handleDisciplineSelect(name)}
-                            className={`discipline-icon-button ${formData.discipline === name ? "selected" : ""}`}>
+                            className={`discipline-icon-button ${formData.typeId === name ? "selected" : ""}`}>
                             <img src={src} alt={alt} />
                         </button>
                     ))}
                 </div>
 
                 <div className="create-tournament-form">
-                    <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+                    <form onSubmit={handleSubmit}>
                         <div className="create-tournament-input-group">
                             <input
                                 name="name"
@@ -83,14 +155,26 @@ const CreateTournament: React.FC = () => {
 
                         <div className="create-tournament-input-group">
                             <input
-                                name="date"
+                                name="fromDate"
                                 type="date"
                                 placeholder="dd.MM.yyyy"
                                 onChange={handleChange}
-                                value={formData.date}
+                                value={formData.fromDate}
                                 required
                             />
                         </div>
+                        
+                        <div className="create-tournament-input-group">
+                            <input
+                                name="toDate"
+                                type="date"
+                                placeholder="dd.MM.yyyy"
+                                onChange={handleChange}
+                                value={formData.toDate}
+                                required
+                            />
+                        </div>
+                        
 
                         <div
                             className="create-tournament-input-group"
