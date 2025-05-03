@@ -10,6 +10,7 @@ import RegisterInformation from "./pages/RegisterInformation";
 import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
 import EditMatch from "./pages/EditMatch";
+import TournamentBracket from "./pages/TournamentBracket";
 import "./styles/App.css";
 
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/tournaments/new" element={<CreateTournament />} />
           <Route path="/tournaments/edit" element={<EditTournament />} />
           <Route path="/matches/edit" element={<EditMatch />} />
+          <Route path="/tournaments/bracket" element={<TournamentBracket />} />
 
           <Route path="*" element={<Login />} /> {/* Fallback */}
 
