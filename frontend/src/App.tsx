@@ -8,6 +8,9 @@ import UserTypeChoser from "./pages/UserTypeChoser";
 import JudgeLicence from "./pages/JudgeLicence";
 import RegisterInformation from "./pages/RegisterInformation";
 import CreateTournament from "./pages/CreateTournament";
+import EditTournament from "./pages/EditTournament";
+import EditMatch from "./pages/EditMatch";
+import "./styles/App.css";
 
 
 function App() {
@@ -25,6 +28,8 @@ function App() {
           <Route path="/register/judge" element={<JudgeLicence />} />
           <Route path="/register/information" element={<RegisterInformation />} />
           <Route path="/tournaments/new" element={<CreateTournament />} />
+          <Route path="/tournaments/edit" element={<EditTournament />} />
+          <Route path="/matches/edit" element={<EditMatch />} />
 
           <Route path="*" element={<Login />} /> {/* Fallback */}
 

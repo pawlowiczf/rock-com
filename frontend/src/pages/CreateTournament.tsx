@@ -32,27 +32,33 @@ const CreateTournament: React.FC = () => {
             const place = autocomplete.getPlace();
             if (place.formatted_address) {
                 const components = place.address_components;
-                let country = '';
                 let city = '';
                 let postalCode = '';
+                let streetNumber = '';
+                let route = '';
     
                 components.forEach((component: any) => {
                     const types = component.types;
-                    if (types.includes('country')) {
-                        country = component.long_name;
-                    }
                     if (types.includes('locality')) {
                         city = component.long_name;
                     }
                     if (types.includes('postal_code')) {
                         postalCode = component.long_name;
                     }
+                    if (types.includes('street_number')) {
+                        streetNumber = component.long_name;
+                    }
+                    if (types.includes('route')) {
+                        route = component.long_name;
+                    }
                 });
+    
+                const fullStreetAddress = `${route} ${streetNumber}`.trim();
     
                 setFormData(prev => ({
                     ...prev,
                     location: place.formatted_address,
-                    streetAddress: place.address_components.find((component: any) => component.types.includes('route'))?.long_name || '',
+                    streetAddress: fullStreetAddress,
                     city,
                     postalCode
                 }));
