@@ -1,17 +1,19 @@
 import { useState } from "react";
-import Modal from "react-modal";
-import { GoogleMap, Autocomplete } from '@react-google-maps/api';
 import "../styles/CreateTournament.css";
 import TennisIcon from "../assets/icons/tennis.svg";
 import PingPongIcon from "../assets/icons/pingpong.svg";
 import BadmintonIcon from "../assets/icons/badminton.svg";
+import TextField from "@mui/material/TextField";
 
-// Ustawienie elementu root dla modala
-Modal.setAppElement("#root");
+declare global {
+    interface Window {
+        google: any;
+    }
+}
 
 const CreateTournament: React.FC = () => {
     const [formData, setFormData] = useState({
-        typeId: 0, 
+        typeId: 1,
         name: "",
         fromDate: "",
         toDate: "",
@@ -23,51 +25,6 @@ const CreateTournament: React.FC = () => {
         city: "",
         postalCode: ""
     });
-
-    const [autocomplete, setAutocomplete] = useState<any>(null);
-    const [isLocationModalOpen, setLocationModalOpen] = useState(false);
-
-    const onPlaceChanged = () => {
-        if (autocomplete !== null) {
-            const place = autocomplete.getPlace();
-            if (place.formatted_address) {
-                const components = place.address_components;
-                let city = '';
-                let postalCode = '';
-                let streetNumber = '';
-                let route = '';
-    
-                components.forEach((component: any) => {
-                    const types = component.types;
-                    if (types.includes('locality')) {
-                        city = component.long_name;
-                    }
-                    if (types.includes('postal_code')) {
-                        postalCode = component.long_name;
-                    }
-                    if (types.includes('street_number')) {
-                        streetNumber = component.long_name;
-                    }
-                    if (types.includes('route')) {
-                        route = component.long_name;
-                    }
-                });
-    
-                const fullStreetAddress = `${route} ${streetNumber}`.trim();
-    
-                setFormData(prev => ({
-                    ...prev,
-                    location: place.formatted_address,
-                    streetAddress: fullStreetAddress,
-                    city,
-                    postalCode
-                }));
-    
-                setLocationModalOpen(false);
-            }
-        }
-    };
-    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -81,27 +38,78 @@ const CreateTournament: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Tworzenie obiektu danych do wysłania
+        if (window.google) {
+            const geocoder = new window.google.maps.Geocoder();
+
+            geocoder.geocode({ address: formData.location }, (results: any, status: any) => {
+                if (status === "OK" && results.length > 0) {
+                    const place = results[0];
+                    const components = place.address_components;
+                    let city = '';
+                    let postalCode = '';
+                    let streetNumber = '';
+                    let route = '';
+
+                    components.forEach((component: any) => {
+                        const types = component.types;
+                        if (types.includes('locality')) {
+                            city = component.long_name;
+                        }
+                        if (types.includes('postal_code')) {
+                            postalCode = component.long_name;
+                        }
+                        if (types.includes('street_number')) {
+                            streetNumber = component.long_name;
+                        }
+                        if (types.includes('route')) {
+                            route = component.long_name;
+                        }
+                    });
+
+                    const streetAddress = `${route} ${streetNumber}`.trim();
+
+                    setFormData(prev => ({
+                        ...prev,
+                        streetAddress,
+                        city,
+                        postalCode
+                    }));
+
+                    submitTournamentData({
+                        ...formData,
+                        streetAddress,
+                        city,
+                        postalCode
+                    });
+                } else {
+                    alert("Nie udało się rozpoznać lokalizacji");
+                }
+            });
+        } else {
+            alert("Google Maps API nie jest dostępne");
+        }
+    };
+
+    const submitTournamentData = async (data: typeof formData) => {
         const competitionData = {
-            competitionId: null, // Brak ID, gdy tworzymy nowy
-            type: formData.typeId,  // Przekazanie typu dyscypliny (np. "BADMINTON")
-            matchDurationMinutes: timeToMinutes(formData.matchTime),
-            availableCourts: Number(formData.courts),
-            participantsLimit: Number(formData.participants),
-            streetAddress: formData.streetAddress,
-            city: formData.city,
-            postalCode: formData.postalCode,
-            registrationOpen: false // Domyślnie ustawiamy jako "false"
+            competitionId: null,
+            type: data.typeId,
+            matchDurationMinutes: timeToMinutes(data.matchTime),
+            availableCourts: Number(data.courts),
+            participantsLimit: Number(data.participants),
+            streetAddress: data.streetAddress,
+            city: data.city,
+            postalCode: data.postalCode,
+            registrationOpen: false
         };
 
-        // Wysłanie zapytania POST do backendu
         try {
             const response = await fetch("/api/competitions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(competitionData), // Przesyłanie danych w formacie JSON
+                body: JSON.stringify(competitionData),
             });
 
             if (response.ok) {
@@ -126,14 +134,15 @@ const CreateTournament: React.FC = () => {
     ];
 
     const timeToMinutes = (time: string): number => {
-        const [hours, minutes] = time.split(":").map(Number); 
-        return hours * 60 + minutes; 
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
     };
 
     return (
         <div className="create-tournament-container">
             <div className="create-tournament-window">
                 <h2 className="create-tournament-header">Utwórz turniej</h2>
+                <div className="edit-tournament-scroll-pane">
 
                 <div className="discipline-icons">
                     {disciplines.map(({ name, src, alt }) => (
@@ -147,122 +156,96 @@ const CreateTournament: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="create-tournament-form">
-                    <form onSubmit={handleSubmit}>
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="name"
-                                type="text"
-                                placeholder="Nazwa"
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="fromDate"
-                                type="date"
-                                placeholder="dd.MM.yyyy"
-                                onChange={handleChange}
-                                value={formData.fromDate}
-                                required
-                            />
-                        </div>
-                        
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="toDate"
-                                type="date"
-                                placeholder="dd.MM.yyyy"
-                                onChange={handleChange}
-                                value={formData.toDate}
-                                required
-                            />
-                        </div>
-                        
-
-                        <div
-                            className="create-tournament-input-group"
-                            onClick={() => setLocationModalOpen(true)}
-                            style={{ cursor: "pointer" }}
-                        >
-                            <input
-                                type="text"
-                                placeholder="Lokalizacja"
-                                value={formData.location}
-                                readOnly
-                                required
-                            />
-                        </div>
-
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="courts"
-                                type="number"
-                                placeholder="Liczba boisk"
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="participants"
-                                type="number"
-                                placeholder="Limit uczestników"
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="create-tournament-input-group">
-                            <input
-                                name="matchTime"
-                                type="time"
-                                placeholder="Czas trwania meczu"
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <button className="create-tournament-button" type="submit">Utwórz</button>
-                    </form>
-                </div>
-            </div>
-
-            {/* Modal do wyboru lokalizacji */}
-            <Modal
-                isOpen={isLocationModalOpen}
-                onRequestClose={() => setLocationModalOpen(false)}
-                contentLabel="Wybierz lokalizację"
-                className="location-modal"
-                overlayClassName="location-modal-overlay"
-            >
-                <h2>Wybierz lokalizację</h2>
-                    <Autocomplete
-                        onLoad={setAutocomplete}
-                        onPlaceChanged={onPlaceChanged}
-                    >
-                        <input
-                            type="text"
-                            placeholder="Szukaj lokalizacji..."
-                            style={{ width: "100%", padding: "0.5rem", marginBottom: "1rem" }}
-                        />
-                    </Autocomplete>
-
-                    <div style={{ height: "300px", width: "100%", marginBottom: "1rem" }}>
-                        <GoogleMap
-                            mapContainerStyle={{ height: "100%", width: "100%" }}
-                            center={{ lat: 50.06143, lng: 19.93658 }}
-                            zoom={12}
+                <form className="create-tournament-form" onSubmit={handleSubmit}>
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            label="Nazwa"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
-                <button onClick={() => setLocationModalOpen(false)} style={{ marginTop: "1rem" }}>
-                    Anuluj
-                </button>
-            </Modal>
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            type="date"
+                            label="Od"
+                            name="fromDate"
+                            InputLabelProps={{ shrink: true }}
+                            value={formData.fromDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            type="date"
+                            label="Do"
+                            name="toDate"
+                            InputLabelProps={{ shrink: true }}
+                            value={formData.toDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            label="Lokalizacja"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            type="number"
+                            label="Liczba boisk"
+                            name="courts"
+                            value={formData.courts}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            type="number"
+                            label="Limit uczestników"
+                            name="participants"
+                            value={formData.participants}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="create-tournament-input-group">
+                        <TextField
+                            fullWidth
+                            type="time"
+                            label="Czas trwania meczu"
+                            name="matchTime"
+                            value={formData.matchTime}
+                            onChange={handleChange}
+                            InputLabelProps={{ shrink: true }}
+                            required
+                        />
+                    </div>
+
+                    <button className="create-tournament-button" type="submit">Utwórz</button>
+                </form>
+            </div>
+            </div>
         </div>
     );
 };

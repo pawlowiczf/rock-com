@@ -1,27 +1,53 @@
 import "../styles/EditMatch.css";
 import { useState } from "react";
-import Select, { SingleValue } from "react-select";
+import Select from "react-select";
+import TextField from "@mui/material/TextField";
 
 export const customSelectStyles = {
-  control: (base: any) => ({
+  control: (base: any, { isFocused }: any) => ({
     ...base,
-    width: "110%",
-    border: "2px solid #ccc",
+    width: "100%",
+    border: isFocused ? "2px solid #A020F0" : "1px solid #ccc",
+    textAlign: "left",
     borderRadius: "8px",
+    boxShadow: "none",
+    transition: "none",
     minHeight: "45px",
-    "&:hover": { borderColor: "#7b61ff" }
+    "&:hover": { 
+      borderColor: isFocused ? "#A020F0" : "black" 
+    },
   }),
-  option: (base: any, { isFocused, isSelected }: any) => ({
+  option: (base: any, { isFocused, isSelected,  }: any) => ({
     ...base,
-    backgroundColor: isSelected ? "#7b61ff" : isFocused ? "#f2f2f2" : "white",
-    color: isSelected ? "white" : "black"
+    backgroundColor: isSelected ? "#A020F0" : isFocused ? "#f2f2f2" : "white",
+    color: isSelected ? "white" : "black",
+    "&:active": { 
+      backgroundColor: "#D1B3FF"
+    },
+    
   }),
   singleValue: (base: any) => ({
     ...base,
     color: "#333"
-  })
+  }),
+  menu: (base: any) => ({
+    ...base,
+    zIndex: 3,
+  }),
 };
+
+export const selectLabelStyle = {
+  fontSize: "0.8rem",
+  color: "#333",
+  marginLeft: "0.8rem", 
+  marginTop: "-0.5rem", 
+  textAlign: "left",
+  display: "block",
+
+}
+
 const scorePattern = /^\d+:\d+$/;
+
 const refereeOptions = [
   { value: "Ref1", label: "Jan Kowalski" },
   { value: "Ref2", label: "Anna Nowak" },
@@ -46,7 +72,7 @@ const EditMatch: React.FC = () => {
     score: string;
     protocol: string;
   }>({
-    date: "2025-06-10",
+    date: "2025-06-10T12:12",
     location: "Kort 1",
     referee: null,
     player1: null,
@@ -58,49 +84,66 @@ const EditMatch: React.FC = () => {
   const isScoreValid = scorePattern.test(formData.score);
 
   const handleSubmit = () => {
-    if (!scorePattern.test(formData.score)) {
+    if (!isScoreValid) {
       alert("Wynik musi być w formacie liczba:liczba, np. 6:4");
       return;
     }
     console.log("Formularz poprawny:", formData);
   };
 
-  
   return (
     <div className="edit-match-container">
       <div className="edit-match-window">
         <h3 className="edit-match-header">Edytuj mecz</h3>
         <div className="edit-match-form">
+
           <div className="edit-match-input-group">
-            <input
-              type="date"
+            <TextField
+              type="datetime-local"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              fullWidth
+              size="small"
+              label="Data i godzina"
+              InputLabelProps={{ shrink: true }}
             />
           </div>
 
           <div className="edit-match-input-group">
-            <input
-              type="text"
-              placeholder="Lokalizacja"
+            <TextField
+              label="Lokalizacja"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              fullWidth
+              size="small"
             />
           </div>
 
-           <div className="edit-match-input-group">
+          <div className="edit-match-input-group">
+            <label
+              htmlFor="referee"
+              style={selectLabelStyle}>
+              Sędzia
+            </label>
             <Select
+              id="referee"
               options={refereeOptions}
-              placeholder="Wybierz sędziego"
+              placeholder="Sędzia"
               value={formData.referee}
               onChange={(selected) => setFormData({ ...formData, referee: selected })}
               styles={customSelectStyles}
               isSearchable
             />
           </div>
-          
+
           <div className="edit-match-input-group">
+          <label
+              htmlFor="player1"
+              style={selectLabelStyle}>
+              Gracz 1
+            </label>
             <Select
+              id="player1"
               options={playerOptions}
               placeholder="Gracz 1"
               value={formData.player1}
@@ -111,7 +154,13 @@ const EditMatch: React.FC = () => {
           </div>
 
           <div className="edit-match-input-group">
+          <label
+              htmlFor="player2"
+              style={selectLabelStyle}>
+              Gracz 2
+            </label>
             <Select
+              id="player2"
               options={playerOptions}
               placeholder="Gracz 2"
               value={formData.player2}
@@ -122,30 +171,32 @@ const EditMatch: React.FC = () => {
           </div>
 
           <div className="edit-match-input-group">
-            <input
-              type="text"
-              placeholder="Wynik (np. 6:4)"
+            <TextField
+              label="Wynik (np. 6:4)"
               value={formData.score}
-              onChange={(e) =>
-                setFormData({ ...formData, score: e.target.value })
-              }
-              style={{ borderColor: formData.score && !isScoreValid ? 'red' : undefined }}
+              onChange={(e) => setFormData({ ...formData, score: e.target.value })}
+              error={!!formData.score && !isScoreValid}
+              helperText={formData.score && !isScoreValid ? "Nieprawidłowy format wyniku" : ""}
+              fullWidth
+              size="small"
             />
-            {!isScoreValid && formData.score && (
-              <div style={{ color: 'red', fontSize: '0.8rem' }}>
-                Nieprawidłowy format wyniku.
-              </div>
-            )}
+          </div>
+          <div className="edit-match-input-group">
+          <label
+              htmlFor="protocol"
+              style={selectLabelStyle}>
+              Protokół
+            </label>
+              <div id="protocol" className="edit-match-input-item">
+            <input type="file" name="licenceFile" accept=".pdf" required />
+            </div>
           </div>
 
-          <div className="edit-match-input-group">
-                        <input type="file" name="licenceFile" accept=".pdf" required />
-                    </div>
           <div className="edit-match-button-group">
-          <button className="edit-match-button">ANULUJ</button>
-          <button className="edit-match-button"
-          onClick={handleSubmit}>
-            POTWIEDŹ</button>
+            <button className="edit-match-button">ANULUJ</button>
+            <button className="edit-match-button" onClick={handleSubmit}>
+              POTWIEDŹ
+            </button>
           </div>
         </div>
       </div>
