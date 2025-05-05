@@ -1,14 +1,25 @@
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "../styles/Auth.css";
 import "../styles/UserTypeChoser.css";
-
-
+import { useNavigate } from "react-router-dom";
 
 const RegisterInformation: React.FC = () => {
+    const navigate = useNavigate();
 
-    const informationText: string = "Po weryfikacji przez pracownika firmy otrzymasz informacje mailową o aktywacji Twojego konta. W przypadku braku informacji w ciągu dwóch dni roboczych prosimy o kontakt: "
+    useEffect(() => {
+        const registrationData = sessionStorage.getItem("registrationData");
+        if (!registrationData) {
+            navigate("/register");
+        }
+    }, [navigate]);
 
-    const somefunction = () => {
-        console.log("Button clicked!");
+    const informationText: string =
+        "Po weryfikacji przez pracownika firmy otrzymasz informacje mailową o aktywacji Twojego konta. W przypadku braku informacji w ciągu dwóch dni roboczych prosimy o kontakt: ";
+
+    const handleFinish = () => {
+        sessionStorage.removeItem("registrationData");
+        navigate("/login");
     };
 
     return (
@@ -17,17 +28,17 @@ const RegisterInformation: React.FC = () => {
                 <h3 className="auth-header">Twoje Konto jest weryfikowane</h3>
                 <div className="auth-form">
                     <p className="auth-information-text">
-                        {informationText}<a href="prawdziwy@mail.com" className="auth-link">prawdziwy@mail.com</a>
+                        {informationText}
+                        <a href="prawdziwy@mail.com" className="auth-link">
+                            prawdziwy@mail.com
+                        </a>
                     </p>
                     <div className="auth-user-type-button-group">
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             className="auth-button"
-                            style={{width: "35%"}}
-                            onClick={() => {
-                                somefunction();
-                                window.location.href = "/login";
-                            }}
+                            style={{ width: "35%" }}
+                            onClick={handleFinish}
                         >
                             Zakończ
                         </button>

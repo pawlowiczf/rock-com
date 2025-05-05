@@ -8,15 +8,30 @@ const Login: React.FC = () => {
                 <div className="auth-form">
                     <form>
                         <div className="auth-input-group">
-                            <input type="email" name="email" placeholder="Email" required />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                required
+                            />
                         </div>
                         <div className="auth-input-group">
-                            <input type="password" name="password" placeholder="Hasło" required />
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Hasło"
+                                required
+                            />
                         </div>
-                        <button type="submit" className="auth-button">Zaloguj się</button>
+                        <button type="submit" className="auth-button">
+                            Zaloguj się
+                        </button>
                     </form>
                     <p className="auth-bottom-text">
-                        Nie masz konta? <a href="/register" className="auth-link">Zarejestruj się</a>
+                        Nie masz konta?{" "}
+                        <a href="/register" className="auth-link">
+                            Zarejestruj się
+                        </a>
                     </p>
                 </div>
             </div>

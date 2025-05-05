@@ -11,13 +11,13 @@
     max-width: 400px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     box-sizing: border-box;
 }
 
 .login-header {
-    color: #A020F0;
+    color: #a020f0;
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.5rem;
@@ -44,7 +44,7 @@
 }
 
 .login-button {
-    background-color: #A020F0;
+    background-color: #a020f0;
     color: white;
     border-radius: 4px;
     width: 100%;
@@ -56,7 +56,7 @@
 }
 
 .login-button:hover {
-    background-color: #8A1DD8;
+    background-color: #8a1dd8;
 }
 
 .login-bottom-text {
@@ -67,7 +67,7 @@
 }
 
 .login-link {
-    color: #A020F0;
+    color: #a020f0;
     text-decoration: none;
 }
 
