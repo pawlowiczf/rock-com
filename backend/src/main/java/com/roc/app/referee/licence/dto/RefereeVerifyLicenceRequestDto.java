@@ -16,7 +16,8 @@ public record RefereeVerifyLicenceRequestDto(
         String license
 ) {
     public RefereeLicence toModel(RefereeRepository refereeRepository) {
-        Referee referee = refereeRepository.findById(userId).orElseThrow(() -> new RefereeNotFoundException("Referee not found. Id: " + userId));
+        Referee referee = refereeRepository.findById(userId)
+                .orElseThrow(() -> new RefereeNotFoundException("Referee not found. Id: " + userId));
 
         RefereeLicenceId id = RefereeLicenceId
                 .builder()
