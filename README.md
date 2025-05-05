@@ -22,6 +22,15 @@ The platform allows organizers to configure competitions, referees to manage mat
 
 ## How to run the project
 
+#### Running
+To build and start the web application, run:
+```bash
+docker compose up --build -d
+```
+
+## Running part of project
+
+
 ### Frontend
 
 *Coming soon.*
