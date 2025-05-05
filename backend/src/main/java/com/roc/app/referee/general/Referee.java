@@ -17,9 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Referee {
-
     @Id
+    @Column(name = FieldNames.USER_ID)
+    private Long userId;
+
     @OneToOne
+    @MapsId
     @JoinColumn(name = FieldNames.USER_ID)
     private User user;
 

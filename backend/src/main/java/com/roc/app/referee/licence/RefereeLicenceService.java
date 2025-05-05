@@ -4,9 +4,7 @@ import com.roc.app.referee.general.RefereeRepository;
 import com.roc.app.referee.licence.dto.RefereeVerifyLicenceRequestDto;
 import com.roc.app.referee.licence.dto.RefereeVerifyLicenceResponseDto;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class RefereeLicenceService {

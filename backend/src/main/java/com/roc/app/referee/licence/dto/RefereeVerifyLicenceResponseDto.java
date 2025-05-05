@@ -14,9 +14,9 @@ public record RefereeVerifyLicenceResponseDto(
 ) {
     public static RefereeVerifyLicenceResponseDto fromModel(RefereeLicence refereeLicence) {
         return new RefereeVerifyLicenceResponseDto(
-                refereeLicence.getTypeId(),
+                refereeLicence.getId().getTypeId(),
                 refereeLicence.getReferee().getUser().getUserId().intValue(),
-                refereeLicence.getLicense()
+                refereeLicence.getId().getLicence()
         );
     }
 }

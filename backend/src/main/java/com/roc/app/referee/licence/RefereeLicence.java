@@ -18,15 +18,9 @@ public class RefereeLicence {
     @EmbeddedId
     private RefereeLicenceId id;
 
-    @Column(name = FieldNames.TYPE_ID, nullable = false)
-    private int typeId;
-
     @ManyToOne
     @JoinColumn(name = FieldNames.REFEREE_ID, nullable = false)
     private Referee referee;
-
-    @Column(name = FieldNames.LICENSE, nullable = false)
-    private String license;
 
     public static final class FieldNames {
         public static final String TYPE_ID = "type_id";
