@@ -1,18 +1,26 @@
 services:
   db:
-    image: 'postgres:13.1-alpine'
+    build:
+      context: ./backend/db
+      dockerfile: Dockerfile
     container_name: RockcomDB
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password2137
+      - POSTGRES_DB=rockcom
     ports:
       - "5432:5432"
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d rockcom" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
-      context: ./backend/db
+      context: ./backend
       dockerfile: Dockerfile
     container_name: backend
     ports:
