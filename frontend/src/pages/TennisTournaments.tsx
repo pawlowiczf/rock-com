@@ -46,28 +46,28 @@ const TennisTournaments = () => {
             category: "W TOKU",
         },
         {
-            id: 5,
-            name: "Turniej 5",
-            date: "2023-10-10",
-            status: "W toku",
-            category: "W TOKU",
-        },
-        {
-            id: 5,
-            name: "Turniej 5",
-            date: "2023-10-10",
-            status: "W toku",
-            category: "W TOKU",
-        },
-        {
-            id: 5,
-            name: "Turniej 5",
-            date: "2023-10-10",
-            status: "W toku",
-            category: "W TOKU",
-        },
-        {
             id: 6,
+            name: "Turniej 5",
+            date: "2023-10-10",
+            status: "W toku",
+            category: "W TOKU",
+        },
+        {
+            id: 7,
+            name: "Turniej 5",
+            date: "2023-10-10",
+            status: "W toku",
+            category: "W TOKU",
+        },
+        {
+            id: 8,
+            name: "Turniej 5",
+            date: "2023-10-10",
+            status: "W toku",
+            category: "W TOKU",
+        },
+        {
+            id: 9,
             name: "Turniej 6",
             date: "2023-09-25",
             status: "Zakończony",
@@ -141,9 +141,25 @@ const TennisTournaments = () => {
                                 <button
                                     color="primary"
                                     className="user-button"
-                                    onClick={() =>
-                                        handleJoinTournament(tournament.id)
+                                    onClick={
+                                        tournament.status !== "Nadchodzący"
+                                            ? undefined
+                                            : () =>
+                                                handleJoinTournament(
+                                                    tournament.id
+                                                )
                                     }
+                                    style={{
+                                        backgroundColor:
+                                            tournament.status !== "Nadchodzący"
+                                                ? "gray"
+                                                : undefined,
+                                        cursor:
+                                            tournament.status !== "Nadchodzący"
+                                                ? "not-allowed"
+                                                : "pointer",
+                                    }}
+                                    disabled={tournament.status !== "Nadchodzący"}
                                 >
                                     Dołącz
                                 </button>
