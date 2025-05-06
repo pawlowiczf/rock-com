@@ -134,6 +134,7 @@ CREATE TABLE users (
     firstname varchar(50)  NOT NULL,
     lastname varchar(50)  NOT NULL,
     email varchar(50)  NOT NULL,
+    password varchar(60) NOT NULL,
     city varchar(50)  NOT NULL,
     phone_number varchar(12)  NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (user_id)

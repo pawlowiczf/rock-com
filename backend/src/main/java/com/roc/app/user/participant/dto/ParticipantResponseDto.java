@@ -15,14 +15,13 @@ public record ParticipantResponseDto(
         LocalDate birthDate
 ) {
     public static ParticipantResponseDto fromModel(Participant participant) {
-        User details = participant.getUserDetails();
         return new ParticipantResponseDto(
-                participant.getId(),
-                details.getFirstName(),
-                details.getLastName(),
-                details.getEmail(),
-                details.getCity(),
-                details.getPhoneNumber(),
+                participant.getUserId(),
+                participant.getFirstName(),
+                participant.getLastName(),
+                participant.getEmail(),
+                participant.getCity(),
+                participant.getPhoneNumber(),
                 participant.getBirthDate()
         );
     }
