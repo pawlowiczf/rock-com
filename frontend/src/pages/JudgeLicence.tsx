@@ -1,10 +1,99 @@
 import "../styles/Auth.css";
 import "../styles/UserTypeChoser.css";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const JudgeLicence: React.FC = () => {
-    const somefunction = () => {
-        console.log("Button clicked!");
+    const navigate = useNavigate();
+    const [licenceFile, setLicenceFile] = useState<File | null>(null);
+    const [licenceNumber, setLicenceNumber] = useState<string>("");
+    const [error, setError] = useState<string>("");
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] || null;
+        if (file) {
+            setLicenceFile(file);
+        }
+    }
+
+    const handleLicenceNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLicenceNumber(event.target.value);
+    }
+
+    const handleBackButtonClick = () => {
+    }
+
+    const finishRegister = () => {
+        const prevData = JSON.parse(
+            sessionStorage.getItem("registrationData") || "{}",
+        );
+        const updatedData = { ...prevData, licenceNumber };
+        sessionStorage.setItem("registrationData", JSON.stringify(updatedData));
+
+        submitRegistration(updatedData);
     };
+
+    interface JudgeRegistrationData {
+        firstName: string;
+        lastName: string;
+        email: string;
+        birthdate: string;
+        licenceNumber: string;
+    }
+
+    const submitRegistration = async (data: JudgeRegistrationData) => {
+        try {
+            const participantData = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                city: "Kraków",
+                phoneNumber: "123456789",
+                birthDate: data.birthdate,
+                licenceNumber: data.licenceNumber,
+            };
+            console.log("Participant data:", participantData);
+            const response = await fetch(
+                "http://localhost:8080/api/referee",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(participantData),
+                },
+            );
+            const licenceResponse = await fetch(
+                "http://localhost:8080/api/referee/licence",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        licenceNumber: data.licenceNumber,
+                        licenceFile: licenceFile,
+                    }),
+                },
+            );
+        
+            if (!response.ok) {
+                throw new Error("Failed to register participant");
+            }
+            if (!licenceResponse.ok) {
+                throw new Error("Failed to upload licence file");
+            }
+            navigate("/register/information");
+        } catch (error) {
+            console.error("Error during registration:", error);
+            setError(
+                "Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie.",
+            );
+        }
+    };
+
+
 
     return (
         <div className="auth-container">
@@ -29,15 +118,11 @@ const JudgeLicence: React.FC = () => {
                             />
                         </div>
                         <div className="auth-user-type-button-group">
-                            <button
-                                type="button"
-                                className="auth-button"
-                                style={{ width: "35%" }}
-                                onClick={() => {
-                                    somefunction();
-                                    window.location.href =
-                                        "/register/chose-user-type";
-                                }}
+                           <button
+                            type="button"
+                            className="auth-button"
+                            style={{ width: "35%" }}
+                            onClick={handleBackButtonClick}
                             >
                                 Wstecz
                             </button>
@@ -46,9 +131,7 @@ const JudgeLicence: React.FC = () => {
                                 className="auth-button"
                                 style={{ width: "35%" }}
                                 onClick={() => {
-                                    somefunction();
-                                    window.location.href =
-                                        "/register/information";
+                                    finishRegister();
                                 }}
                             >
                                 Dalej

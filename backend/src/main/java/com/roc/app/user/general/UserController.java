@@ -16,7 +16,7 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @PostMapping
+    @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateRequestDto requestDto) {
         /*
         Not sure whether we want to keep this endpoint or not, or even the whole controller.

@@ -81,7 +81,8 @@ const UserTypeChoser: React.FC = () => {
                     throw new Error("Failed to register participant");
                 }
             }
-            navigate("/register/information");
+        
+                navigate("/register/information");
         } catch (error) {
             console.error("Error during registration:", error);
             setError(
