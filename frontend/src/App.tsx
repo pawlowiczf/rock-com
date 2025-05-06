@@ -9,6 +9,7 @@ import RegisterInformation from "./pages/RegisterInformation";
 import ParticipantProfile from "./pages/ParticipantProfile";
 import TennisTournaments from "./pages/TennisTournaments";
 import UpcomingMatches from "./pages/UpcomingMatches";
+import JudgeScore from "./pages/JudgeScore";
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
                             element={<TennisTournaments />}
                         />
                         <Route path="/matches" element={<UpcomingMatches />} />
+                        <Route path="/judge/score" element={<JudgeScore />} />
                         <Route path="*" element={<Login />} /> {/* Fallback */}
                     </Routes>
                 </div>
