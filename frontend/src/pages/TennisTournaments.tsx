@@ -1,9 +1,27 @@
 import React, { useState } from "react";
-import { Card, CardContent, Typography, Tabs, Tab } from "@mui/material";
+import { Card, CardContent, Typography, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import "../styles/UserSite.css";
 
 const TennisTournaments = () => {
     const [tab, setTab] = useState(0);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedTournament, setSelectedTournament] = useState<any>(null);
+
+
+    const handleOpenDialog = (tournament: any) => {
+        setSelectedTournament(tournament);
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setSelectedTournament(null);
+    };
+    const handleProceedToPayment = () => {
+        console.log(`Proceeding to payment for: ${selectedTournament.name}`);
+        handleJoinTournament(selectedTournament.id);
+        handleCloseDialog();
+    };
 
     const handleJoinTournament = (tournamentId: number) => {
         console.log(`Dołączono do turnieju o ID: ${tournamentId}`);
@@ -139,15 +157,12 @@ const TennisTournaments = () => {
                                     </Typography>
                                 </div>
                                 <button
-                                    color="primary"
                                     className="user-button"
                                     onClick={
                                         tournament.status !== "Nadchodzący"
                                             ? undefined
                                             : () =>
-                                                handleJoinTournament(
-                                                    tournament.id
-                                                )
+                                                handleOpenDialog(tournament)
                                     }
                                     style={{
                                         backgroundColor:
@@ -167,6 +182,29 @@ const TennisTournaments = () => {
                         </Card>
                     ))}
                 </div>
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                    <DialogTitle>Dołącz do turnieju</DialogTitle>
+                    <DialogContent>
+                        {selectedTournament && (
+                            <Typography variant="body1">
+                                Czy potwierdzasz zapisanie się na zawody: <strong>{selectedTournament.name}</strong><br />
+                                Data: {selectedTournament.date} <br />
+                                Lokalizacja: Stadion Wisły <br />
+                                Koszt zapisu: <strong>300zł</strong> <br />
+                            </Typography>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog} color="secondary">
+                            Anuluj
+                        </Button>
+                        <Button onClick={handleProceedToPayment} variant="contained" color="primary">
+                            Tak, przejdź do płatności
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+
             </div>
         </div>
     );

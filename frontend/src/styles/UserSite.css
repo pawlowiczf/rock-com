@@ -63,3 +63,14 @@
     width: 100%;
     align-items: left;
 }
+
+
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-textSecondary {
+    color: #a020f0;
+}
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedPrimary {
+    background-color: #a020f0;
+    color: white;
+}
