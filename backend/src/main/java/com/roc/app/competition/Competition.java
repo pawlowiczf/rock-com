@@ -1,6 +1,8 @@
 package com.roc.app.competition;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 @Table(name = Competition.FieldNames.TABLE_NAME)
 public class Competition {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = FieldNames.ID)
@@ -44,10 +47,6 @@ public class Competition {
     public Competition() {}
 
     // Getters & Setters
-
-    public Integer getCompetitionId() {
-        return competitionId;
-    }
 
     public void setCompetitionId(Integer competitionId) {
         this.competitionId = competitionId;

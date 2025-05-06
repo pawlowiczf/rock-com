@@ -1,9 +1,14 @@
 package com.roc.app.competition;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Setter
+@Getter
 @Entity
 @Table(name = CompetitionDate.FieldNames.TABLE_NAME)
 public class CompetitionDate {
@@ -26,38 +31,6 @@ public class CompetitionDate {
     public CompetitionDate() {}
 
     // Getters and Setters
-
-    public Integer getDateId() {
-        return dateId;
-    }
-
-    public void setDateId(Integer dateId) {
-        this.dateId = dateId;
-    }
-
-    public Competition getCompetition() {
-        return competition;
-    }
-
-    public void setCompetition(Competition competition) {
-        this.competition = competition;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
 
     @Override
     public boolean equals(Object o) {

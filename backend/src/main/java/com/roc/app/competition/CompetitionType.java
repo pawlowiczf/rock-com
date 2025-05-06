@@ -1,7 +1,9 @@
 package com.roc.app.competition;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = CompetitionType.FieldNames.TABLE_NAME)
 public class CompetitionType {
@@ -15,14 +17,6 @@ public class CompetitionType {
     private String typeLabel;
 
     public CompetitionType() {}
-
-    public Integer getTypeId() {
-        return typeId;
-    }
-
-    public String getTypeLabel() {
-        return typeLabel;
-    }
 
     public static final class FieldNames {
         public static final String TABLE_NAME = "competition_types";
