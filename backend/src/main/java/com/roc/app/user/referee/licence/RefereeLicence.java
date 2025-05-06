@@ -1,6 +1,6 @@
-package com.roc.app.referee.licence;
+package com.roc.app.user.referee.licence;
 
-import com.roc.app.referee.general.Referee;
+import com.roc.app.user.referee.general.Referee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

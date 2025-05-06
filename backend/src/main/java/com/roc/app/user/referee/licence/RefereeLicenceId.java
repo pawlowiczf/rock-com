@@ -1,4 +1,4 @@
-package com.roc.app.referee.licence;
+package com.roc.app.user.referee.licence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

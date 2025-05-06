@@ -1,4 +1,4 @@
-package com.roc.app.referee.exception;
+package com.roc.app.user.referee.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

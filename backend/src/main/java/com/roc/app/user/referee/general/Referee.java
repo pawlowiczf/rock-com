@@ -1,6 +1,6 @@
-package com.roc.app.referee.general;
+package com.roc.app.user.referee.general;
 
-import com.roc.app.referee.licence.RefereeLicence;
+import com.roc.app.user.referee.licence.RefereeLicence;
 import com.roc.app.user.general.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class Referee {
     @OneToOne
     @MapsId
     @JoinColumn(name = FieldNames.USER_ID)
-    private User user;
+    private User userDetails;
 
     @OneToMany(mappedBy = "referee")
     private List<RefereeLicence> refereeLicences;

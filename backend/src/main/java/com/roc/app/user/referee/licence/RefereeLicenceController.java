@@ -1,8 +1,9 @@
-package com.roc.app.referee.licence;
+package com.roc.app.user.referee.licence;
 
-import com.roc.app.referee.exception.RefereeNotFoundException;
-import com.roc.app.referee.licence.dto.RefereeVerifyLicenceRequestDto;
-import com.roc.app.referee.licence.dto.RefereeVerifyLicenceResponseDto;
+import com.roc.app.user.referee.exception.RefereeNotFoundException;
+import com.roc.app.user.referee.licence.dto.RefereeAddLicenceRequestDto;
+import com.roc.app.user.referee.licence.dto.RefereeAddLicenceResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +22,12 @@ public class RefereeLicenceController {
 
     @PostMapping
     public ResponseEntity<?> addRefereeLicence(
-            @RequestBody RefereeVerifyLicenceRequestDto refereeVerifyLicenceRequestDto) {
+            @RequestBody RefereeAddLicenceRequestDto refereeAddLicenceRequestDto) {
 
-        RefereeVerifyLicenceResponseDto response;
+        RefereeAddLicenceResponseDto response;
         try {
-            response = refereeLicenceService.verifyRefereeLicence(refereeVerifyLicenceRequestDto);
-
-        } catch (RefereeNotFoundException e) {
+            response = refereeLicenceService.addRefereeLicence(refereeAddLicenceRequestDto);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
 
