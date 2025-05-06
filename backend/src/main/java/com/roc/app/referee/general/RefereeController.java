@@ -1,15 +1,13 @@
 package com.roc.app.referee.general;
 
 import com.roc.app.referee.exception.RefereeNotFoundException;
-import com.roc.app.user.general.User;
+import com.roc.app.referee.general.dto.RefereeAddRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/referee")
@@ -22,8 +20,8 @@ public class RefereeController {
 
     private record AddRefereeRequest(Long userId) {};
     @PostMapping
-    public ResponseEntity<?> addReferee(@RequestBody AddRefereeRequest addRefereeRequest) {
-        Long userId = addRefereeRequest.userId();
+    public ResponseEntity<?> addReferee(@RequestBody RefereeAddRequest refereeAddRequest) {
+        Long userId = refereeAddRequest.userId();
         Referee referee;
 
         try {
