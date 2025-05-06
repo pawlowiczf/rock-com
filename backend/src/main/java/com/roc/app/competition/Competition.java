@@ -64,5 +64,3 @@ public class Competition {
         public static final String REGISTRATION_OPEN = "registration_open";
     }
 }
-
-
