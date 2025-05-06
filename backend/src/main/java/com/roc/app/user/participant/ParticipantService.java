@@ -41,8 +41,6 @@ public class ParticipantService {
                 .birthDate(requestDto.birthDate())
                 .build();
 
-        participantRepository.save(participant);
-
-        return ParticipantResponseDto.fromModel(participant);
+        return ParticipantResponseDto.fromModel(participantRepository.save(participant));
     }
 }
