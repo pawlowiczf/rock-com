@@ -8,7 +8,7 @@
 
 .auth-window {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     background-color: #f7eafd;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -50,6 +50,13 @@
     box-sizing: border-box;
 }
 
+.auth-select {
+    height: 2.8rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
 .auth-button {
     background-color: #a020f0;
     color: white;
@@ -66,6 +73,59 @@
     background-color: #8a1dd8;
 }
 
+
+.add-button {
+    background-color: transparent;
+    color: #8a1dd8;
+    border-radius: 4px;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #8a1dd8;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+    color: white;
+    background-color: #8a1dd8;
+}
+
+.delete-button {
+    background-color: transparent;
+    font-size: 1.5rem;
+    border: none;
+}
+
+.delete-button:hover {
+    color: #8a1dd8;
+}
+
+.discipline-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.discipline-button {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: transparent;
+    cursor: pointer;
+    transition: filter 0.2s ease, border-color 0.2s ease;
+}
+
+.discipline-button img {
+    width: 2.5rem;
+    height: 2.5rem;
+    filter: none;
+
+}
+
+.discipline-button.selected img {
+    filter: grayscale(100%) brightness(0) saturate(100%) invert(19%) sepia(84%) saturate(7476%) hue-rotate(268deg) brightness(94%) contrast(108%);
+
+}
 .auth-bottom-text {
     margin-top: 1rem;
     font-size: 0.9rem;
