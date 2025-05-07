@@ -1,7 +1,12 @@
 package com.roc.app.user.match.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class UserMatchDto {
     private Integer matchId;
     private Integer competitionId;
@@ -22,5 +27,4 @@ public class UserMatchDto {
         this.isWinner = isWinner;
     }
 
-    // Getters and Setters
 }
