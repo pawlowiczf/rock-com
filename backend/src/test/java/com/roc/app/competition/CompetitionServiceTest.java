@@ -1,6 +1,6 @@
 package com.roc.app.competition;
 
-import com.roc.app.competition.dto.CompetitionDTO;
+import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ class CompetitionServiceTest {
         when(competitionRepository.findAll()).thenReturn(competitions);
 
         // When
-        List<CompetitionDTO> result = competitionService.getAllCompetitions();
+        List<CompetitionResponseDto> result = competitionService.getAllCompetitions();
 
         // Then
         assertThat(result).hasSize(1);
@@ -65,25 +65,25 @@ class CompetitionServiceTest {
     @Test
     void getCompetitionById_WithValidId_ShouldReturnCompetition() {
 
-        when(competitionRepository.findById(1L)).thenReturn(Optional.of(testCompetition));
+        when(competitionRepository.findById(1)).thenReturn(Optional.of(testCompetition));
 
-        CompetitionDTO result = competitionService.getCompetitionById(1L);
+        CompetitionResponseDto result = competitionService.getCompetitionById(1);
 
         assertThat(result).isNotNull();
         assertThat(result.competitionId()).isEqualTo(1);
-        verify(competitionRepository, times(1)).findById(1L);
+        verify(competitionRepository, times(1)).findById(1);
     }
 
     @Test
     void getCompetitionById_WithInvalidId_ShouldThrowException() {
-        when(competitionRepository.findById(999L)).thenReturn(Optional.empty());
+        when(competitionRepository.findById(999)).thenReturn(Optional.empty());
 
         CompetitionNotFoundException exception = assertThrows(
                 CompetitionNotFoundException.class,
-                () -> competitionService.getCompetitionById(999L)
+                () -> competitionService.getCompetitionById(999)
         );
 
         assertThat(exception.getMessage()).contains("Competition not found with id: 999");
-        verify(competitionRepository, times(1)).findById(999L);
+        verify(competitionRepository, times(1)).findById(999);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CompetitionRepository extends JpaRepository<Competition, Long> {
+public interface CompetitionRepository extends JpaRepository<Competition, Integer> {
     List<Competition> findByType(CompetitionType type);
 
     List<Competition> findByRegistrationOpen(boolean registrationOpen);

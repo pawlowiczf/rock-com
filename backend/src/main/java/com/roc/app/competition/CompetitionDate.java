@@ -1,10 +1,7 @@
 package com.roc.app.competition;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +9,8 @@ import java.time.LocalDateTime;
 @Table(name = CompetitionDate.FieldNames.TABLE_NAME)
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CompetitionDate {

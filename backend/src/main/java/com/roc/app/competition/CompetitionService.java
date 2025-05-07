@@ -1,7 +1,7 @@
 package com.roc.app.competition;
 
-import com.roc.app.competition.dto.CompetitionDTO;
-import com.roc.app.competition.dto.CreateCompetitionDto;
+import com.roc.app.competition.dto.CompetitionResponseDto;
+import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
@@ -20,13 +20,13 @@ public class CompetitionService {
     private final CompetitionDateRepository competitionDateRepository;
     private final CompetitionMapper competitionMapper;
 
-    public List<CompetitionDTO> getAllCompetitions() {
+    public List<CompetitionResponseDto> getAllCompetitions() {
         return competitionRepository.findAll().stream()
                 .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<CompetitionDTO> getCompetitionsByType(String competitionType) {
+    public List<CompetitionResponseDto> getCompetitionsByType(String competitionType) {
         CompetitionType competitionTypeEnum;
         try{
             competitionTypeEnum = CompetitionType.valueOf(competitionType);
@@ -39,29 +39,29 @@ public class CompetitionService {
                 .collect(Collectors.toList());
     }
 
-    public List<CompetitionDTO> getOpenCompetitions() {
+    public List<CompetitionResponseDto> getOpenCompetitions() {
         return competitionRepository.findByRegistrationOpen(true).stream()
                 .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<CompetitionDTO> getCompetitionsByCity(String city) {
+    public List<CompetitionResponseDto> getCompetitionsByCity(String city) {
         return competitionRepository.findByCity(city).stream()
                 .map(competitionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public CompetitionDTO getCompetitionById(Long id) {
+    public CompetitionResponseDto getCompetitionById(Integer id) {
         return competitionRepository.findById(id)
                 .map(competitionMapper::mapToDto)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
     }
 
     @Transactional
-    public CompetitionDTO createCompetition(CreateCompetitionDto competitionDTO) {
+    public CompetitionResponseDto createCompetition(CompetitionCreateRequestDto competitionDTO) {
 
         if (competitionDTO.registrationOpen() == null) {
-            competitionDTO = new CreateCompetitionDto(
+            competitionDTO = new CompetitionCreateRequestDto(
                     competitionDTO.type(),
                     competitionDTO.matchDurationMinutes(),
                     competitionDTO.availableCourts(),
@@ -80,7 +80,7 @@ public class CompetitionService {
 
 
     @Transactional
-    public CompetitionDTO updateCompetition(Long id, CompetitionDTO competitionDTO) {
+    public CompetitionResponseDto updateCompetition(Integer id, CompetitionResponseDto competitionDTO) {
         Competition competition = competitionRepository.findById(id)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
 
@@ -103,7 +103,7 @@ public class CompetitionService {
 
 
     @Transactional
-    public void deleteCompetition(Long id) {
+    public void deleteCompetition(Integer id) {
         if (!competitionRepository.existsById(id)) {
             throw new CompetitionNotFoundException(id);
         }

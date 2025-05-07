@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id int  NOT NULL,
+    date_id serial  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
