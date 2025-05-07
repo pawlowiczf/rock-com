@@ -16,7 +16,6 @@ const RegisterSchema = z
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
-    //   const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
@@ -90,6 +89,12 @@ const Register: React.FC = () => {
                         </div>
                         {error.repeatPassword && (
                             <p className="auth-error">{error.repeatPassword}</p>
+                        )}
+                        {error.email && (
+                            <p className="auth-error">{error.email}</p>
+                        )}
+                        {error.password && (
+                            <p className="auth-error">{error.password}</p>
                         )}
                         <button type="submit" className="auth-button">
                             Zarejestruj się

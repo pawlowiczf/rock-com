@@ -18,7 +18,12 @@ const accountSchema = z.object({
         .refine(
             (date) => !isNaN(new Date(date).getTime()),
             "Data urodzenia musi być poprawną datą",
-        ),
+        )
+        .refine(
+            (date) => new Date(date) <= new Date(),
+            "Data urodzenia nie może być w przyszłości",
+        )
+        ,
     termsAccepted: z.literal(true, {
         errorMap: () => ({ message: "Musisz zaakceptować regulamin" }),
     }),

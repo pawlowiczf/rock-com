@@ -6,6 +6,7 @@
     padding: 1rem;
 }
 
+
 .auth-window {
     width: 100%;
     max-width: 500px;
@@ -48,6 +49,21 @@
     border: 1px solid #ccc;
     font-size: 1rem;
     box-sizing: border-box;
+}
+
+.auth-input-group input::-webkit-input-placeholder {
+    font-family: "Roboto",sans-serif;
+}
+.auth-input-group input:-ms-input-placeholder {
+    font-family: "Roboto",sans-serif;
+}
+
+.auth-input-group input:-moz-placeholder {
+    font-family:  "Roboto",sans-serif;
+}
+
+.auth-input-group input::-moz-placeholder {
+    font-family:  "Roboto",sans-serif;
 }
 
 .auth-select {

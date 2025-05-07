@@ -81,7 +81,9 @@ const UserTypeChoser: React.FC = () => {
                     throw new Error("Failed to register participant");
                 }
             }
-            navigate("/register/information");
+            else{
+                navigate("/register/information");
+            }
         } catch (error) {
             console.error("Error during registration:", error);
             setError(
@@ -98,7 +100,7 @@ const UserTypeChoser: React.FC = () => {
                     <div className="auth-input-group" style={{ width: "50%" }}>
                         <button
                             onClick={() => handleButtonClick("Participant")}
-                            className={`auth-button ${userType === "Participant" ? "selected-button" : ""}`}
+                            className={`auth-button ${userType !== "Participant" ? "selected-button" : ""}`}
                         >
                             Uczestnik
                         </button>
@@ -106,7 +108,7 @@ const UserTypeChoser: React.FC = () => {
                     <div className="auth-input-group" style={{ width: "50%" }}>
                         <button
                             onClick={() => handleButtonClick("Judge")}
-                            className={`auth-button ${userType === "Judge" ? "selected-button" : ""}`}
+                            className={`auth-button ${userType !== "Judge" ? "selected-button" : ""}`}
                         >
                             Sędzia
                         </button>
@@ -114,7 +116,7 @@ const UserTypeChoser: React.FC = () => {
                     <div className="auth-input-group" style={{ width: "50%" }}>
                         <button
                             onClick={() => handleButtonClick("Organizer")}
-                            className={`auth-button ${userType === "Organizer" ? "selected-button" : ""}`}
+                            className={`auth-button ${userType !== "Organizer" ? "selected-button" : ""}`}
                         >
                             Organizator
                         </button>
