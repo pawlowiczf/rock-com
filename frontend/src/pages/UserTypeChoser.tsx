@@ -77,6 +77,7 @@ const UserTypeChoser: React.FC = () => {
                         body: JSON.stringify(participantData),
                     },
                 );
+                navigate("/login");
                 if (!response.ok) {
                     throw new Error("Failed to register participant");
                 }
