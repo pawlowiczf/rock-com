@@ -1,7 +1,7 @@
 package com.roc.app.competition;
 
-import com.roc.app.competition.dto.CompetitionDTO;
-import com.roc.app.competition.dto.CreateCompetitionDto;
+import com.roc.app.competition.dto.CompetitionResponseDto;
+import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,52 +19,52 @@ public class CompetitionController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public ResponseEntity<List<CompetitionDTO>> getAllCompetitions() {
-        List<CompetitionDTO> competitions = competitionService.getAllCompetitions();
+    public ResponseEntity<List<CompetitionResponseDto>> getAllCompetitions() {
+        List<CompetitionResponseDto> competitions = competitionService.getAllCompetitions();
         return ResponseEntity.ok(competitions);
     }
 
     @GetMapping("/type/{typeId}")
-    public ResponseEntity<List<CompetitionDTO>> getCompetitionsByType(@PathVariable String competitionType) {
-        List<CompetitionDTO> competitions = competitionService.getCompetitionsByType(competitionType);
+    public ResponseEntity<List<CompetitionResponseDto>> getCompetitionsByType(@PathVariable String competitionType) {
+        List<CompetitionResponseDto> competitions = competitionService.getCompetitionsByType(competitionType);
         return ResponseEntity.ok(competitions);
     }
 
     @GetMapping("/open")
-    public ResponseEntity<List<CompetitionDTO>> getOpenCompetitions() {
-        List<CompetitionDTO> competitions = competitionService.getOpenCompetitions();
+    public ResponseEntity<List<CompetitionResponseDto>> getOpenCompetitions() {
+        List<CompetitionResponseDto> competitions = competitionService.getOpenCompetitions();
         return ResponseEntity.ok(competitions);
     }
 
     @GetMapping("/city/{city}")
-    public ResponseEntity<List<CompetitionDTO>> getCompetitionsByCity(@PathVariable String city) {
-        List<CompetitionDTO> competitions = competitionService.getCompetitionsByCity(city);
+    public ResponseEntity<List<CompetitionResponseDto>> getCompetitionsByCity(@PathVariable String city) {
+        List<CompetitionResponseDto> competitions = competitionService.getCompetitionsByCity(city);
         return ResponseEntity.ok(competitions);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CompetitionDTO> getCompetitionById(@PathVariable Long id) {
-        CompetitionDTO competition = competitionService.getCompetitionById(id);
+    public ResponseEntity<CompetitionResponseDto> getCompetitionById(@PathVariable Integer id) {
+        CompetitionResponseDto competition = competitionService.getCompetitionById(id);
         return ResponseEntity.ok(competition);
     }
 
     @PostMapping
-    public ResponseEntity<CompetitionDTO> createCompetition(@Valid @RequestBody CreateCompetitionDto competitionDTO) {
-        CompetitionDTO createdCompetition = competitionService.createCompetition(competitionDTO);
+    public ResponseEntity<CompetitionResponseDto> createCompetition(@Valid @RequestBody CompetitionCreateRequestDto competitionDTO) {
+        CompetitionResponseDto createdCompetition = competitionService.createCompetition(competitionDTO);
         return new ResponseEntity<>(createdCompetition, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompetitionDTO> updateCompetition(
-            @PathVariable Long id,
-            @Valid @RequestBody CompetitionDTO competitionDTO) {
-        CompetitionDTO updatedCompetition = competitionService.updateCompetition(id, competitionDTO);
+    public ResponseEntity<CompetitionResponseDto> updateCompetition(
+            @PathVariable Integer id,
+            @Valid @RequestBody CompetitionResponseDto competitionDTO) {
+        CompetitionResponseDto updatedCompetition = competitionService.updateCompetition(id, competitionDTO);
         return ResponseEntity.ok(updatedCompetition);
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompetition(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCompetition(@PathVariable Integer id) {
         competitionService.deleteCompetition(id);
         return ResponseEntity.noContent().build();
     }

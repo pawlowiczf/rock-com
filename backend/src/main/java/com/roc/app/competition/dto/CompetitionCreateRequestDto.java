@@ -1,18 +1,15 @@
 package com.roc.app.competition.dto;
 
 import com.roc.app.competition.CompetitionType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record CreateCompetitionDto(
+public record CompetitionCreateRequestDto(
 
 
     @NotNull(message = "Competition type is required")
-    @Enumerated(EnumType.STRING)
     CompetitionType type,
 
     @NotNull(message = "Match duration is required")

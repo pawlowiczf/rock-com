@@ -1,15 +1,15 @@
 package com.roc.app.competition;
 
 
-import com.roc.app.competition.dto.CompetitionDTO;
-import com.roc.app.competition.dto.CreateCompetitionDto;
+import com.roc.app.competition.dto.CompetitionResponseDto;
+import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CompetitionMapper {
 
-    CompetitionDTO mapToDto(Competition competition) {
-        return new CompetitionDTO(
+    CompetitionResponseDto mapToDto(Competition competition) {
+        return new CompetitionResponseDto(
                 competition.getCompetitionId(),
                 competition.getType(),
                 competition.getMatchDurationMinutes(),
@@ -23,7 +23,7 @@ public class CompetitionMapper {
     }
 
 
-    Competition mapToEntity(CreateCompetitionDto dto) {
+    Competition mapToEntity(CompetitionCreateRequestDto dto) {
         return Competition.builder()
                 .type(dto.type())
                 .matchDurationMinutes(dto.matchDurationMinutes())

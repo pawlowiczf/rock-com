@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id int  NOT NULL,
+    date_id serial  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
@@ -182,22 +182,6 @@ ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_par
 ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_participants
     FOREIGN KEY (participant_id)
     REFERENCES participants (user_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: competitions_competition_types (table: competitions)
-ALTER TABLE competitions ADD CONSTRAINT competitions_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: judge_licences_competition_types (table: referee_licences)
-ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
