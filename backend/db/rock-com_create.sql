@@ -106,10 +106,11 @@ CREATE TABLE participants (
 
 -- Table: referee_licences
 CREATE TABLE referee_licences (
-    type_id int  NOT NULL,
+    referee_licence_id serial NOT NULL,
+    licence_type varchar(50)  NOT NULL,
     referee_id int  NOT NULL,
     license varchar(50)  NOT NULL,
-    CONSTRAINT referee_licences_pk PRIMARY KEY (type_id,referee_id)
+    CONSTRAINT referee_licences_pk PRIMARY KEY (referee_licence_id)
 );
 
 -- Table: referees

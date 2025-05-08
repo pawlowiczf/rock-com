@@ -40,4 +40,5 @@ public class RefereeService {
         return refereeRepository.findById(id)
                 .orElseThrow(() -> new RefereeNotFoundException(id));
     }
+
 }

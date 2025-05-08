@@ -15,16 +15,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RefereeLicence {
 
-    @EmbeddedId
-    private RefereeLicenceId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = FieldNames.REFEREE_LICENCE_ID)
+    private Long refereeLicenceId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = FieldNames.LICENCE_TYPE)
+    private LicenceType licenceType;
+
+    @Column(name = FieldNames.LICENSE)
+    private String license;
 
     @ManyToOne
     @JoinColumn(name = FieldNames.REFEREE_ID, nullable = false)
     private Referee referee;
 
     public static final class FieldNames {
-        public static final String TYPE_ID = "type_id";
+        public static final String REFEREE_LICENCE_ID = "referee_licence_id";
         public static final String REFEREE_ID = "referee_id";
         public static final String LICENSE = "license";
+        public static final String LICENCE_TYPE = "licence_type";
     }
 }

@@ -1,30 +1,26 @@
 package com.roc.app.user.referee.licence.dto;
 
-import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import com.roc.app.user.referee.general.Referee;
-import com.roc.app.user.referee.general.RefereeRepository;
+import com.roc.app.user.referee.licence.LicenceType;
 import com.roc.app.user.referee.licence.RefereeLicence;
-import com.roc.app.user.referee.licence.RefereeLicenceId;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record RefereeAddLicenceRequestDto(
-        @NotBlank
-        Integer typeId,
-        @NotBlank
+        @NotNull(message = "Provide correct licenceType: TENNIS_OUTDOOR | TABLE_TENNIS | BADMINTON")
+        LicenceType licenceType,
+        @NotNull(message = "Provide correct refereeID") @Min(1)
         Long userId,
-        @NotBlank
+        @NotBlank(message = "Provide referee license")
         String license
 ) {
     public RefereeLicence toModel(Referee referee) {
-        RefereeLicenceId id = RefereeLicenceId
-                .builder()
-                .typeId(typeId)
-                .licence(license)
-                .build();
 
         return RefereeLicence.builder()
-                .id(id)
                 .referee(referee)
+                .licenceType(licenceType)
+                .license(license)
                 .build();
     }
 }

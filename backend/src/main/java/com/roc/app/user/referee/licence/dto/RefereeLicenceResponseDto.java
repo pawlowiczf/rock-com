@@ -2,22 +2,19 @@ package com.roc.app.user.referee.licence.dto;
 
 import com.roc.app.user.referee.licence.LicenceType;
 import com.roc.app.user.referee.licence.RefereeLicence;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
-public record RefereeAddLicenceResponseDto(
-        @NotNull
+public record RefereeLicenceResponseDto(
+        Long refereeLicenceId,
         LicenceType licenceType,
-        @NotNull
         Long refereeId,
-        @NotBlank
         String license
 ) {
-    public static RefereeAddLicenceResponseDto fromModel(RefereeLicence refereeLicence) {
-        return new RefereeAddLicenceResponseDto(
+    public static RefereeLicenceResponseDto fromModel(RefereeLicence refereeLicence) {
+        return new RefereeLicenceResponseDto(
+                refereeLicence.getRefereeLicenceId(),
                 refereeLicence.getLicenceType(),
                 refereeLicence.getReferee().getUserId(),
                 refereeLicence.getLicense()
-            );
+        );
     }
 }

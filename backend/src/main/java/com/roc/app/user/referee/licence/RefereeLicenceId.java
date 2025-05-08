@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Objects;
 
+// This class is no longer needed, but I'm keeping it for now in case it's still useful or needed later.
+@Deprecated
+
 @Embeddable
 @Data
 @NoArgsConstructor

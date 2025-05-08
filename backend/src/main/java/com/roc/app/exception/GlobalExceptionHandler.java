@@ -2,6 +2,7 @@ package com.roc.app.exception;
 
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
+import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,6 +62,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(validationErrorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RefereeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRefereeNotFoundException(RefereeNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Referee not found",
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralExceptions(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse(
@@ -71,6 +83,8 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }
 
 @Data
