@@ -257,7 +257,7 @@ const EditTournament: React.FC = () => {
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 value={formData.fromDate}
-                onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
+                disabled 
               />
             </div>
 
@@ -268,7 +268,7 @@ const EditTournament: React.FC = () => {
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 value={formData.toDate}
-                onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
+                disabled 
               />
             </div>
 

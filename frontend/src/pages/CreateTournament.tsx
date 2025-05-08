@@ -132,25 +132,57 @@ const CreateTournament: React.FC = () => {
 
     const submitTournamentData = async (data: any) => {
         try {
+            // 1. Utwórz turniej
             const response = await fetch("http://localhost:8080/api/competitions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
-
-            if (response.ok) {
-                alert("Turniej został pomyślnie stworzony!");
-                window.location.reload();
-            } else {
+    
+            if (!response.ok) {
                 const error = await response.json();
                 alert("Wystąpił błąd przy tworzeniu turnieju: " + (error.message || ""));
+                setIsLoading(false);
+                return;
             }
+    
+            // 2. Odbierz competitionId z odpowiedzi
+            const createdCompetition = await response.json();
+            const competitionId = createdCompetition.competitionId;
+    
+            // 3. Przygotuj dane dat turnieju
+            const competitionDate = {
+                competitionId,
+                startTime: new Date(formData.fromDate).toISOString(),
+                endTime: new Date(formData.toDate).toISOString()
+            };
+    
+            // 4. Wyślij daty turnieju
+            const dateResponse = await fetch("http://localhost:8080/api/competitions-dates", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify([competitionDate]),
+            });
+    
+            if (!dateResponse.ok) {
+                const error = await dateResponse.json();
+                alert("Wystąpił błąd przy zapisie dat turnieju");
+                console.error(error);
+                setIsLoading(false);
+                return;
+            }
+    
+            // 5. Sukces
+            alert("Turniej został pomyślnie stworzony!");
+            window.location.reload();
+    
         } catch (error) {
             alert("Błąd połączenia z serwerem.");
         } finally {
             setIsLoading(false);
         }
     };
+    
 
     const disciplines = [
         { name: "TENNIS_OUTDOOR", src: TennisIcon, alt: "Tennis" },
