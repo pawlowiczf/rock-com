@@ -21,6 +21,7 @@ public class UserController {
         /*
         Not sure whether we want to keep this endpoint or not, or even the whole controller.
          */
+        System.out.println("Creating user with request: " + requestDto);
         UserResponseDto user = userService.createUser(requestDto);
 
         return ResponseEntity.ok(user);

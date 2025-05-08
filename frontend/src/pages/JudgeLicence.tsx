@@ -15,13 +15,20 @@ const JudgeLicence: React.FC = () => {
         if (file) {
             setLicenceFile(file);
         }
+        console.log("licenceFile", file);
     }
 
     const handleLicenceNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLicenceNumber(event.target.value);
+        console.log("licenceNumber", event.target.value);
     }
 
     const handleBackButtonClick = () => {
+        const prevData = JSON.parse(
+            sessionStorage.getItem("registrationData") || "{}",
+        );
+        sessionStorage.setItem("registrationData", JSON.stringify(prevData));
+        navigate("/register/personal-data");
     }
 
     const finishRegister = () => {
@@ -35,25 +42,20 @@ const JudgeLicence: React.FC = () => {
     };
 
     interface JudgeRegistrationData {
-        firstName: string;
-        lastName: string;
-        email: string;
-        birthdate: string;
+        userId: string;
         licenceNumber: string;
     }
 
     const submitRegistration = async (data: JudgeRegistrationData) => {
         try {
-            const participantData = {
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                city: "Kraków",
-                phoneNumber: "123456789",
-                birthDate: data.birthdate,
-                licenceNumber: data.licenceNumber,
-            };
-            console.log("Participant data:", participantData);
+            const registrationData = sessionStorage.getItem("registrationData");
+            if (!registrationData) {
+                navigate("/register");
+                return;
+            }
+            const parsedData = JSON.parse(registrationData);
+            console.log("Parsed data:", parsedData);
+            
             const response = await fetch(
                 "http://localhost:8080/api/referee",
                 {
@@ -61,21 +63,24 @@ const JudgeLicence: React.FC = () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(participantData),
+                    body: JSON.stringify({
+                        userId: parsedData.user_id.userId,
+                    }),
                 },
             );
+
+            const formData = new FormData();
+            formData.append("licenceNumber", data.licenceNumber);
+            if (licenceFile) {
+            formData.append("licenceFile", licenceFile);
+            }
+
             const licenceResponse = await fetch(
                 "http://localhost:8080/api/referee/licence",
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        licenceNumber: data.licenceNumber,
-                        licenceFile: licenceFile,
-                    }),
-                },
+                    body: formData,
+                }
             );
         
             if (!response.ok) {
@@ -106,6 +111,8 @@ const JudgeLicence: React.FC = () => {
                                 type="text"
                                 name="licenceNumber"
                                 placeholder="Numer licencji"
+                                value={licenceNumber}
+                                onChange={handleLicenceNumberChange}
                                 required
                             />
                         </div>
@@ -114,6 +121,7 @@ const JudgeLicence: React.FC = () => {
                                 type="file"
                                 name="licenceFile"
                                 accept=".png, .jpg, .jpeg, .bmp"
+                                onChange={handleFileChange}
                                 required
                             />
                         </div>

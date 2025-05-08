@@ -24,6 +24,7 @@ public class RefereeLicenceController {
     @PostMapping
     public ResponseEntity<?> verifyRefereeLicence(
             @RequestBody RefereeVerifyLicenceRequestDto refereeVerifyLicenceRequestDto) {
+        System.out.println("Verifying referee licence with request: " + refereeVerifyLicenceRequestDto);
 
         RefereeVerifyLicenceResponseDto response;
         try {

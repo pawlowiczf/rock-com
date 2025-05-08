@@ -40,11 +40,7 @@ const UserTypeChoser: React.FC = () => {
         const updatedData = { ...prevData, userType };
         sessionStorage.setItem("registrationData", JSON.stringify(updatedData));
 
-        if (userType === "Judge") {
-            navigate("/register/judge");
-        } else {
-            submitRegistration(updatedData);
-        }
+        submitRegistration(updatedData);
     };
 
     interface RegistrationData {
@@ -80,9 +76,47 @@ const UserTypeChoser: React.FC = () => {
                 if (!response.ok) {
                     throw new Error("Failed to register participant");
                 }
+                navigate("/register/information"); 
             }
-        
+            else if (data.userType === "Judge") {
+                const judgeData = {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    email: data.email,
+                    city: "Kraków",
+                    phoneNumber: "123456789",
+                    birthDate: data.birthdate,
+                };
+                console.log("Judge data:", judgeData);
+                const response = await fetch(
+                    "http://localhost:8080/api/user",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(judgeData),
+                    },
+                );
+                console.log("Judge response:", response);
+                if (!response.ok) {
+                    throw new Error("Failed to register judge");
+                }
+                const user_id = await response.json();
+                console.log("Judge ID:", user_id);
+                const prevData = JSON.parse(
+                    sessionStorage.getItem("registrationData") || "{}",
+                );
+                const updatedData = { ...prevData, user_id };
+                sessionStorage.setItem(
+                    "registrationData",
+                    JSON.stringify(updatedData),
+                )
+                navigate("/register/judge");
+            }
+            else {
                 navigate("/register/information");
+            }
         } catch (error) {
             console.error("Error during registration:", error);
             setError(

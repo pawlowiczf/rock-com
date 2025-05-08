@@ -23,6 +23,7 @@ public class RefereeController {
     private record AddRefereeRequest(Long userId) {};
     @PostMapping
     public ResponseEntity<?> addReferee(@RequestBody AddRefereeRequest addRefereeRequest) {
+        System.out.println("Creating referee with request: " + addRefereeRequest);
         Long userId = addRefereeRequest.userId();
         Referee referee;
 
