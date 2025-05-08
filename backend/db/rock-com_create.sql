@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2025-04-11 13:27:37.367
+-- Last modification date: 2025-04-24 15:09:02.946
 
 -- tables
 -- Table: brackets
@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id int  NOT NULL,
+    date_id serial  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
@@ -35,22 +35,12 @@ CREATE TABLE competition_referees (
     CONSTRAINT competition_referees_pk PRIMARY KEY (competition_id,referee_id)
 );
 
--- Table: competition_types
-CREATE TABLE competition_types (
-    type_id serial  NOT NULL,
-    type_label varchar(20)  NOT NULL,
-    CONSTRAINT competition_types_pk PRIMARY KEY (type_id)
-);
 
-INSERT INTO competition_types (type_label) VALUES
-('Tennis Outdoor'),
-('Table Tennis'),
-('Badminton');
 
 -- Table: competitions
 CREATE TABLE competitions (
     competition_id serial  NOT NULL,
-    type_id int  NOT NULL,
+    type varchar(50)  NOT NULL,
     match_duration_minutes int  NOT NULL,
     available_courts int  NOT NULL,
     participants_limit int  NULL,
@@ -88,6 +78,13 @@ CREATE TABLE matches (
     CONSTRAINT matches_pk PRIMARY KEY (match_id)
 );
 
+-- Table: organizers
+CREATE TABLE organizers (
+    user_id int  NOT NULL,
+    is_admin boolean  NOT NULL,
+    CONSTRAINT organizers_pk PRIMARY KEY (user_id)
+);
+
 -- Table: participant_statuses
 CREATE TABLE participant_statuses (
     status_id serial  NOT NULL,
@@ -100,32 +97,25 @@ INSERT INTO participant_statuses (status_label) VALUES
 ('withdrawn'),
 ('waiting_list');
 
+-- Table: participants
+CREATE TABLE participants (
+    user_id int  NOT NULL,
+    birth_date date  NOT NULL,
+    CONSTRAINT user_id PRIMARY KEY (user_id)
+);
+
 -- Table: referee_licences
 CREATE TABLE referee_licences (
-    user_id int  NOT NULL,
     type_id int  NOT NULL,
+    referee_id int  NOT NULL,
     license varchar(50)  NOT NULL,
-    CONSTRAINT referee_licences_pk PRIMARY KEY (user_id,type_id)
+    CONSTRAINT referee_licences_pk PRIMARY KEY (type_id,referee_id)
 );
 
--- Table: roles
-CREATE TABLE roles (
-    role_id serial  NOT NULL,
-    role_name varchar(20)  NOT NULL,
-    CONSTRAINT roles_pk PRIMARY KEY (role_id)
-);
-
-INSERT INTO roles (role_name) 
-VALUES 
-    ('Organizer'),
-    ('Participant'),
-    ('Referee');
-
--- Table: user_roles
-CREATE TABLE user_roles (
+-- Table: referees
+CREATE TABLE referees (
     user_id int  NOT NULL,
-    role_id int  NOT NULL,
-    CONSTRAINT user_roles_pk PRIMARY KEY (user_id,role_id)
+    CONSTRAINT referees_pk PRIMARY KEY (user_id)
 );
 
 -- Table: users
@@ -134,6 +124,8 @@ CREATE TABLE users (
     firstname varchar(50)  NOT NULL,
     lastname varchar(50)  NOT NULL,
     email varchar(50)  NOT NULL,
+    city varchar(50)  NOT NULL,
+    phone_number varchar(12)  NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
 
@@ -142,14 +134,6 @@ CREATE TABLE users (
 ALTER TABLE competition_referees ADD CONSTRAINT Table_14_competitions
     FOREIGN KEY (competition_id)
     REFERENCES competitions (competition_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Table_14_user (table: competition_referees)
-ALTER TABLE competition_referees ADD CONSTRAINT Table_14_user
-    FOREIGN KEY (referee_id)
-    REFERENCES users (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -194,34 +178,10 @@ ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_par
     INITIALLY IMMEDIATE
 ;
 
--- Reference: competition_participants_user (table: competition_participants)
-ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_user
+-- Reference: competition_participants_participants (table: competition_participants)
+ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_participants
     FOREIGN KEY (participant_id)
-    REFERENCES users (user_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: competitions_competition_types (table: competitions)
-ALTER TABLE competitions ADD CONSTRAINT competitions_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: judge_licences_competition_types (table: referee_licences)
-ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: judge_licences_user (table: referee_licences)
-ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_user
-    FOREIGN KEY (user_id)
-    REFERENCES users (user_id)  
+    REFERENCES participants (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -274,16 +234,40 @@ ALTER TABLE matches ADD CONSTRAINT matches_match_statuses
     INITIALLY IMMEDIATE
 ;
 
--- Reference: user_roles_roles (table: user_roles)
-ALTER TABLE user_roles ADD CONSTRAINT user_roles_roles
-    FOREIGN KEY (role_id)
-    REFERENCES roles (role_id)  
+-- Reference: referee_licences_referees (table: referee_licences)
+ALTER TABLE referee_licences ADD CONSTRAINT referee_licences_referees
+    FOREIGN KEY (referee_id)
+    REFERENCES referees (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: user_roles_user (table: user_roles)
-ALTER TABLE user_roles ADD CONSTRAINT user_roles_user
+-- Reference: referees_competition_referees (table: competition_referees)
+ALTER TABLE competition_referees ADD CONSTRAINT referees_competition_referees
+    FOREIGN KEY (referee_id)
+    REFERENCES referees (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: users_organizers (table: organizers)
+ALTER TABLE organizers ADD CONSTRAINT users_organizers
+    FOREIGN KEY (user_id)
+    REFERENCES users (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: users_participants (table: participants)
+ALTER TABLE participants ADD CONSTRAINT users_participants
+    FOREIGN KEY (user_id)
+    REFERENCES users (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: users_referees (table: referees)
+ALTER TABLE referees ADD CONSTRAINT users_referees
     FOREIGN KEY (user_id)
     REFERENCES users (user_id)  
     NOT DEFERRABLE 

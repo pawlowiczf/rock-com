@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
     AppBar, Toolbar, Typography, IconButton, Menu, MenuItem
@@ -26,7 +27,7 @@ const TopBar: React.FC = () => {
     };
 
     return (
-        <AppBar position="static" color='default'>
+        <AppBar position="static" color="default">
             <Toolbar>
                 <IconButton
                     edge="start"

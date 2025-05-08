@@ -1,11 +1,10 @@
 .selected-button {
     background-color: transparent;
-    color: #A020F0;
-    border: 2px solid #A020F0;
+    color: #a020f0;
+    border: 2px solid #a020f0;
 }
 
-
-.auth-user-type-button-group{
+.auth-user-type-button-group {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
