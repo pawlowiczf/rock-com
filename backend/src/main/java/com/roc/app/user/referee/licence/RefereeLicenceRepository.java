@@ -2,5 +2,10 @@ package com.roc.app.user.referee.licence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RefereeLicenceRepository extends JpaRepository<RefereeLicence, RefereeLicenceId> {
+import java.util.List;
+
+public interface RefereeLicenceRepository extends JpaRepository<RefereeLicence, Long> {
+
+    List<RefereeLicence> findByRefereeUserId(Long userId);
+    RefereeLicence findByLicense(String license);
 }
