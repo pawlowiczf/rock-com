@@ -52,6 +52,7 @@ const UserTypeChoser: React.FC = () => {
         firstName: string;
         lastName: string;
         email: string;
+        password: string;
         birthdate: string;
     }
 
@@ -62,6 +63,7 @@ const UserTypeChoser: React.FC = () => {
                     firstName: data.firstName,
                     lastName: data.lastName,
                     email: data.email,
+                    password: data.password,
                     city: "Kraków",
                     phoneNumber: "123456789",
                     birthDate: data.birthdate,
