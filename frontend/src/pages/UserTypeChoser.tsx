@@ -70,7 +70,7 @@ const UserTypeChoser: React.FC = () => {
                 };
                 console.log("Participant data:", participantData);
                 const response = await fetch(
-                    "http://localhost:8080/api/participant",
+                    "http://localhost:8080/api/participants",
                     {
                         method: "POST",
                         headers: {
