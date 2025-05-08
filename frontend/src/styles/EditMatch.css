@@ -1,0 +1,122 @@
+.edit-match-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    padding: 1rem;
+}
+
+.edit-match-window {
+    width: 100%;
+    max-width: 400px;
+    background-color: #f3eaff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem 2rem;
+    box-sizing: border-box;
+}
+
+.edit-match-header {
+    margin-top: 0rem;
+    color: #A020F0;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.edit-match-form {
+    display: flex;
+    flex-direction: column;
+    width:95%;
+}
+
+.edit-match-input-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.edit-match-input-group input,
+.MuiTextField-root {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: white;
+    font-size: 1rem;
+}
+
+.edit-match-input-group input:focus,
+.MuiTextField-root input:focus {
+    border-color: #A020F0;
+}
+
+.icon-input .input-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #A020F0;
+}
+
+.edit-match-participants-header {
+    margin-top: 0rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #333;
+    width: 100%;
+}
+
+.edit-match-input-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.1rem;
+    border-radius: 8px;
+    background-color: white;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.edit-match-input-item:focus {
+   border-color: #A020F0;
+}
+
+
+.edit-match-input-item:hover {
+    border-color: black;
+}
+
+.edit-match-button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.edit-match-button {
+    width: 48%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-match-button {
+    background-color: #6400C8;
+    color: white;
+}
+
+
+/* Stylizacja TextField */
+.MuiTextField-root {
+    margin-bottom: 1rem;
+}
+
+.MuiTextField-root input {
+    font-size: 1rem;
+}
+
+.MuiInputLabel-root {
+    font-size: 1rem;
+    color: #333;
+}

@@ -30,6 +30,13 @@ const accountSchema = z.object({
 });
 
 const AccountCreating: React.FC = () => {
+    const termsText: string =
+        "Wyrażam zgode na przetwarzanie mojego numeru PESEL przez Akademię Górniczo-Hutnicza w celu weryfikacji mojej tożasmości.  Dane będą przechowywane przez okres 6 miesięcy. Zostałem(am) przy tym poinformowany(a) o moich prawach w zakresie ochrony danych osobowych, w tym o prawie do dostępu do moich danych, ich poprawiania, usuwania oraz wycofywania zgody w dowolnym momencie";
+
+    const somefunction = () => {
+        console.log("Button clicked!");
+    };
+
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -43,9 +50,6 @@ const AccountCreating: React.FC = () => {
             navigate("/register");
         }
     }, [navigate]);
-
-    const termsText: string =
-        "Wyrażam zgode na przetwarzanie mojej daty urodzenia przez Akademię Górniczo-Hutnicza w celu weryfikacji mojej tożasmości. Dane będą przechowywane przez okres 6 miesięcy. Zostałem(am) przy tym poinformowany(a) o moich prawach w zakresie ochrony danych osobowych, w tym o prawie do dostępu do moich danych, ich poprawiania, usuwania oraz wycofywania zgody w dowolnym momencie";
 
     const validateForm = () => {
         try {
@@ -144,7 +148,13 @@ const AccountCreating: React.FC = () => {
                         {error.termsAccepted && (
                             <p className="auth-error">{error.termsAccepted}</p>
                         )}
-                        <button type="submit" className="auth-terms-button">
+                        <button type="submit" className="auth-terms-button"
+                            onClick={() => {
+                                somefunction();
+                                window.location.href =
+                                    "/register/chose-user-type";
+                            }}
+                        >
                             Dalej
                         </button>
                     </form>
