@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id int  NOT NULL,
+    date_id serial  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
@@ -35,22 +35,12 @@ CREATE TABLE competition_referees (
     CONSTRAINT competition_referees_pk PRIMARY KEY (competition_id,referee_id)
 );
 
--- Table: competition_types
-CREATE TABLE competition_types (
-    type_id serial  NOT NULL,
-    type_label varchar(20)  NOT NULL,
-    CONSTRAINT competition_types_pk PRIMARY KEY (type_id)
-);
 
-INSERT INTO competition_types (type_label) VALUES
-('Tennis Outdoor'),
-('Table Tennis'),
-('Badminton');
 
 -- Table: competitions
 CREATE TABLE competitions (
     competition_id serial  NOT NULL,
-    type_id int  NOT NULL,
+    type varchar(50)  NOT NULL,
     match_duration_minutes int  NOT NULL,
     available_courts int  NOT NULL,
     participants_limit int  NULL,
