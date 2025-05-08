@@ -12,6 +12,10 @@ import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
 import EditMatch from "./pages/EditMatch";
 import "./styles/App.css";
+import ParticipantProfile from "./pages/ParticipantProfile";
+import TennisTournaments from "./pages/TennisTournaments";
+import UpcomingMatches from "./pages/UpcomingMatches";
+import JudgeScore from "./pages/JudgeScore";
 
 
 function App() {
@@ -52,6 +56,16 @@ function App() {
                               path="/matches/edit" 
                               element={<EditMatch />} 
                           />
+                          <Route
+                            path="/profile"
+                            element={<ParticipantProfile />}
+                        />
+                        <Route
+                            element={<TennisTournaments />}
+                            path="/tournaments"
+                        />
+                        <Route path="/matches" element={<UpcomingMatches />} />
+                        <Route path="/judge/score" element={<JudgeScore />} />
                           <Route path="*" element={<Login />} /> {/* Fallback */}
                       </Routes>
                   </div>
@@ -59,6 +73,7 @@ function App() {
             </LoadScript>
         </>
     );
+                        
 }
 
 export default App;
