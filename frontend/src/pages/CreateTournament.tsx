@@ -13,7 +13,7 @@ declare global {
 }
 
 const TournamentSchema = z.object({
-    typeId: z.number(),
+    type: z.string(),
     name: z.string().min(1, "Nazwa jest wymagana"),
     fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
     toDate: z.string().min(1, "Data zakończenia jest wymagana"),
@@ -35,7 +35,7 @@ const TournamentSchema = z.object({
 
 const CreateTournament: React.FC = () => {
     const [formData, setFormData] = useState({
-        typeId: 1,
+        type: "TENNIS_OUTDOOR",
         name: "",
         fromDate: "",
         toDate: "",
@@ -50,13 +50,15 @@ const CreateTournament: React.FC = () => {
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleDisciplineSelect = (discipline: number) => {
-        setFormData(prev => ({ ...prev, typeId: discipline }));
+    const handleDisciplineSelect = (discipline: string) => {
+        setFormData(prev => ({ ...prev, type: discipline }));
     };
 
     const validateForm = () => {
@@ -65,12 +67,14 @@ const CreateTournament: React.FC = () => {
             setErrors({});
             return true;
         } catch (e) {
+            
             if (e instanceof z.ZodError) {
                 const newErrors: Record<string, string> = {};
                 e.errors.forEach(err => {
                     const field = err.path[0] as string;
                     newErrors[field] = err.message;
                 });
+                console.error(newErrors)
                 setErrors(newErrors);
             }
             return false;
@@ -81,6 +85,20 @@ const CreateTournament: React.FC = () => {
         e.preventDefault();
 
         if (!validateForm()) return;
+
+        setIsLoading(true);
+
+
+        const competitionData = {
+            type: formData.type,
+            matchDurationMinutes: timeToMinutes(formData.matchTime),
+            availableCourts: Number(formData.courts),
+            participantsLimit: Number(formData.participants),
+            streetAddress: formData.streetAddress,
+            city: formData.city,
+            postalCode: formData.postalCode,
+            registrationOpen: false
+        };
 
         if (window.google) {
             const geocoder = new window.google.maps.Geocoder();
@@ -102,7 +120,7 @@ const CreateTournament: React.FC = () => {
                     const streetAddress = `${route} ${streetNumber}`.trim();
 
                     const fullData = {
-                        ...formData,
+                        ...competitionData,
                         streetAddress,
                         city,
                         postalCode,
@@ -110,47 +128,43 @@ const CreateTournament: React.FC = () => {
 
                     submitTournamentData(fullData);
                 } else {
+                    setIsLoading(false);
                     alert("Nie udało się rozpoznać lokalizacji");
                 }
             });
         } else {
+            setIsLoading(false);
             alert("Google Maps API nie jest dostępne");
         }
     };
 
     const submitTournamentData = async (data: typeof formData) => {
-        const competitionData = {
-            competitionId: null,
-            type: data.typeId,
-            matchDurationMinutes: timeToMinutes(data.matchTime),
-            availableCourts: Number(data.courts),
-            participantsLimit: Number(data.participants),
-            streetAddress: data.streetAddress,
-            city: data.city,
-            postalCode: data.postalCode,
-            registrationOpen: false
-        };
-
         try {
-            const response = await fetch("/api/competitions", {
+            console.log(data);
+            const response = await fetch("http://localhost:8080/api/competitions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(competitionData),
+                body: JSON.stringify(data),
             });
 
             if (response.ok) {
+                setIsLoading(false);
                 alert("Turniej został pomyślnie stworzony!");
+                window.location.reload();
             } else {
                 const error = await response.json();
                 console.error("Błąd:", error);
+                setIsLoading(false);
                 alert("Wystąpił błąd przy tworzeniu turnieju.");
             }
         } catch (error) {
             console.error("Błąd połączenia:", error);
+            setIsLoading(false);
             alert("Błąd połączenia z serwerem.");
         }
+        
     };
 
     const timeToMinutes = (time: string): number => {
@@ -159,12 +173,18 @@ const CreateTournament: React.FC = () => {
     };
 
     const disciplines = [
-        { name: 1, src: TennisIcon, alt: "Tennis" },
-        { name: 2, src: PingPongIcon, alt: "Ping Pong" },
-        { name: 3, src: BadmintonIcon, alt: "Badminton" },
+        { name: "TENNIS_OUTDOOR", src: TennisIcon, alt: "Tennis" },
+        { name: "TABLE_TENNIS", src: PingPongIcon, alt: "Ping Pong" },
+        { name: "BADMINTON", src: BadmintonIcon, alt: "Badminton" },
     ];
 
     return (
+    <>
+        {isLoading && (
+            <div className="spinner-overlay">
+                <div className="spinner"></div>
+            </div>
+        )}
         <div className="create-tournament-container">
             <div className="create-tournament-window">
                 <h2 className="create-tournament-header">Utwórz turniej</h2>
@@ -175,7 +195,7 @@ const CreateTournament: React.FC = () => {
                                 key={name}
                                 type="button"
                                 onClick={() => handleDisciplineSelect(name)}
-                                className={`discipline-icon-button ${formData.typeId === name ? "selected" : ""}`}
+                                className={`discipline-icon-button ${formData.type === name ? "selected" : ""}`}
                             >
                                 <img src={src} alt={alt} />
                             </button>
@@ -287,6 +307,7 @@ const CreateTournament: React.FC = () => {
                 </div>
             </div>
         </div>
+    </>
     );
 };
 
