@@ -1,6 +1,7 @@
 import "../styles/EditTournament.css";
 import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom"; // TODO: to uncomment when tournaments listing ROC-89 merged
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "../assets/icons/cross.svg";
 import TennisIcon from "../assets/icons/tennis.svg";
 import PingPongIcon from "../assets/icons/pingpong.svg";
@@ -36,8 +37,9 @@ declare global {
 }
 
 const EditTournament: React.FC = () => {
-    // const { id } = useParams<{ id: string }>(); // TODO: to uncomment when tournaments listing ROC-89 merged
-    const id = 1
+    const { id } = useParams<{ id: string }>();
+
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         type: "TENNIS_OUTDOOR",
@@ -64,12 +66,13 @@ const EditTournament: React.FC = () => {
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/competitions/1");
+                const response = await fetch("http://localhost:8080/api/competitions/"+id);
                 if (!response.ok) {
                     throw new Error("Błąd przy pobieraniu danych turnieju");
                 }
 
                 const data = await response.json();
+                console.log(data);
 
                 setFormData(prev => ({
                     ...prev,
@@ -122,7 +125,7 @@ const EditTournament: React.FC = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent, open : boolean) => {
         e.preventDefault();
         if (!validateForm()) return;
 
@@ -152,7 +155,7 @@ const EditTournament: React.FC = () => {
                         streetAddress,
                         city,
                         postalCode
-                    });
+                    }, open);
                 } else {
                     setIsLoading(false);
                     alert("Nie udało się rozpoznać lokalizacji");
@@ -164,7 +167,7 @@ const EditTournament: React.FC = () => {
         }
     };
 
-    const submitTournamentData = async (data: typeof formData) => {
+    const submitTournamentData = async (data: typeof formData, open : boolean) => {
         const competitionData = {
             competitionId: null,
             type: data.type,
@@ -178,7 +181,7 @@ const EditTournament: React.FC = () => {
             streetAddress: data.streetAddress,
             city: data.city,
             postalCode: data.postalCode,
-            registrationOpen: false
+            registrationOpen: open
         };
 
         try {
@@ -193,7 +196,7 @@ const EditTournament: React.FC = () => {
             if (response.ok) {
               setIsLoading(false);
               alert("Turniej został pomyślnie zaktualizowany!");
-              window.location.reload();
+              navigate("/organizer/tournaments");
           } else {
               const error = await response.json();
               console.error("Błąd:", error);
@@ -224,6 +227,12 @@ const EditTournament: React.FC = () => {
     ];
 
   return (
+    <>
+            {isLoading && (
+                <div className="spinner-overlay">
+                    <div className="spinner"></div>
+                </div>
+            )}
     <div className="edit-tournament-container">
       <div className="edit-tournament-window">
         <h3 className="edit-tournament-header">Edytuj turniej</h3>
@@ -332,15 +341,24 @@ const EditTournament: React.FC = () => {
         </div>
 
         <div className="edit-tournament-button-group">
-          <button className="edit-tournament-button accept" onClick={handleSubmit} type="submit">
-            AKCEPTUJ
-          </button>
-          <button className="edit-tournament-button start" type="button">
-            ROZPOCZNIJ
-          </button>
+        <button
+          className="edit-tournament-button accept"
+          onClick={(e) => handleSubmit(e, true)}
+          type="submit"
+          >
+          AKCEPTUJ
+      </button>
+      <button
+          className="edit-tournament-button start"
+          onClick={(e) => handleSubmit(e, false)}
+          type="submit"
+          >
+          ROZPOCZNIJ
+      </button>
         </div>
       </div>
     </div>
+    </>
   );
 };
 

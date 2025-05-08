@@ -56,6 +56,7 @@ const TopBar: React.FC = () => {
                     <MenuItem onClick={() => handleNavigate('/matches')}>Matches</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/judge/score')}>Judge Score</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/tournaments')}>Tournaments</MenuItem>
+                    <MenuItem onClick={() => handleNavigate('/organizer/tournaments')}>Organizer Tournaments</MenuItem>
                 </Menu>
 
                 <Typography

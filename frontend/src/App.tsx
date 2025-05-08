@@ -14,6 +14,7 @@ import EditMatch from "./pages/EditMatch";
 import "./styles/App.css";
 import ParticipantProfile from "./pages/ParticipantProfile";
 import UserTournaments from "./pages/UserTournaments";
+import OrganizerTournaments from "./pages/OrganizerTournaments";
 import UpcomingMatches from "./pages/UpcomingMatches";
 import JudgeScore from "./pages/JudgeScore";
 
@@ -49,7 +50,7 @@ function App() {
                               element={<CreateTournament />}
                           />
                           <Route 
-                              path="/tournaments/edit" 
+                              path="/tournaments/edit/:id" 
                               element={<EditTournament />} 
                           />
                           <Route 
@@ -63,6 +64,10 @@ function App() {
                           <Route
                                 element={<UserTournaments />}
                                 path="/tournaments"
+                            />
+                          <Route
+                                element={<OrganizerTournaments />}
+                                path="/organizer/tournaments"
                             />
                           <Route 
                                 path="/matches" 
