@@ -2,16 +2,6 @@ import "../styles/EditMatch.css";
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-export const selectLabelStyle = {
-  fontSize: "0.8rem",
-  color: "#333",
-  marginLeft: "0.8rem", 
-  marginTop: "-0.5rem", 
-  textAlign: "left",
-  display: "block",
-
-}
-
 const scorePattern = /^\d+:\d+$/;
 
 const EditMatch: React.FC = () => {
@@ -116,11 +106,6 @@ const EditMatch: React.FC = () => {
             />
           </div>
           <div className="edit-match-input-group">
-          <label
-              htmlFor="protocol"
-              style={selectLabelStyle}>
-              Protokół
-            </label>
               <div id="protocol" className="edit-match-input-item">
             <input type="file" name="licenceFile" accept=".pdf" required />
             </div>

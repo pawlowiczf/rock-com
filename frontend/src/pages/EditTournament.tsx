@@ -1,11 +1,15 @@
 import "../styles/EditTournament.css";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+// import { useParams } from "react-router-dom"; // TODO: to uncomment when tournaments listing ROC-89 merged
 import DeleteIcon from "../assets/icons/cross.svg";
+import TennisIcon from "../assets/icons/tennis.svg";
+import PingPongIcon from "../assets/icons/pingpong.svg";
+import BadmintonIcon from "../assets/icons/badminton.svg";
 import TextField from '@mui/material/TextField';
 import z from "zod";
 
 const TournamentSchema = z.object({
+    type: z.string(),
     name: z.string().min(1, "Nazwa jest wymagana"),
     fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
     toDate: z.string().min(1, "Data zakończenia jest wymagana"),
@@ -16,6 +20,7 @@ const TournamentSchema = z.object({
     participants: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Limit uczestników musi być większy od 0",
     }),
+    matchTime: z.string().min(1, "Czas trwania meczu jest wymagany"),
     streetAddress: z.string().optional(),
     city: z.string().optional(),
     postalCode: z.string().optional(),
@@ -31,17 +36,18 @@ declare global {
 }
 
 const EditTournament: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-
-    console.log("Tournament ID:", id);
+    // const { id } = useParams<{ id: string }>(); // TODO: to uncomment when tournaments listing ROC-89 merged
+    const id = 1
 
     const [formData, setFormData] = useState({
+        type: "TENNIS_OUTDOOR",
         name: "Wielki Tenis",
         fromDate: "2025-12-12",
         toDate: "2025-12-14",
         location: "Stadion Wisły",
         courts: "12",
         participants: "12",
+        matchTime: "00:45",
         streetAddress: "",
         city: "",
         postalCode: ""
@@ -55,6 +61,38 @@ const EditTournament: React.FC = () => {
         "Piotr Budynek, M, 34l.",
     ]);
 
+    useEffect(() => {
+        const fetchTournamentData = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/competitions/1");
+                if (!response.ok) {
+                    throw new Error("Błąd przy pobieraniu danych turnieju");
+                }
+
+                const data = await response.json();
+
+                setFormData(prev => ({
+                    ...prev,
+                    type: data.type || prev.type,
+                    name: data.name || prev.name,
+                    location: data.location || prev.location,
+                    courts: data.availableCourts?.toString() || prev.courts,
+                    participants: data.participantsLimit?.toString() || prev.participants,
+                    matchTime: minutesToTime(data.matchDurationMinutes) || prev.matchTime,
+                    streetAddress: data.streetAddress || "",
+                    city: data.city || "",
+                    postalCode: data.postalCode || ""
+                }));
+            } catch (error) {
+                console.error("Błąd ładowania danych:", error);
+                alert("Nie udało się załadować danych turnieju");
+            }
+        };
+
+        fetchTournamentData();
+    }, []);
+
+
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(false);
 
@@ -62,9 +100,8 @@ const EditTournament: React.FC = () => {
         setParticipants(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const handleDisciplineSelect = (discipline: string) => {
+        setFormData(prev => ({ ...prev, type: discipline }));
     };
 
     const validateForm = () => {
@@ -130,12 +167,14 @@ const EditTournament: React.FC = () => {
     const submitTournamentData = async (data: typeof formData) => {
         const competitionData = {
             competitionId: null,
+            type: data.type,
             name: data.name,
             fromDate: data.fromDate,
             toDate: data.toDate,
             location: data.location,
             availableCourts: Number(data.courts),
             participantsLimit: Number(data.participants),
+            matchDurationMinutes: timeToMinutes(data.matchTime),
             streetAddress: data.streetAddress,
             city: data.city,
             postalCode: data.postalCode,
@@ -144,7 +183,7 @@ const EditTournament: React.FC = () => {
 
         try {
             const response = await fetch("http://localhost:8080/api/competitions/" + id , {
-                method: "POST",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -167,12 +206,40 @@ const EditTournament: React.FC = () => {
             alert("Błąd połączenia z serwerem.");
         }
     };
-  
+
+    const timeToMinutes = (time: string): number => {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const minutesToTime = (minutes: number): string => {
+        const h = Math.floor(minutes / 60).toString().padStart(2, "0");
+        const m = (minutes % 60).toString().padStart(2, "0");
+        return `${h}:${m}`;
+    };
+    const disciplines = [
+        { name: "TENNIS_OUTDOOR", src: TennisIcon, alt: "Tennis" },
+        { name: "TABLE_TENNIS", src: PingPongIcon, alt: "Ping Pong" },
+        { name: "BADMINTON", src: BadmintonIcon, alt: "Badminton" },
+    ];
+
   return (
     <div className="edit-tournament-container">
       <div className="edit-tournament-window">
         <h3 className="edit-tournament-header">Edytuj turniej</h3>
         <div className="edit-tournament-scroll-pane">
+          <div className="discipline-icons">
+            {disciplines.map(({ name, src, alt }) => (
+              <button
+                key={name}
+                type="button"
+                onClick={() => handleDisciplineSelect(name)}
+                className={`discipline-icon-button ${formData.type === name ? "selected" : ""}`}
+              >
+                <img src={src} alt={alt} />
+              </button>
+            ))}
+          </div>
           <div className="edit-tournament-form">
             <div className="edit-tournament-input-group">
               <TextField
@@ -234,6 +301,18 @@ const EditTournament: React.FC = () => {
               />
             </div>
 
+            <div className="edit-tournament-input-group">
+              <TextField
+                fullWidth
+                type="time"
+                label="Czas trwania meczu"
+                name="matchTime"
+                value={formData.matchTime}
+                onChange={(e) => setFormData({ ...formData, matchTime: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+              />
+            </div>
+
             <div className="edit-tournament-participants-header">
               Lista uczestników
             </div>
@@ -253,10 +332,10 @@ const EditTournament: React.FC = () => {
         </div>
 
         <div className="edit-tournament-button-group">
-          <button className="edit-tournament-button accept" onClick={handleSubmit}>
+          <button className="edit-tournament-button accept" onClick={handleSubmit} type="submit">
             AKCEPTUJ
           </button>
-          <button className="edit-tournament-button start">
+          <button className="edit-tournament-button start" type="button">
             ROZPOCZNIJ
           </button>
         </div>
@@ -266,3 +345,4 @@ const EditTournament: React.FC = () => {
 };
 
 export default EditTournament;
+z
