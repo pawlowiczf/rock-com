@@ -15,6 +15,7 @@ public record ParticipantCreateRequestDto(
         @NotBlank
         String city,
         @NotBlank
+
         String phoneNumber,
         @Past @NotNull
         LocalDate birthDate
