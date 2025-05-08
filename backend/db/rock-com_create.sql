@@ -109,7 +109,7 @@ CREATE TABLE referee_licences (
     referee_licence_id serial NOT NULL,
     licence_type varchar(50)  NOT NULL,
     referee_id int  NOT NULL,
-    license varchar(50)  NOT NULL,
+    license varchar(50)  NOT NULL UNIQUE,
     CONSTRAINT referee_licences_pk PRIMARY KEY (referee_licence_id)
 );
 

@@ -6,6 +6,7 @@ import com.roc.app.user.referee.licence.dto.RefereeAddLicenceRequestDto;
 import com.roc.app.user.referee.licence.dto.RefereeAddLicenceResponseDto;
 import com.roc.app.user.referee.licence.dto.RefereeLicenceResponseDto;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class RefereeLicenceController {
 
     @PostMapping
     public ResponseEntity<?> addRefereeLicence(
-            @RequestBody RefereeAddLicenceRequestDto refereeAddLicenceRequestDto) {
+            @RequestBody @Valid RefereeAddLicenceRequestDto refereeAddLicenceRequestDto) {
 
         RefereeAddLicenceResponseDto response;
         try {
