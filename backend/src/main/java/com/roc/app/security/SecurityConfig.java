@@ -1,5 +1,6 @@
 package com.roc.app.security;
 
+import com.roc.app.exception.ErrorResponse;
 import com.roc.app.user.general.UserRole;
 import com.roc.app.user.general.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +22,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+import static com.roc.app.exception.ErrorResponse.writeToResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -49,18 +53,12 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                         })
-                        .failureHandler((request, response, exception) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Invalid credentials\"}");
-                        })
+                        .failureHandler((request, response, exception) ->
+                                writeToResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid credentials"))
                         .permitAll())
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
-                        }))
+                        .authenticationEntryPoint((request, response, authException) ->
+                                writeToResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Authentication is required to access this resource.")))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
