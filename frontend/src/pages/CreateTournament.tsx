@@ -25,7 +25,10 @@ const TournamentSchema = z.object({
 }).refine((data) => new Date(data.toDate) > new Date(data.fromDate), {
     message: "Data zakończenia musi być po dacie rozpoczęcia",
     path: ["toDate"],
-});
+}).refine(
+    (data) => new Date(data.fromDate) >= new Date(),
+    "Data rozpoczęcia musi być w przyszłości",
+);
 
 type TournamentFormData = z.infer<typeof TournamentSchema>;
 
