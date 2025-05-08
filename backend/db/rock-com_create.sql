@@ -133,7 +133,7 @@ CREATE TABLE users (
     user_id serial  NOT NULL,
     firstname varchar(50)  NOT NULL,
     lastname varchar(50)  NOT NULL,
-    email varchar(50)  NOT NULL,
+    email varchar(50)  NOT NULL UNIQUE,
     password varchar(60) NOT NULL,
     city varchar(50)  NOT NULL,
     phone_number varchar(12)  NOT NULL,
