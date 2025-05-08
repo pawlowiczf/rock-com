@@ -49,7 +49,7 @@ const TopBar: React.FC = () => {
                     <MenuItem onClick={() => handleNavigate('/register/chose-user-type')}>Choose User Type</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/register/judge')}>Judge Licence</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/register/information')}>Register Information</MenuItem>
-                    <MenuItem onClick={() => handleNavigate('/tournaments/new')}>Create Tournament</MenuItem>
+                    <MenuItem onClick={() => handleNavigate('/tournaments/create')}>Create Tournament</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/tournaments/edit')}>Edit Tournament</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/matches/edit')}>Edit Match</MenuItem>
                 </Menu>
