@@ -13,7 +13,7 @@ import EditTournament from "./pages/EditTournament";
 import EditMatch from "./pages/EditMatch";
 import "./styles/App.css";
 import ParticipantProfile from "./pages/ParticipantProfile";
-import TennisTournaments from "./pages/TennisTournaments";
+import UserTournaments from "./pages/UserTournaments";
 import UpcomingMatches from "./pages/UpcomingMatches";
 import JudgeScore from "./pages/JudgeScore";
 
@@ -57,15 +57,21 @@ function App() {
                               element={<EditMatch />} 
                           />
                           <Route
-                            path="/profile"
-                            element={<ParticipantProfile />}
-                        />
-                        <Route
-                            element={<TennisTournaments />}
-                            path="/tournaments"
-                        />
-                        <Route path="/matches" element={<UpcomingMatches />} />
-                        <Route path="/judge/score" element={<JudgeScore />} />
+                                path="/profile"
+                                element={<ParticipantProfile />}
+                          />
+                          <Route
+                                element={<UserTournaments />}
+                                path="/tournaments"
+                            />
+                          <Route 
+                                path="/matches" 
+                                element={<UpcomingMatches />} 
+                          />
+                          <Route 
+                                path="/judge/score" 
+                                element={<JudgeScore />} 
+                          />
                           <Route path="*" element={<Login />} /> {/* Fallback */}
                       </Routes>
                   </div>

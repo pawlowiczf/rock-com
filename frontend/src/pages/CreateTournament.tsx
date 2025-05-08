@@ -64,7 +64,7 @@ const CreateTournament: React.FC = () => {
         matchTime: "",
         streetAddress: "",
         city: "",
-        postalCode: ""
+        postalCode: "",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -120,7 +120,7 @@ const CreateTournament: React.FC = () => {
                 streetAddress,
                 city,
                 postalCode,
-                registrationOpen: false
+                registrationOpen: true
             };
 
             await submitTournamentData(competitionData);
