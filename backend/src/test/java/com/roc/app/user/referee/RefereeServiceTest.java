@@ -1,7 +1,13 @@
-package com.roc.app.user.participant;
+package com.roc.app.user.referee;
 
+import com.roc.app.user.participant.ParticipantService;
 import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
 import com.roc.app.user.participant.dto.ParticipantResponseDto;
+import com.roc.app.user.referee.general.Referee;
+import com.roc.app.user.referee.general.RefereeRepository;
+import com.roc.app.user.referee.general.RefereeService;
+import com.roc.app.user.referee.general.dto.RefereeCreateRequestDto;
+import com.roc.app.user.referee.general.dto.RefereeResponseDto;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,41 +17,37 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
-
 import static com.roc.app.user.UserTestConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ParticipantServiceTest {
-    private static final LocalDate BIRTH_DATE = LocalDate.ofEpochDay(735);
-
+public class RefereeServiceTest {
     @Mock
-    private ParticipantRepository participantRepository;
+    private RefereeRepository refereeRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
     @InjectMocks
-    private ParticipantService participantService;
+    private RefereeService refereeService;
 
-    private ParticipantCreateRequestDto validRequestDto;
-    private Participant savedParticipant;
-    private ParticipantResponseDto expectedParticipantResponseDto;
+    private RefereeCreateRequestDto validRequestDto;
+    private Referee savedReferee;
+    private RefereeResponseDto expectedRefereeResponseDto;
 
     @BeforeEach
     void setUp() {
-        validRequestDto = new ParticipantCreateRequestDto(
+        validRequestDto = new RefereeCreateRequestDto(
                 FIRST_NAME,
                 LAST_NAME,
                 EMAIL,
                 PASSWORD,
                 CITY,
-                PHONE_NUMBER,
-                BIRTH_DATE
+                PHONE_NUMBER
         );
-        savedParticipant = Participant.builder()
+        savedReferee = Referee.builder()
                 .userId(USER_ID)
                 .firstName(FIRST_NAME)
                 .lastName(LAST_NAME)
@@ -53,39 +55,35 @@ class ParticipantServiceTest {
                 .password(ENCODED_PASSWORD)
                 .city(CITY)
                 .phoneNumber(PHONE_NUMBER)
-                .birthDate(BIRTH_DATE)
                 .build();
-
-        expectedParticipantResponseDto = new ParticipantResponseDto(
+        expectedRefereeResponseDto = new RefereeResponseDto(
                 USER_ID,
                 FIRST_NAME,
                 LAST_NAME,
                 EMAIL,
                 CITY,
-                PHONE_NUMBER,
-                BIRTH_DATE
+                PHONE_NUMBER
         );
     }
-
 
     @Test
     void createParticipantWorksAsExpected() {
         // given
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
-        when(participantRepository.save(any())).thenReturn(savedParticipant);
+        when(refereeRepository.save(any())).thenReturn(savedReferee);
 
         // when
-        ParticipantResponseDto participant = participantService.createParticipant(validRequestDto);
+        RefereeResponseDto participant = refereeService.createReferee(validRequestDto);
 
         // then
-        assertThat(participant).isEqualTo(expectedParticipantResponseDto);
+        assertThat(participant).isEqualTo(expectedRefereeResponseDto);
     }
 
     @Test
     void createParticipantUser_VerifiesTransactionalAnnotation() {
         try {
-            assertTrue(ParticipantService.class
-                    .getMethod("createParticipant", ParticipantCreateRequestDto.class)
+            assertTrue(RefereeService.class
+                    .getMethod("createReferee", RefereeCreateRequestDto.class)
                     .isAnnotationPresent(Transactional.class));
         } catch (NoSuchMethodException e) {
             fail("Method not found");
