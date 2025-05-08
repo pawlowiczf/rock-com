@@ -1,5 +1,6 @@
 package com.roc.app.user.referee.licence;
 
+import com.roc.app.competition.CompetitionType;
 import com.roc.app.user.referee.general.Referee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,13 @@ public class RefereeLicence {
 
     @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.LICENCE_TYPE)
-    private LicenceType licenceType;
+    private CompetitionType licenceType;
 
     @Column(name = FieldNames.LICENSE)
     private String license;
 
     @ManyToOne
-    @JoinColumn(name = FieldNames.REFEREE_ID, nullable = false)
+    @JoinColumn(name = FieldNames.REFEREE_ID, referencedColumnName = "user_id", nullable = false)
     private Referee referee;
 
     public static final class FieldNames {

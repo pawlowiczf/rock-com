@@ -1,11 +1,11 @@
 package com.roc.app.user.referee.licence.dto;
 
-import com.roc.app.user.referee.licence.LicenceType;
+import com.roc.app.competition.CompetitionType;
 import com.roc.app.user.referee.licence.RefereeLicence;
 
 public record RefereeLicenceResponseDto(
         Long refereeLicenceId,
-        LicenceType licenceType,
+        CompetitionType licenceType,
         Long refereeId,
         String license
 ) {

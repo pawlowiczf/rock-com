@@ -1,9 +1,7 @@
 package com.roc.app.user.referee.licence;
 
-import com.roc.app.user.referee.exception.RefereeNotFoundException;
-import com.roc.app.user.referee.general.dto.RefereeResponseDto;
-import com.roc.app.user.referee.licence.dto.RefereeAddLicenceRequestDto;
-import com.roc.app.user.referee.licence.dto.RefereeAddLicenceResponseDto;
+import com.roc.app.user.referee.licence.dto.RefereeCreateLicenceRequestDto;
+import com.roc.app.user.referee.licence.dto.RefereeCreateLicenceResponseDto;
 import com.roc.app.user.referee.licence.dto.RefereeLicenceResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -11,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/licence")
+@RequestMapping("/api/licences")
 public class RefereeLicenceController {
     private final RefereeLicenceService refereeLicenceService;
 
@@ -24,9 +20,9 @@ public class RefereeLicenceController {
 
     @PostMapping
     public ResponseEntity<?> addRefereeLicence(
-            @RequestBody @Valid RefereeAddLicenceRequestDto refereeAddLicenceRequestDto) {
+            @RequestBody @Valid RefereeCreateLicenceRequestDto refereeAddLicenceRequestDto) {
 
-        RefereeAddLicenceResponseDto response;
+        RefereeCreateLicenceResponseDto response;
         try {
             response = refereeLicenceService.addRefereeLicence(refereeAddLicenceRequestDto);
         } catch (EntityNotFoundException e) {
@@ -36,13 +32,7 @@ public class RefereeLicenceController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/by-referee/{refereeId}")
-    public ResponseEntity<List<RefereeLicenceResponseDto>> getRefereeLicences(@PathVariable long refereeId) {
-        List<RefereeLicenceResponseDto> licences = refereeLicenceService.getRefereeLicencesByRefereeId(refereeId);
-        return ResponseEntity.ok(licences);
-    }
-
-    @GetMapping("/by-license/{license}")
+    @GetMapping("/{license}")
     public ResponseEntity<RefereeLicenceResponseDto> getRefereeLicenceByLicense(@PathVariable String license) {
         RefereeLicenceResponseDto licence = refereeLicenceService.getRefereeLicenceByLicense(license);
         return ResponseEntity.ok(licence);
