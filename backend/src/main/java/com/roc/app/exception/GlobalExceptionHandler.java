@@ -2,6 +2,7 @@ package com.roc.app.exception;
 
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
+
 import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
