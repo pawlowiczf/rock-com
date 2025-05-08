@@ -99,6 +99,8 @@ const CreateTournament: React.FC = () => {
             postalCode: formData.postalCode,
             registrationOpen: false
         };
+        
+        // Geokodowanie lokalizacji
 
         if (window.google) {
             const geocoder = new window.google.maps.Geocoder();

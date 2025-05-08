@@ -1,37 +1,96 @@
 import "../styles/EditTournament.css";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import DeleteIcon from "../assets/icons/cross.svg";
 import TextField from '@mui/material/TextField';
+import z from "zod";
+
+const TournamentSchema = z.object({
+    name: z.string().min(1, "Nazwa jest wymagana"),
+    fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
+    toDate: z.string().min(1, "Data zakończenia jest wymagana"),
+    location: z.string().min(1, "Lokalizacja jest wymagana"),
+    courts: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
+        message: "Liczba boisk musi być większa od 0",
+    }),
+    participants: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
+        message: "Limit uczestników musi być większy od 0",
+    }),
+    streetAddress: z.string().optional(),
+    city: z.string().optional(),
+    postalCode: z.string().optional(),
+}).refine(data => new Date(data.toDate) > new Date(data.fromDate), {
+    message: "Data zakończenia musi być po dacie rozpoczęcia",
+    path: ["toDate"]
+});
+
+declare global {
+    interface Window {
+        google: any;
+    }
+}
 
 const EditTournament: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: "Wielki Tenis",
-    fromDate: "2025-12-12",
-    toDate: "2025-12-14",
-    location: "Stadion Wisły",
-    fields: "12",
-    participantLimit: "12",
-    streetAddress: "",
-    city: "",
-    postalCode: ""
-  });
+    const { id } = useParams<{ id: string }>();
 
-  const [participants, setParticipants] = useState([
-    "Piotr Budynek, M, 34l.",
-    "Piotr Budynek, M, 34l.",
-    "Piotr Budynek, M, 34l.",
-    "Piotr Budynek, M, 34l.",
-    "Piotr Budynek, M, 34l.",
-  ]);
+    console.log("Tournament ID:", id);
 
-  const removeParticipant = (index: number) => {
-    setParticipants(prev => prev.filter((_, i) => i !== index));
-  };
+    const [formData, setFormData] = useState({
+        name: "Wielki Tenis",
+        fromDate: "2025-12-12",
+        toDate: "2025-12-14",
+        location: "Stadion Wisły",
+        courts: "12",
+        participants: "12",
+        streetAddress: "",
+        city: "",
+        postalCode: ""
+    });
 
-const handleSubmit = async (e: React.FormEvent) => {
+    const [participants, setParticipants] = useState([
+        "Piotr Budynek, M, 34l.",
+        "Piotr Budynek, M, 34l.",
+        "Piotr Budynek, M, 34l.",
+        "Piotr Budynek, M, 34l.",
+        "Piotr Budynek, M, 34l.",
+    ]);
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(false);
+
+    const removeParticipant = (index: number) => {
+        setParticipants(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const validateForm = () => {
+        try {
+            TournamentSchema.parse(formData);
+            setErrors({});
+            return true;
+        } catch (e) {
+            if (e instanceof z.ZodError) {
+                const newErrors: Record<string, string> = {};
+                e.errors.forEach(err => {
+                    const field = err.path[0] as string;
+                    newErrors[field] = err.message;
+                });
+                setErrors(newErrors);
+            }
+            return false;
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validateForm()) return;
 
-        // Geokodowanie lokalizacji
+        setIsLoading(true);
+
         if (window.google) {
             const geocoder = new window.google.maps.Geocoder();
 
@@ -39,42 +98,18 @@ const handleSubmit = async (e: React.FormEvent) => {
                 if (status === "OK" && results.length > 0) {
                     const place = results[0];
                     const components = place.address_components;
-                    let city = '';
-                    let postalCode = '';
-                    let streetNumber = '';
-                    let route = '';
-        
+                    let city = '', postalCode = '', streetNumber = '', route = '';
+
                     components.forEach((component: any) => {
                         const types = component.types;
-                        if (types.includes('locality')) {
-                            city = component.long_name;
-                        }
-                        if (types.includes('postal_code')) {
-                            postalCode = component.long_name;
-                        }
-                        if (types.includes('street_number')) {
-                            streetNumber = component.long_name;
-                        }
-                        if (types.includes('route')) {
-                            route = component.long_name;
-                        }
+                        if (types.includes('locality')) city = component.long_name;
+                        if (types.includes('postal_code')) postalCode = component.long_name;
+                        if (types.includes('street_number')) streetNumber = component.long_name;
+                        if (types.includes('route')) route = component.long_name;
                     });
 
                     const streetAddress = `${route} ${streetNumber}`.trim();
-                    console.log(streetAddress);
-                    console.log(city);
-                    console.log(postalCode);
 
-
-                    // Ustawiamy dane o lokalizacji
-                    setFormData(prev => ({
-                        ...prev,
-                        streetAddress: streetAddress,
-                        city,
-                        postalCode
-                    }));
-
-                    // Przesyłamy dane do backendu
                     submitTournamentData({
                         ...formData,
                         streetAddress,
@@ -82,10 +117,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                         postalCode
                     });
                 } else {
+                    setIsLoading(false);
                     alert("Nie udało się rozpoznać lokalizacji");
                 }
             });
         } else {
+            setIsLoading(false);
             alert("Google Maps API nie jest dostępne");
         }
     };
@@ -93,8 +130,12 @@ const handleSubmit = async (e: React.FormEvent) => {
     const submitTournamentData = async (data: typeof formData) => {
         const competitionData = {
             competitionId: null,
-            availableCourts: Number(data.fields),
-            participantsLimit: Number(data.participantLimit),
+            name: data.name,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+            location: data.location,
+            availableCourts: Number(data.courts),
+            participantsLimit: Number(data.participants),
             streetAddress: data.streetAddress,
             city: data.city,
             postalCode: data.postalCode,
@@ -102,30 +143,31 @@ const handleSubmit = async (e: React.FormEvent) => {
         };
 
         try {
-            console.log(competitionData)
-            const response = await fetch("/api/competitions", {
+            const response = await fetch("http://localhost:8080/api/competitions/" + id , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(competitionData), // Przesyłanie danych w formacie JSON
+                body: JSON.stringify(competitionData),
             });
 
             if (response.ok) {
-                const result = await response.json();
-                console.log("Turniej stworzony", result);
-                alert("Turniej został pomyślnie stworzony!");
-            } else {
-                const error = await response.json();
-                console.error("Błąd przy tworzeniu turnieju", error);
-                alert("Wystąpił błąd przy tworzeniu turnieju.");
-            }
+              setIsLoading(false);
+              alert("Turniej został pomyślnie zaktualizowany!");
+              window.location.reload();
+          } else {
+              const error = await response.json();
+              console.error("Błąd:", error);
+              setIsLoading(false);
+              alert("Wystąpił błąd przy aktualizacji turnieju.");
+          }
         } catch (error) {
-            console.error("Błąd połączenia", error);
+            console.error("Błąd połączenia:", error);
+            setIsLoading(false);
             alert("Błąd połączenia z serwerem.");
         }
     };
-
+  
   return (
     <div className="edit-tournament-container">
       <div className="edit-tournament-window">
@@ -177,8 +219,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 fullWidth
                 label="Liczba boisk"
                 type="number"
-                value={formData.fields}
-                onChange={(e) => setFormData({ ...formData, fields: e.target.value })}
+                value={formData.courts}
+                onChange={(e) => setFormData({ ...formData, courts: e.target.value })}
               />
             </div>
 
@@ -187,8 +229,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 fullWidth
                 label="Limit uczestników"
                 type="number"
-                value={formData.participantLimit}
-                onChange={(e) => setFormData({ ...formData, participantLimit: e.target.value })}
+                value={formData.participants}
+                onChange={(e) => setFormData({ ...formData, participants: e.target.value })}
               />
             </div>
 
