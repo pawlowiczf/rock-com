@@ -51,7 +51,6 @@ const TopBar: React.FC = () => {
                     <MenuItem onClick={() => handleNavigate('/tournaments/new')}>Create Tournament</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/tournaments/edit')}>Edit Tournament</MenuItem>
                     <MenuItem onClick={() => handleNavigate('/matches/edit')}>Edit Match</MenuItem>
-                    <MenuItem onClick={() => handleNavigate('/tournaments/bracket')}>Tournament Bracket</MenuItem>
                 </Menu>
 
                 <Typography

@@ -104,6 +104,7 @@ const CreateTournament: React.FC = () => {
         };
 
         try {
+            console.error("Błąd połączenia", competitionData);
             const response = await fetch("/api/competitions", {
                 method: "POST",
                 headers: {

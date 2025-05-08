@@ -1,40 +1,6 @@
 import "../styles/EditMatch.css";
 import { useState } from "react";
-import Select from "react-select";
 import TextField from "@mui/material/TextField";
-
-export const customSelectStyles = {
-  control: (base: any, { isFocused }: any) => ({
-    ...base,
-    width: "100%",
-    border: isFocused ? "2px solid #A020F0" : "1px solid #ccc",
-    textAlign: "left",
-    borderRadius: "8px",
-    boxShadow: "none",
-    transition: "none",
-    minHeight: "45px",
-    "&:hover": { 
-      borderColor: isFocused ? "#A020F0" : "black" 
-    },
-  }),
-  option: (base: any, { isFocused, isSelected,  }: any) => ({
-    ...base,
-    backgroundColor: isSelected ? "#A020F0" : isFocused ? "#f2f2f2" : "white",
-    color: isSelected ? "white" : "black",
-    "&:active": { 
-      backgroundColor: "#D1B3FF"
-    },
-    
-  }),
-  singleValue: (base: any) => ({
-    ...base,
-    color: "#333"
-  }),
-  menu: (base: any) => ({
-    ...base,
-    zIndex: 3,
-  }),
-};
 
 export const selectLabelStyle = {
   fontSize: "0.8rem",
@@ -48,35 +14,21 @@ export const selectLabelStyle = {
 
 const scorePattern = /^\d+:\d+$/;
 
-const refereeOptions = [
-  { value: "Ref1", label: "Jan Kowalski" },
-  { value: "Ref2", label: "Anna Nowak" },
-  { value: "Ref3", label: "Piotr Wiśniewski" },
-];
-
-const playerOptions = [
-  { value: "P1", label: "Kamil Stoch" },
-  { value: "P2", label: "Robert Lewandowski" },
-  { value: "P3", label: "Iga Świątek" },
-];
-
-type OptionType = { value: string; label: string };
-
 const EditMatch: React.FC = () => {
   const [formData, setFormData] = useState<{
     date: string;
     location: string;
-    referee: OptionType | null;
-    player1: OptionType | null;
-    player2: OptionType | null;
+    referee: string;
+    player1: string;
+    player2: string;
     score: string;
     protocol: string;
   }>({
     date: "2025-06-10T12:12",
     location: "Kort 1",
-    referee: null,
-    player1: null,
-    player2: null,
+    referee: "",
+    player1: "",
+    player2: "",
     score: "",
     protocol: ""
   });
@@ -105,7 +57,6 @@ const EditMatch: React.FC = () => {
               fullWidth
               size="small"
               label="Data i godzina"
-              InputLabelProps={{ shrink: true }}
             />
           </div>
 
@@ -119,54 +70,37 @@ const EditMatch: React.FC = () => {
             />
           </div>
 
+
           <div className="edit-match-input-group">
-            <label
-              htmlFor="referee"
-              style={selectLabelStyle}>
-              Sędzia
-            </label>
-            <Select
-              id="referee"
-              options={refereeOptions}
-              placeholder="Sędzia"
+            <TextField
+              type="text"
               value={formData.referee}
-              onChange={(selected) => setFormData({ ...formData, referee: selected })}
-              styles={customSelectStyles}
-              isSearchable
+              onChange={(e) => setFormData({ ...formData, referee: e.target.value })}
+              fullWidth
+              size="small"
+              label="Sędzia"
             />
           </div>
 
           <div className="edit-match-input-group">
-          <label
-              htmlFor="player1"
-              style={selectLabelStyle}>
-              Gracz 1
-            </label>
-            <Select
-              id="player1"
-              options={playerOptions}
-              placeholder="Gracz 1"
+            <TextField
+              type="text"
               value={formData.player1}
-              onChange={(selected) => setFormData({ ...formData, player1: selected })}
-              styles={customSelectStyles}
-              isSearchable
+              onChange={(e) => setFormData({ ...formData, player1: e.target.value })}
+              fullWidth
+              size="small"
+              label="Gracz 1"
             />
           </div>
 
           <div className="edit-match-input-group">
-          <label
-              htmlFor="player2"
-              style={selectLabelStyle}>
-              Gracz 2
-            </label>
-            <Select
-              id="player2"
-              options={playerOptions}
-              placeholder="Gracz 2"
+            <TextField
+              type="text"
               value={formData.player2}
-              onChange={(selected) => setFormData({ ...formData, player2: selected })}
-              styles={customSelectStyles}
-              isSearchable
+              onChange={(e) => setFormData({ ...formData, player2: e.target.value })}
+              fullWidth
+              size="small"
+              label="Gracz 1"
             />
           </div>
 
