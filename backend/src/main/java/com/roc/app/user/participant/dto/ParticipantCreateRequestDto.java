@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record ParticipantCreateRequestDto(
+<<<<<<< HEAD
         @NotBlank @Size(max = 50)
         String firstName,
         @NotBlank @Size(max = 50)
@@ -15,6 +16,17 @@ public record ParticipantCreateRequestDto(
         @NotBlank @Size(max = 50)
         String city,
         @NotBlank @Size(max = 12)
+=======
+        @NotBlank
+        String firstName,
+        @NotBlank
+        String lastName,
+        @NotBlank @Email
+        String email,
+        @NotBlank
+        String city,
+        @NotBlank
+>>>>>>> origin/main
         String phoneNumber,
         @Past @NotNull
         LocalDate birthDate

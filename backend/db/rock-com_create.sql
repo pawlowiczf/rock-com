@@ -187,22 +187,6 @@ ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_par
     INITIALLY IMMEDIATE
 ;
 
--- Reference: competitions_competition_types (table: competitions)
-ALTER TABLE competitions ADD CONSTRAINT competitions_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: judge_licences_competition_types (table: referee_licences)
-ALTER TABLE referee_licences ADD CONSTRAINT judge_licences_competition_types
-    FOREIGN KEY (type_id)
-    REFERENCES competition_types (type_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
 -- Reference: matches_competition_participants_1 (table: matches)
 ALTER TABLE matches ADD CONSTRAINT matches_competition_participants_1
     FOREIGN KEY (competition_id, player1_id)
