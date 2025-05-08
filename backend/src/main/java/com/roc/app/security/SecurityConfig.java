@@ -1,6 +1,6 @@
 package com.roc.app.security;
 
-import com.roc.app.exception.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roc.app.user.general.UserRole;
 import com.roc.app.user.general.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,9 +21,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
-
-import static com.roc.app.exception.ErrorResponse.writeToResponse;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -45,8 +48,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.POST,"/api/participant", "/api/referee").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/competition").hasAuthority(UserRole.ORGANIZER.getAuthority())
+                        .requestMatchers(HttpMethod.POST,"/api/participants", "/api/referees", "/api/licences").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/competitions").hasAuthority(UserRole.ORGANIZER.getAuthority())
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
@@ -84,4 +87,17 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    private void writeToResponse(HttpServletResponse response, HttpStatus status, String error, String message) throws IOException {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", status.value());
+        body.put("error", error);
+        body.put("message", message);
+        body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+    }
+
 }
