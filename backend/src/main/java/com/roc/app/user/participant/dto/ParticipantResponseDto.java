@@ -1,6 +1,5 @@
 package com.roc.app.user.participant.dto;
 
-import com.roc.app.user.general.User;
 import com.roc.app.user.participant.Participant;
 
 import java.time.LocalDate;

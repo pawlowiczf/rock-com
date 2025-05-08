@@ -25,11 +25,12 @@ public class RefereeService {
                 .lastName(requestDto.lastName())
                 .email(requestDto.email())
                 .password(passwordEncoder.encode(requestDto.password()))
+                .city(requestDto.city())
                 .phoneNumber(requestDto.phoneNumber())
                 .build();
 
-        refereeRepository.save(referee);
-        return RefereeResponseDto.fromModel(referee);
+        Referee savedReferee =  refereeRepository.save(referee);
+        return RefereeResponseDto.fromModel(savedReferee);
     }
 
     public Referee getRefereeByRefereeId(Long id) {
