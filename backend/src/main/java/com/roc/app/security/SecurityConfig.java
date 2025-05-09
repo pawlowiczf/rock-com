@@ -48,9 +48,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.POST,"/api/participants", "/api/referees", "/api/licences").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/competitions").hasAuthority(UserRole.ORGANIZER.getAuthority())
-                        .anyRequest().authenticated())
+//                        .requestMatchers(HttpMethod.POST,"/api/participants", "/api/referees", "/api/licences").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/competitions").hasAuthority(UserRole.ORGANIZER.getAuthority())
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
