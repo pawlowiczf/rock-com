@@ -21,6 +21,7 @@ public class ParticipantController {
 
     @PostMapping
     public ResponseEntity<ParticipantResponseDto> createParticipant(@Valid @RequestBody ParticipantCreateRequestDto requestDto) {
+        System.out.println("Creating participant with request: " + requestDto);
         ParticipantResponseDto participant = participantService.createParticipant(requestDto);
         return ResponseEntity.ok(participant);
     }

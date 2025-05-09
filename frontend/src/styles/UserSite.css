@@ -1,0 +1,76 @@
+.user-site-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    padding: 1rem;
+}
+
+.user-site-window {
+    width: 100%;
+    max-width: 400px;
+    background-color: #f7eafd;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.user-header {
+    color: #a020f0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.user-avatar {
+    height: 100px;
+    width: 100px;
+    margin: 2rem auto;
+}
+
+.user-field-edit {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.user-button {
+    background-color: #a020f0;
+    color: white;
+    border-radius: 4px;
+    width: 30%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tournament-list {
+    max-height: 100%;
+    overflow-y: auto;
+    margin-top: 16px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-content div {
+    width: 100%;
+    align-items: left;
+}
+
+
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-textSecondary {
+    color: #a020f0;
+}
+
+.MuiDialogActions-root .MuiButton-root.MuiButton-containedPrimary {
+    background-color: #a020f0;
+    color: white;
+}

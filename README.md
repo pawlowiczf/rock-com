@@ -4,6 +4,7 @@
 The platform allows organizers to configure competitions, referees to manage match data, and participants to register and track their progress.
 
 ## Workflow
+- **Quality of code:** npx prettier . --write npx eslint . for frontend
 - **Branch naming convention:** `feature/<JIRA-TICKET-ID>`, `bugfix/<JIRA-TICKET-ID>`, etc.
 - **Pull Request naming convention:** `[<JIRA-TICKET-ID>] - <JIRA task title>`
 - **Merging:** The person who opened the PR is responsible for merging it.
@@ -33,7 +34,13 @@ docker compose up --build -d
 
 ### Frontend
 
-*Coming soon.*
+#### Setup
+npm install
+
+
+#### Running the Backend
+npm run dev
+
 
 ---
 ### Database

@@ -1,16 +1,18 @@
 package com.roc.app.competition;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-@Setter
-@Getter
 @Entity
 @Table(name = CompetitionDate.FieldNames.TABLE_NAME)
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 public class CompetitionDate {
 
     @Id
@@ -27,22 +29,6 @@ public class CompetitionDate {
 
     @Column(name = FieldNames.END_TIME)
     private LocalDateTime endTime;
-
-    public CompetitionDate() {}
-
-    // Getters and Setters
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CompetitionDate that)) return false;
-        return Objects.equals(dateId, that.dateId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(dateId);
-    }
 
     public static final class FieldNames {
         public static final String TABLE_NAME = "competition_dates";

@@ -60,10 +60,10 @@ class UserMatchServiceTest {
 
         // Then
         assertThat(result).hasSize(4);
-        assertThat(result.get(0).getMatchId()).isEqualTo(101);
-        assertThat(result.get(1).getMatchId()).isEqualTo(102);
-        assertThat(result.get(2).getMatchId()).isEqualTo(103);
-        assertThat(result.get(3).getMatchId()).isEqualTo(104);
+        assertThat(result.get(0).matchId()).isEqualTo(101);
+        assertThat(result.get(1).matchId()).isEqualTo(102);
+        assertThat(result.get(2).matchId()).isEqualTo(103);
+        assertThat(result.get(3).matchId()).isEqualTo(104);
     }
 
     @Test

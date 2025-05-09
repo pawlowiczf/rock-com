@@ -1,0 +1,73 @@
+.container {
+  background-color: #f3eaff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 1rem;
+  width: 100%; 
+  overflow-x: auto;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  color: #6b21a8;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.date {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.bracket {
+  width: 100%; /* Gwarantujemy, że bracket nie będzie szerszy niż 100% */
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .date {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.8rem;
+    width: 95%; /* Zmniejszenie szerokości na małych ekranach */
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .date {
+    font-size: 0.8rem;
+  }
+
+  .bracket {
+    padding: 0; /* Zmniejszenie paddingu, aby element mieścił się w ekranie */
+  }
+
+  .bracket svg {
+    max-width: 100%; /* Zmniejszenie szerokości SVG, aby dostosować do ekranu */
+  }
+}
