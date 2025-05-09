@@ -1,4 +1,4 @@
-package com.roc.app.user.match;
+package com.roc.app.match;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,8 +22,9 @@ public class CompetitionParticipant {
     @Column(name = "participant_id")
     private Integer participantId;
 
-    @Column(name = "status_id")
-    private Integer statusId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "participant_status", nullable = false)
+    private ParticipantStatus participantStatus;
 
     @Column(name = "status_change_date")
     private LocalDateTime statusChangeDate;
@@ -36,3 +37,4 @@ public class CompetitionParticipant {
         private Integer participantId;
     }
 }
+

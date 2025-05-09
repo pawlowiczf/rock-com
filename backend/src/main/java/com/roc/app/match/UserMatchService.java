@@ -1,6 +1,6 @@
-package com.roc.app.user.match;
+package com.roc.app.match;
 
-import com.roc.app.user.match.dto.UserMatchDto;
+import com.roc.app.match.dto.UserMatchDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

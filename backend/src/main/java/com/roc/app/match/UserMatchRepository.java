@@ -1,6 +1,6 @@
-package com.roc.app.user.match;
+package com.roc.app.match;
 
-import com.roc.app.user.match.dto.UserMatchDto;
+import com.roc.app.match.dto.UserMatchDto;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserMatchRepository extends Repository<Match, Integer> {
 
     @Query("""
-        SELECT new com.roc.app.user.match.dto.UserMatchDto(
+        SELECT new com.roc.app.match.dto.UserMatchDto(
             m.matchId, m.competition.competitionId, m.matchDate,
             s.statusLabel,
             CONCAT(u.firstName, ' ', u.lastName),

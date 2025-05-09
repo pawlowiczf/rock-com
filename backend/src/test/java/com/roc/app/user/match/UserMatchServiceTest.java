@@ -1,7 +1,8 @@
 package com.roc.app.user.match;
 
-import com.roc.app.user.match.dto.UserMatchDto;
-import com.roc.app.user.match.UserMatchRepository;
+import com.roc.app.match.UserMatchService;
+import com.roc.app.match.dto.UserMatchDto;
+import com.roc.app.match.UserMatchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
