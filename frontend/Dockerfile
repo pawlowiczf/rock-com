@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the application (adjust if your build script is different)
-RUN npm run build --config tsconfig.json
+RUN npm run build -- --mode production --tsc-flags "--noUnusedLocals false --noUnusedParameters
 
 # Stage 2: Serve the application
 FROM node:20-alpine AS production
