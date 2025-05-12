@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Copy package files first to leverage Docker cache
 COPY package*.json ./
+COPY tsconfig.docker.json ./tsconfig.json
 
 # Install dependencies (including devDependencies)
 RUN npm install
