@@ -4,8 +4,8 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files first to leverage Docker cache
-COPY package*.json ./
 COPY tsconfig.docker.json ./tsconfig.json
+COPY package*.json ./
 
 # Install dependencies (including devDependencies)
 RUN npm install
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the application (adjust if your build script is different)
-RUN npm run build
+RUN npm run build --config tsconfig.json
 
 # Stage 2: Serve the application
 FROM node:20-alpine AS production
@@ -23,7 +23,6 @@ WORKDIR /app
 
 # Copy package files again
 COPY package*.json ./
-COPY tsconfig.docker.json ./tsconfig.json
 
 # Install only production dependencies
 RUN npm install --omit=dev
