@@ -21,13 +21,14 @@ FROM node:20-alpine AS production
 WORKDIR /app
 
 # Copy package files again
+COPY package*.json ./
+COPY tsconfig.docker.json ./tsconfig.json
 
 # Install only production dependencies
 RUN npm install --omit=dev
 
 # Copy built assets from builder stage
 COPY --from=builder /app/build ./build
-COPY tsconfig.docker.json ./tsconfig.json
 
 # If you're using a custom server (like Express), copy it too
 # COPY server.js ./
