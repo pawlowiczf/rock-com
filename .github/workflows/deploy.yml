@@ -41,7 +41,7 @@ jobs:
 
       - name: Print environment variables
         run: |
-          echo "SPRING_DATASOURCE_URL=${{ steps.secrets.outputs.SPRING_DATASOURCE_URL }}"
+          echo "SPRING_DATASOURCE_URL=${{ steps.secrets.outputs.rockcom_deployment_SPRING_DATASOURCE_URL }}"
           echo "SPRING_DATASOURCE_USERNAME=${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }}" 
           echo "SPRING_DATASOURCE_PASSWORD=${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }}" 
 
