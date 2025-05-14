@@ -35,7 +35,10 @@ jobs:
         id: secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-          secret-ids: rockcom-deployment
+          secret-ids: |
+            SPRING_DATASOURCE_URL
+            SPRING_DATASOURCE_USERNAME
+            SPRING_DATASOURCE_PASSWORD
           parse-json-secrets: false
           name-transformation: none
           debug: true
