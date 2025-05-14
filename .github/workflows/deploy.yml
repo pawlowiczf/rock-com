@@ -44,7 +44,7 @@ jobs:
           echo "SPRING_DATASOURCE_URL=${{ steps.secrets.outputs.SPRING_DATASOURCE_URL }}"
           echo "SPRING_DATASOURCE_USERNAME=${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }}" 
           echo "SPRING_DATASOURCE_PASSWORD=${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }}" 
-          echo "${{ steps.secrets.outputs.rockcom-deployment }}"
+
 
       - name: Build, tag, and push backend Docker image to Amazon ECR
         env:
