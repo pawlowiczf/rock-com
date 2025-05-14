@@ -38,6 +38,7 @@ jobs:
           secret-ids: rockcom-deployment
           parse-json-secrets: false
           name-transformation: none
+          debug: true
 
       - name: Show secret fields
         run: |
