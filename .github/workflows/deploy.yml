@@ -36,7 +36,6 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: ,rockcom-deployment
-          parse-json-secrets: true
           name-transformation: none
 
       - name: Print environment variables
