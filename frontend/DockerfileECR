@@ -4,20 +4,22 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files first to leverage Docker cache
-COPY tsconfig.docker.json ./tsconfig.json
 COPY package*.json ./
 
 # Install dependencies (including devDependencies)
-RUN npm install
+#RUN npm install
 
 # Copy all source files
 COPY . .
-
+RUN rm -rf node_modules package-lock.json
+RUN rm tsconfig.app.json tsconfig.node.json tsconfig.json
+COPY tsconfig.docker.json tsconfig.json
+RUN npm install
 # Build the application (adjust if your build script is different)
-RUN npm run build -- --mode production --tsc-flags "--noUnusedLocals false --noUnusedParameters false"
+RUN npm run build
 
 # Stage 2: Serve the application
-FROM node:20-alpine AS production
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -28,7 +30,7 @@ COPY package*.json ./
 RUN npm install --omit=dev
 
 # Copy built assets from builder stage
-COPY --from=builder /app/build ./build
+COPY --from=builder /app/dist ./build
 
 # If you're using a custom server (like Express), copy it too
 # COPY server.js ./
