@@ -35,18 +35,15 @@ jobs:
         id: secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-          secret-ids: |
-            rockcom-deployment/SPRING_DATASOURCE_URL
-            rockcom-deployment/SPRING_DATASOURCE_USERNAME
-            rockcom-deployment/SPRING_DATASOURCE_PASSWORD
+          secret-ids: rockcom-deployment
           parse-json-secrets: false
           name-transformation: none
 
-      - name: Show secret fields
+      - name: Print environment variables
         run: |
-          echo "SPRING_DATASOURCE_URL: ${{ steps.secrets.outputs.SPRING_DATASOURCE_URL }}"
-          echo "SPRING_DATASOURCE_USERNAME: ${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }}"
-          echo "SPRING_DATASOURCE_PASSWORD: ${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }}"
+          echo "SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL"
+          echo "SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME"
+          echo "SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD"
 
       - name: Build, tag, and push backend Docker image to Amazon ECR
         env:
