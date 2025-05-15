@@ -46,15 +46,6 @@ jobs:
           ECR_REPOSITORY: rockcom/backend
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          
-          ARG SPRING_DATASOURCE_USERNAME
-          ARG SPRING_DATASOURCE_PASSWORD
-          ARG SPRING_DATASOURCE_URL
-          
-          ENV SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME
-          ENV SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD
-          ENV SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL
-          
           docker build \
           --build-arg SPRING_DATASOURCE_USERNAME=${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }} \
           --build-arg SPRING_DATASOURCE_PASSWORD=${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }} \
