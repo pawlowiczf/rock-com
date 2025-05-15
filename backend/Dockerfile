@@ -25,6 +25,8 @@ COPY --from=builder /app/target/*.jar backend.jar
 EXPOSE 8080
 
 ENV SPRING_PROFILES_ACTIVE=deployment
-
+ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_PASSWORD=password2137
+ENV SPRING_DATATSOURCE_URL=rockcom-db.cfe4yy0664uj.eu-central-1.rds.amazonaws.com/rockcom
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "backend.jar", "--spring.profiles.active=deployment"]
