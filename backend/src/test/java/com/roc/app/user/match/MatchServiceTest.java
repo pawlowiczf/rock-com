@@ -1,8 +1,8 @@
 package com.roc.app.user.match;
 
-import com.roc.app.match.UserMatchService;
-import com.roc.app.match.dto.UserMatchDto;
-import com.roc.app.match.UserMatchRepository;
+import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.ParticipantMatchResponseDto;
+import com.roc.app.match.MatchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,32 +17,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserMatchServiceTest {
+class MatchServiceTest {
 
     @Mock
-    private UserMatchRepository userMatchRepository;
+    private MatchRepository matchRepository;
 
     @InjectMocks
-    private UserMatchService userMatchService;
+    private MatchService matchService;
 
-    private List<UserMatchDto> mockMatches;
+    private List<ParticipantMatchResponseDto> mockMatches;
 
     @BeforeEach
     void setUp() {
         mockMatches = List.of(
-                new UserMatchDto(
+                new ParticipantMatchResponseDto(
                         101, 1, LocalDateTime.of(2025, 5, 1, 15, 30),
                         "completed", "Alice Smith", "21-18", true
                 ),
-                new UserMatchDto(
+                new ParticipantMatchResponseDto(
                         102, 1, LocalDateTime.of(2025, 4, 20, 11, 0),
                         "completed", "Bob Johnson", "21-17", false
                 ),
-                new UserMatchDto(
+                new ParticipantMatchResponseDto(
                         103, 2, LocalDateTime.of(2025, 4, 15, 10, 0),
                         "scheduled", "Charlie Davis", null, false
                 ),
-                new UserMatchDto(
+                new ParticipantMatchResponseDto(
                         104, 2, LocalDateTime.of(2025, 5, 3, 9, 0),
                         "completed", "Alice Smith", "22-20", true
                 )
@@ -50,13 +50,13 @@ class UserMatchServiceTest {
     }
 
     @Test
-    void getUserMatches_returnsMatchesForGivenUserOnly() {
+    void getParticipantMatches_returnsMatchesForGivenParticipantOnly() {
         // Given
         Integer userId = 5;
-        when(userMatchRepository.findUserMatches(userId)).thenReturn(mockMatches);
+        when(matchRepository.findParticipantMatches(userId)).thenReturn(mockMatches);
 
         // When
-        List<UserMatchDto> result = userMatchService.getUserMatches(userId);
+        List<ParticipantMatchResponseDto> result = matchService.getParticipantMatches(userId);
 
         // Then
         assertThat(result).hasSize(4);
@@ -67,13 +67,13 @@ class UserMatchServiceTest {
     }
 
     @Test
-    void getUserMatches_emptyListWhenUserHasNoMatches() {
+    void getParticipantMatches_emptyListWhenParticipantHasNoMatches() {
         // Given
         Integer userId = 99;
-        when(userMatchRepository.findUserMatches(userId)).thenReturn(List.of());
+        when(matchRepository.findParticipantMatches(userId)).thenReturn(List.of());
 
         // When
-        List<UserMatchDto> result = userMatchService.getUserMatches(userId);
+        List<ParticipantMatchResponseDto> result = matchService.getParticipantMatches(userId);
 
         // Then
         assertThat(result).isEmpty();

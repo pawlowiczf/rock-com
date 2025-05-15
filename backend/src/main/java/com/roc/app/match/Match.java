@@ -38,9 +38,8 @@ public class Match {
     @Column(name = FieldNames.MATCH_DATE, nullable = false)
     private LocalDateTime matchDate;
 
-    @ManyToOne
-    @JoinColumn(name = FieldNames.STATUS_ID, nullable = false)
-    private MatchStatus status;
+    @Column(name = FieldNames.STATUS, nullable = false)
+    private String status;
 
     @Column(name = FieldNames.SCORE)
     private String score;
@@ -56,7 +55,7 @@ public class Match {
         public static final String PLAYER2_ID = "player2_id";
         public static final String REFEREE_ID = "referee_id";
         public static final String MATCH_DATE = "match_date";
-        public static final String STATUS_ID = "status_id";
+        public static final String STATUS = "status";
         public static final String SCORE = "score";
         public static final String WINNER_ID = "winner_id";
     }

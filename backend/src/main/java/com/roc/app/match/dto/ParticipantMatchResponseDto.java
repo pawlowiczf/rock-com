@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record UserMatchDto(
+public record ParticipantMatchResponseDto(
 
         @NotNull(message = "Match ID is required")
         Integer matchId,
@@ -19,13 +19,10 @@ public record UserMatchDto(
         @NotBlank(message = "Status is required")
         String status,
 
-        @NotBlank(message = "Opponent name is required")
         String opponentName,
 
-        @NotBlank(message = "Score is required")
         String score,
 
-        @NotNull(message = "Winner status is required")
         Boolean isWinner
 
 ) {}

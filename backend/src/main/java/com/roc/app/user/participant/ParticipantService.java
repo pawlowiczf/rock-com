@@ -1,5 +1,7 @@
 package com.roc.app.user.participant;
 
+import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.ParticipantMatchResponseDto;
 import com.roc.app.user.general.User;
 import com.roc.app.user.general.UserService;
 import com.roc.app.user.general.dto.UserCreateRequestDto;
@@ -9,6 +11,8 @@ import com.roc.app.user.participant.dto.ParticipantResponseDto;
 import com.roc.app.user.participant.exception.ParticipantNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -48,4 +52,5 @@ public class ParticipantService {
 
         return ParticipantResponseDto.fromModel(participant);
     }
+
 }

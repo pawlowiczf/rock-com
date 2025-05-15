@@ -1,7 +1,7 @@
 package com.roc.app.user.general;
 
-import com.roc.app.match.UserMatchService;
-import com.roc.app.match.dto.UserMatchDto;
+import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.ParticipantMatchResponseDto;
 import com.roc.app.user.general.dto.UserCreateRequestDto;
 import com.roc.app.user.general.dto.UserResponseDto;
 import jakarta.validation.Valid;
@@ -15,11 +15,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserMatchService matchService;
 
-    public UserController(UserService userService, UserMatchService matchService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.matchService = matchService;
     }
 
     @PostMapping
@@ -32,8 +30,4 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/{userId}/matches")
-    public List<UserMatchDto> getUserMatches(@PathVariable Integer userId) {
-        return matchService.getUserMatches(userId);
-    }
 }
