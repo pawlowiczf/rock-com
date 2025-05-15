@@ -31,8 +31,7 @@ public interface MatchRepository extends Repository<Match, Integer> {
     ORDER BY m.matchDate DESC
 """)
     List<ParticipantMatchResponseDto> findParticipantMatches(@Param("userId") Integer userId);
-
-
+    
     @Query("""
     SELECT new com.roc.app.match.dto.RefereeMatchResponseDto(
         m.matchId, m.competition.competitionId, m.matchDate, m.status,
