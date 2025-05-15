@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+
+data:
+  mapUsers: |
+    - userarn: arn:aws:iam::329976954374:user/github-ecr-deployer
+      username: github-ecr-deployer
+      groups: 
+        - system:masters

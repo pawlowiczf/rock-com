@@ -24,5 +24,7 @@ COPY --from=builder /app/target/*.jar backend.jar
 # Expose the port your app runs on (change if needed)
 EXPOSE 8080
 
+ENV SPRING_PROFILES_ACTIVE=deployment
+
 # Command to run the application
-ENTRYPOINT ["java", "-jar", "backend.jar", "--spring.profiles.active=local"]
+ENTRYPOINT ["java", "-jar", "backend.jar", "--spring.profiles.active=deployment"]
