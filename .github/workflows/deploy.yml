@@ -40,6 +40,12 @@ jobs:
           parse-json-secrets: true
           name-transformation: none
 
+      - name: Replace deployment properties with secrets
+        run: |
+          echo "spring.datasource.username=${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }}" > ./backend/src/main/resources/application-deployment.properties
+          echo "spring.datasource.password=${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }}" >> ./backend/src/main/resources/application-deployment.properties
+          echo "spring.datasource.url=${{ steps.secrets.outputs.SPRING_DATASOURCE_URL }}" >> ./backend/src/main/resources/application-deployment.properties
+
       - name: Build, tag, and push backend Docker image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -47,9 +53,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
-          --build-arg SPRING_DATASOURCE_USERNAME=${{ steps.secrets.outputs.SPRING_DATASOURCE_USERNAME }} \
-          --build-arg SPRING_DATASOURCE_PASSWORD=${{ steps.secrets.outputs.SPRING_DATASOURCE_PASSWORD }} \
-          --build-arg SPRING_DATASOURCE_URL=${{ steps.secrets.outputs.SPRING_DATASOURCE_URL }} \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
           -f ./backend/Dockerfile ./backend
         
