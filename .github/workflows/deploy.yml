@@ -64,11 +64,9 @@ jobs:
       - name: Update kube config
         run: kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
 
-      - name: Restart Deployment
-        run: kubectl rollout restart deployment/rockcom-backend
-
       - name: Deploy image to Amazon EKS
         run: |
+          kubectl delete deployment rockcom-backend
           kubectl apply -f eks/aws-auth.yaml --force
           kubectl apply -f eks/backend-deployment.yaml --force
 #          kubectl apply -f eks/backend-service.yaml
@@ -116,11 +114,9 @@ jobs:
       - name: Update kube config
         run: kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
 
-      - name: Restart Deployment
-        run: kubectl rollout restart deployment/rockcom-frontend
-
       - name: Deploy image to Amazon EKS
         run: |
+          kubectl delete deployment rockcom-frontend
           kubectl apply -f eks/aws-auth.yaml --force
           kubectl apply -f eks/frontend-deployment.yaml --force
 #          kubectl apply -f eks/frontend-service.yaml --force
