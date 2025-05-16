@@ -66,7 +66,7 @@ jobs:
 
       - name: Deploy image to Amazon EKS
         run: |
-          kubectl delete deployment rockcom-backend
+          kubectl delete deployment rockcom-backend --ignore-not-found
           kubectl apply -f eks/aws-auth.yaml --force
           kubectl apply -f eks/backend-deployment.yaml --force
 #          kubectl apply -f eks/backend-service.yaml
@@ -116,7 +116,7 @@ jobs:
 
       - name: Deploy image to Amazon EKS
         run: |
-          kubectl delete deployment rockcom-frontend
+          kubectl delete deployment rockcom-frontend --ignore-not-found
           kubectl apply -f eks/aws-auth.yaml --force
           kubectl apply -f eks/frontend-deployment.yaml --force
 #          kubectl apply -f eks/frontend-service.yaml --force
