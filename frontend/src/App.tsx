@@ -20,6 +20,7 @@ import JudgeScore from "./pages/JudgeScore";
 
 
 function App() {
+
     return (
         <>
             <LoadScript googleMapsApiKey="AIzaSyARWy34KH0FwqnZeF4scwrJeXMoRHm7i9A" libraries={["places"]}>
