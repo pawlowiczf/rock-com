@@ -1,10 +1,10 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2025-04-24 15:09:02.946
+-- Last modification date: 2025-05-09 17:15:25.613
 
 -- tables
 -- Table: brackets
 CREATE TABLE brackets (
-    bracket_id int  NOT NULL,
+    bracket_id serial  NOT NULL,
     match_id int  NOT NULL,
     next_match_id int  NOT NULL,
     CONSTRAINT brackets_pk PRIMARY KEY (bracket_id)
@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id serial  NOT NULL,
+    date_id int  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE competition_dates (
 CREATE TABLE competition_participants (
     competition_id int  NOT NULL,
     participant_id int  NOT NULL,
-    status_id int  NOT NULL,
+    status varchar(20)  NOT NULL,
     status_change_date timestamp  NOT NULL,
     CONSTRAINT competition_participants_pk PRIMARY KEY (competition_id,participant_id)
 );
@@ -35,11 +35,10 @@ CREATE TABLE competition_referees (
     CONSTRAINT competition_referees_pk PRIMARY KEY (competition_id,referee_id)
 );
 
-
-
 -- Table: competitions
 CREATE TABLE competitions (
     competition_id serial  NOT NULL,
+    competition_name varchar(255)  NOT NULL,
     type varchar(50)  NOT NULL,
     match_duration_minutes int  NOT NULL,
     available_courts int  NOT NULL,
@@ -51,19 +50,6 @@ CREATE TABLE competitions (
     CONSTRAINT competitions_pk PRIMARY KEY (competition_id)
 );
 
--- Table: match_statuses
-CREATE TABLE match_statuses (
-    status_id serial  NOT NULL,
-    status_label varchar(20)  NOT NULL,
-    CONSTRAINT match_statuses_pk PRIMARY KEY (status_id)
-);
-
-INSERT INTO match_statuses (status_label) VALUES
-('scheduled'),
-('completed'),
-('delayed'),
-('cancelled');
-
 -- Table: matches
 CREATE TABLE matches (
     match_id serial  NOT NULL,
@@ -72,9 +58,9 @@ CREATE TABLE matches (
     player2_id int  NULL,
     referee_id int  NOT NULL,
     match_date timestamp  NOT NULL,
-    status_id int  NOT NULL,
     score varchar(10)  NULL,
     winner_id int  NULL,
+    status varchar(20)  NOT NULL,
     CONSTRAINT matches_pk PRIMARY KEY (match_id)
 );
 
@@ -85,18 +71,6 @@ CREATE TABLE organizers (
     CONSTRAINT organizers_pk PRIMARY KEY (user_id)
 );
 
--- Table: participant_statuses
-CREATE TABLE participant_statuses (
-    status_id serial  NOT NULL,
-    status_label varchar(20)  NOT NULL,
-    CONSTRAINT participant_statuses_pk PRIMARY KEY (status_id)
-);
-
-INSERT INTO participant_statuses (status_label) VALUES
-('confirmed'),
-('withdrawn'),
-('waiting_list');
-
 -- Table: participants
 CREATE TABLE participants (
     user_id int  NOT NULL,
@@ -106,10 +80,10 @@ CREATE TABLE participants (
 
 -- Table: referee_licences
 CREATE TABLE referee_licences (
-    referee_licence_id serial NOT NULL,
+    referee_licence_id serial  NOT NULL,
     licence_type varchar(50)  NOT NULL,
     referee_id int  NOT NULL,
-    license varchar(50)  NOT NULL UNIQUE,
+    license varchar(50)  NOT NULL,
     CONSTRAINT referee_licences_pk PRIMARY KEY (referee_licence_id)
 );
 
@@ -125,6 +99,7 @@ CREATE TABLE users (
     firstname varchar(50)  NOT NULL,
     lastname varchar(50)  NOT NULL,
     email varchar(50)  NOT NULL,
+    password varchar(60)  NOT NULL,
     city varchar(50)  NOT NULL,
     phone_number varchar(12)  NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (user_id)
@@ -167,14 +142,6 @@ ALTER TABLE competition_dates ADD CONSTRAINT competition_dates_competitions
 ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_competitions
     FOREIGN KEY (competition_id)
     REFERENCES competitions (competition_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: competition_participants_participant_statuses (table: competition_participants)
-ALTER TABLE competition_participants ADD CONSTRAINT competition_participants_participant_statuses
-    FOREIGN KEY (status_id)
-    REFERENCES participant_statuses (status_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -223,14 +190,6 @@ ALTER TABLE matches ADD CONSTRAINT matches_competition_referees
 ALTER TABLE matches ADD CONSTRAINT matches_competitions
     FOREIGN KEY (competition_id)
     REFERENCES competitions (competition_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: matches_match_statuses (table: matches)
-ALTER TABLE matches ADD CONSTRAINT matches_match_statuses
-    FOREIGN KEY (status_id)
-    REFERENCES match_statuses (status_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
