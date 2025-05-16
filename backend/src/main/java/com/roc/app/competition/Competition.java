@@ -30,7 +30,6 @@ public class Competition {
     @Column(name = FieldNames.TYPE, nullable = false)
     private CompetitionType type;
 
-
     @Column(name = FieldNames.MATCH_DURATION, nullable = false)
     private Integer matchDurationMinutes;
 
@@ -58,7 +57,8 @@ public class Competition {
     public static final class FieldNames {
         public static final String TABLE_NAME = "competitions";
         public static final String ID = "competition_id";
-        public static final String TYPE_ID = "type_id";
+        public static final String NAME = "competition_name";
+        public static final String TYPE = "type";
         public static final String MATCH_DURATION = "match_duration_minutes";
         public static final String COURTS = "available_courts";
         public static final String PARTICIPANTS_LIMIT = "participants_limit";
@@ -68,7 +68,7 @@ public class Competition {
         public static final String REGISTRATION_OPEN = "registration_open";
     }
 
-    // Needed for matchService
+    // Used in test for matchService
     public Competition(Integer competitionId) {
         this.competitionId = competitionId;
     }
