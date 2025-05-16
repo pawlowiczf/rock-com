@@ -72,7 +72,7 @@ jobs:
 
       - name: Test kubectl
         run: |
-          kubectl apply -f eks/aws-auth.yaml
+#          kubectl apply -f eks/aws-auth.yaml
           kubectl get nodes
 
       - name: Wait for kubeconfig to be ready
