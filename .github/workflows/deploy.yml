@@ -58,12 +58,6 @@ jobs:
 #
 #          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
-      - name: Debug kubeconfig
-        run: |
-          echo "Kubeconfig:"
-          cat /home/runner/.kube/config
-          echo "---"
-          aws eks get-token --region eu-central-1 --cluster-name rockcom
 
       - name: Update kube config
         run: |
@@ -72,6 +66,13 @@ jobs:
 
       - name: Check kubectl context
         run: kubectl config current-context
+
+      - name: Debug kubeconfig
+        run: |
+          echo "Kubeconfig:"
+          cat /home/runner/.kube/config
+          echo "---"
+          aws eks get-token --region eu-central-1 --cluster-name rockcom
 
       - name: Deploy image to Amazon EKS
         run: |
