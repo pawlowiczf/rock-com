@@ -71,8 +71,9 @@ jobs:
         run: kubectl config current-context
 
       - name: Test kubectl
-        run: export KUBECONFIG=/home/runner/.kube/config
-#          kubectl apply -f eks/aws-auth.yaml
+        run: | 
+          export KUBECONFIG=/home/runner/.kube/config
+          kubectl apply -f eks/aws-auth.yaml
 
       - name: Show kubeconfig
         run: cat /home/runner/.kube/config
