@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Build the application (adjust if your build script is different)
-RUN npm run build
+RUN npm run build -- --mode=production
 
 # Stage 2: Serve the application
 FROM node:18-alpine AS production
