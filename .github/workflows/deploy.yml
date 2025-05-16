@@ -31,7 +31,7 @@ jobs:
         with:
           version: 'v1.30.13' # default is latest stable
         id: install
-      -
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
