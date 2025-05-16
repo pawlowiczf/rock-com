@@ -1,5 +1,6 @@
 package com.roc.app.user.general;
 
+import static com.roc.app.user.UserTestConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,8 +20,6 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    private static final Long USER_ID = 1L;
-    private static final String EMAIL = "john.doe@example.com";
 
     @Mock
     private UserRepository userRepository;
@@ -34,11 +33,11 @@ class UserServiceTest {
     void setUp() {
         savedUser = Participant.builder()
                 .userId(USER_ID)
-                .firstName("John")
-                .lastName("Doe")
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
                 .email(EMAIL)
-                .password("1234567890")
-                .city("New York")
+                .password(PASSWORD)
+                .city(CITY)
                 .build();
     }
 

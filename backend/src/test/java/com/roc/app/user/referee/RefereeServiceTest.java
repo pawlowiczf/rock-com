@@ -1,8 +1,5 @@
 package com.roc.app.user.referee;
 
-import com.roc.app.user.participant.ParticipantService;
-import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
-import com.roc.app.user.participant.dto.ParticipantResponseDto;
 import com.roc.app.user.referee.general.Referee;
 import com.roc.app.user.referee.general.RefereeRepository;
 import com.roc.app.user.referee.general.RefereeService;
@@ -67,20 +64,20 @@ public class RefereeServiceTest {
     }
 
     @Test
-    void createParticipantWorksAsExpected() {
+    void createRefereeWorksAsExpected() {
         // given
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
         when(refereeRepository.save(any())).thenReturn(savedReferee);
 
         // when
-        RefereeResponseDto participant = refereeService.createReferee(validRequestDto);
+        RefereeResponseDto referee = refereeService.createReferee(validRequestDto);
 
         // then
-        assertThat(participant).isEqualTo(expectedRefereeResponseDto);
+        assertThat(referee).isEqualTo(expectedRefereeResponseDto);
     }
 
     @Test
-    void createParticipantUser_VerifiesTransactionalAnnotation() {
+    void createRefereeUser_VerifiesTransactionalAnnotation() {
         try {
             assertTrue(RefereeService.class
                     .getMethod("createReferee", RefereeCreateRequestDto.class)
