@@ -20,6 +20,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.32.3' # default is latest stable
+        id: install
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -27,18 +32,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
           aws-region: eu-central-1
 
-      - uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.32.3' # default is latest stable
-        id: install
-
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Check identity
-        run: aws sts get-caller-identity
-
 
 #      - name: Get secrets from AWS Secrets Manager
 #        id: secrets
@@ -70,19 +66,9 @@ jobs:
       - name: Check kubectl context
         run: kubectl config current-context
 
-      - name: Test kubectl
-        run: | 
-          export KUBECONFIG=/home/runner/.kube/config
-          kubectl apply -f eks/aws-auth.yaml --validate=false 
-
-      - name: Show kubeconfig
-        run: cat /home/runner/.kube/config
-
-      - name: Wait for kubeconfig to be ready
-        run: sleep 5
-
       - name: Deploy image to Amazon EKS
         run: |
+          kubectl apply -f eks/aws-auth.yaml 
           kubectl apply -f eks/backend-deployment.yaml
           kubectl apply -f eks/backend-service.yaml
 
@@ -97,12 +83,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'v1.32.3' # default is latest stable
-        id: install
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -123,18 +103,6 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
           docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
-
-      - name: Update kube config
-        run: aws eks update-kubeconfig --name rockcom --region eu-central-1
-
-      - name: Wait for kubeconfig to be ready
-        run: sleep 5
-
-      - name: Deploy image to Amazon EKS
-        run: |
-          kubectl apply -f eks/aws-auth.yaml
-          kubectl apply -f eks/frontend-deployment.yaml
-          kubectl apply -f eks/frontend-service.yaml 
 
 #
 #  build_db:
