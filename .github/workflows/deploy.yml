@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - uses: azure/setup-kubectl@v4
+      - uses: azure/setup-kubectl@v3
         with:
           version: 'v1.32.3' # default is latest stable
         id: install
@@ -45,18 +45,25 @@ jobs:
 #          parse-json-secrets: true
 #          name-transformation: none
 
-      - name: Build, tag, and push backend Docker image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: rockcom/backend
-          IMAGE_TAG: ${{ github.sha }}
+#      - name: Build, tag, and push backend Docker image to Amazon ECR
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: rockcom/backend
+#          IMAGE_TAG: ${{ github.sha }}
+#        run: |
+#          docker build \
+#          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+#          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+#          -f ./backend/Dockerfile ./backend
+#
+#          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: Debug kubeconfig
         run: |
-          docker build \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-          -f ./backend/Dockerfile ./backend
-        
-          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+          echo "Kubeconfig:"
+          cat /home/runner/.kube/config
+          echo "---"
+          aws eks get-token --region eu-central-1 --cluster-name rockcom
 
       - name: Update kube config
         run: |
