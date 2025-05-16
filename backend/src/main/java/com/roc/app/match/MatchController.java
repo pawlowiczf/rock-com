@@ -21,7 +21,7 @@ public class MatchController {
     public MatchController(MatchService matchService) {
         this.matchService = matchService;
     }
-//
+
 //    @PostMapping
 //    public ResponseEntity<?> createMatch(@Valid @RequestBody MatchCreateRequestDto requestDto) {
 //        Integer createdMatchId = matchService.createMatch(requestDto);
@@ -40,13 +40,5 @@ public class MatchController {
 //        matchService.deleteMatch(matchId);
 //        return ResponseEntity.ok().body("Match deleted successfully.");
 //    }
-
-
-    // I am adding it here for testing purposes since we don't have a separate Referee package yet
-    @GetMapping("/referee/{refereeId}")
-    public ResponseEntity<List<RefereeMatchResponseDto>> getRefereeMatches(@PathVariable Integer refereeId) {
-        return ResponseEntity.ok(matchService.getRefereeMatches(refereeId));
-    }
-
 
 }
