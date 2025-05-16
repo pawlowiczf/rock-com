@@ -58,12 +58,13 @@ jobs:
           docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --name rockcom --region eu-central-1
+        run: |
+          aws eks update-kubeconfig --name rockcom --region eu-central-1
+          kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
 
       - name: Test kubectl
         run: |
           kubectl apply -f eks/aws-auth.yaml
-          kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
           kubectl get nodes
 
       - name: Wait for kubeconfig to be ready
