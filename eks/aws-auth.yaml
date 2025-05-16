@@ -10,3 +10,8 @@ data:
       username: github-ecr-deployer
       groups: 
         - system:masters
+    
+    - userarn: arn:aws:iam::329976954374:user/root-user
+      username: root-user
+      groups:
+        - system:masters 
