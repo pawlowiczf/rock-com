@@ -1,4 +1,4 @@
-package com.roc.app.match;
+package com.roc.app.user.participant;
 
 public enum ParticipantStatus {
     CONFIRMED,

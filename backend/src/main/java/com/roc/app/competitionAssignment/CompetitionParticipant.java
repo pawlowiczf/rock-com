@@ -1,6 +1,6 @@
 package com.roc.app.competitionAssignment;
 
-import com.roc.app.match.ParticipantStatus;
+import com.roc.app.user.participant.ParticipantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

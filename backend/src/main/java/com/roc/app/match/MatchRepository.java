@@ -2,13 +2,13 @@ package com.roc.app.match;
 
 import com.roc.app.match.dto.ParticipantMatchResponseDto;
 import com.roc.app.match.dto.RefereeMatchResponseDto;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MatchRepository extends Repository<Match, Integer> {
+public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     @Query("""
     SELECT new com.roc.app.match.dto.ParticipantMatchResponseDto(
