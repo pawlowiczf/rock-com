@@ -71,9 +71,11 @@ jobs:
         run: kubectl config current-context
 
       - name: Test kubectl
-        run: kubectl get nodes
+        run: export KUBECONFIG=/home/runner/.kube/config
 #          kubectl apply -f eks/aws-auth.yaml
 
+      - name: Show kubeconfig
+        run: cat /home/runner/.kube/config
 
       - name: Wait for kubeconfig to be ready
         run: sleep 5
