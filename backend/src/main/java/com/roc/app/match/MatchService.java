@@ -1,6 +1,8 @@
 package com.roc.app.match;
 
 import com.roc.app.competition.Competition;
+import com.roc.app.competition.CompetitionRepository;
+import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.match.dto.*;
 import com.roc.app.match.exception.MatchNotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,11 @@ import java.util.List;
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final CompetitionRepository competitionRepository;
 
-    public MatchService(MatchRepository matchRepository) {
+    public MatchService(MatchRepository matchRepository, CompetitionRepository competitionRepository) {
         this.matchRepository = matchRepository;
+        this.competitionRepository = competitionRepository;
     }
 
     public List<ParticipantMatchResponseDto> getParticipantMatches(Integer participantId) {
@@ -25,17 +29,13 @@ public class MatchService {
     }
 
     public Integer createMatch(MatchCreateRequestDto dto) {
-        Match match = Match.builder()
-                .competition(new Competition(dto.competitionId()))
-                .player1Id(dto.player1Id())
-                .player2Id(dto.player2Id())
-                .refereeId(dto.refereeId())
-                .matchDate(dto.matchDate())
-                .status(dto.status())
-                .build();
+        Competition competition = competitionRepository.findById(dto.competitionId())
+                .orElseThrow(() -> new CompetitionNotFoundException(dto.competitionId()));
 
+        Match match = dto.toModel(competition);
         return matchRepository.save(match).getMatchId();
     }
+
 
 
     public void updateMatch(Integer matchId, MatchUpdateRequestDto dto) {

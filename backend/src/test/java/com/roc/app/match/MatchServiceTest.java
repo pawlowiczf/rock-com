@@ -1,6 +1,7 @@
 package com.roc.app.match;
 
 import com.roc.app.competition.Competition;
+import com.roc.app.competition.CompetitionRepository;
 import com.roc.app.match.dto.MatchCreateRequestDto;
 import com.roc.app.match.dto.MatchUpdateRequestDto;
 import com.roc.app.match.exception.MatchNotFoundException;
@@ -26,6 +27,9 @@ class MatchServiceTest {
     @Mock
     private MatchRepository matchRepository;
 
+    @Mock
+    private CompetitionRepository competitionRepository;
+
     @InjectMocks
     private MatchService matchService;
 
@@ -40,7 +44,7 @@ class MatchServiceTest {
                 20, // player2Id
                 30, // refereeId
                 LocalDateTime.of(2025, 5, 16, 14, 0),
-                "scheduled",
+                MatchStatus.SCHEDULED,
                 null,
                 null
         );
@@ -50,7 +54,7 @@ class MatchServiceTest {
                 21, // player2Id
                 31, // refereeId
                 LocalDateTime.of(2025, 5, 17, 15, 0),
-                "completed",
+                MatchStatus.COMPLETED,
                 "21-15",
                 11 // winnerId
         );
@@ -58,9 +62,15 @@ class MatchServiceTest {
 
     @Test
     void createMatch_savesAndReturnsId() {
+        Competition mockCompetition = new Competition();
+        mockCompetition.setCompetitionId(createDto.competitionId());
+
+        when(competitionRepository.findById(createDto.competitionId()))
+                .thenReturn(Optional.of(mockCompetition));
+
         Match savedMatch = Match.builder()
                 .matchId(100)
-                .competition(new Competition(createDto.competitionId()))
+                .competition(mockCompetition)
                 .player1Id(createDto.player1Id())
                 .player2Id(createDto.player2Id())
                 .refereeId(createDto.refereeId())
@@ -88,6 +98,7 @@ class MatchServiceTest {
         assertThat(captured.getStatus()).isEqualTo(createDto.status());
     }
 
+
     @Test
     void updateMatch_updatesExistingMatch() {
         Match existingMatch = Match.builder()
@@ -97,7 +108,7 @@ class MatchServiceTest {
                 .player2Id(20)
                 .refereeId(30)
                 .matchDate(LocalDateTime.of(2025, 5, 15, 14, 0))
-                .status("scheduled")
+                .status(MatchStatus.COMPLETED)
                 .score(null)
                 .winnerId(null)
                 .build();

@@ -38,8 +38,9 @@ public class Match {
     @Column(name = FieldNames.MATCH_DATE, nullable = false)
     private LocalDateTime matchDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.STATUS, nullable = false)
-    private String status;
+    private MatchStatus status;
 
     @Column(name = FieldNames.SCORE)
     private String score;

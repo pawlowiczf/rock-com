@@ -1,5 +1,6 @@
 package com.roc.app.match.dto;
 
+import com.roc.app.match.MatchStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,12 +18,13 @@ public record ParticipantMatchResponseDto(
         LocalDateTime matchDate,
 
         @NotBlank(message = "Status is required")
-        String status,
+        MatchStatus status,
 
         String opponentName,
 
         String score,
 
-        Boolean isWinner
+        Boolean isWinner,
 
+        String refereeName
 ) {}
