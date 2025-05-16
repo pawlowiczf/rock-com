@@ -66,9 +66,9 @@ jobs:
 
       - name: Deploy image to Amazon EKS
         run: |
-          kubectl apply -f eks/aws-auth.yaml 
-          kubectl apply -f eks/backend-deployment.yaml
-          kubectl apply -f eks/backend-service.yaml
+          kubectl apply -f eks/aws-auth.yaml --force
+          kubectl apply -f eks/backend-deployment.yaml --force
+#          kubectl apply -f eks/backend-service.yaml
 
   build_frontend:
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
 
       - name: Deploy image to Amazon EKS
         run: |
-          kubectl apply -f eks/aws-auth.yaml 
-          kubectl apply -f eks/frontend-deployment.yaml
-          kubectl apply -f eks/frontend-service.yaml
+          kubectl apply -f eks/aws-auth.yaml --force
+          kubectl apply -f eks/frontend-deployment.yaml --force
+#          kubectl apply -f eks/frontend-service.yaml --force
           
