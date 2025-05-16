@@ -31,14 +31,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Get secrets from AWS Secrets Manager
-        id: secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            ,rockcom-deployment
-          parse-json-secrets: true
-          name-transformation: none
+      - name: Check identity
+        run: aws sts get-caller-identity
+
+
+#      - name: Get secrets from AWS Secrets Manager
+#        id: secrets
+#        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+#        with:
+#          secret-ids: |
+#            ,rockcom-deployment
+#          parse-json-secrets: true
+#          name-transformation: none
 
       - name: Build, tag, and push backend Docker image to Amazon ECR
         env:
@@ -55,6 +59,9 @@ jobs:
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name rockcom --region eu-central-1
+
+      - name: Test kubectl
+        run: kubectl get nodes
 
       - name: Wait for kubeconfig to be ready
         run: sleep 5
