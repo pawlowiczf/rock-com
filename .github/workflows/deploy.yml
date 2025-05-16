@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
           version: 'v1.32.3' # default is latest stable
         id: install
@@ -68,6 +68,7 @@ jobs:
         run: |
           aws eks update-kubeconfig --name rockcom --region eu-central-1
           kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
+          kubectl version
 
       - name: Check kubectl context
         run: kubectl config current-context
