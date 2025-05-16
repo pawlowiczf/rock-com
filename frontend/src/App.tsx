@@ -17,10 +17,12 @@ import UserTournaments from "./pages/UserTournaments";
 import OrganizerTournaments from "./pages/OrganizerTournaments";
 import UpcomingMatches from "./pages/UpcomingMatches";
 import JudgeScore from "./pages/JudgeScore";
-
+import {HTTP_ADDRESS} from "./config.ts"
 
 function App() {
-
+    console.log(HTTP_ADDRESS)
+    console.log(HTTP_ADDRESS)
+    console.log(HTTP_ADDRESS)
     return (
         <>
             <LoadScript googleMapsApiKey="AIzaSyARWy34KH0FwqnZeF4scwrJeXMoRHm7i9A" libraries={["places"]}>
