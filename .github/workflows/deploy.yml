@@ -28,8 +28,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ECR }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ECR3 }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR3 }}
           aws-region: eu-central-1
 
       - name: Login to Amazon ECR
@@ -60,9 +60,7 @@ jobs:
 
       - name: Setup kubeconfig
         run: aws eks update-kubeconfig --region eu-central-1 --name rockcom
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_ECR }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
+
 
       - name: Update kube config
         run: |
