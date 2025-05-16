@@ -4,7 +4,7 @@ metadata:
   name: rockcom-frontend-service
 spec:
   selector:
-    app: rockcom
+    app: rockcom-frontend 
   ports:
     - protocol: TCP
       port: 80

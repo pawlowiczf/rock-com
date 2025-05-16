@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rockcom-frontend
+  labels:
+    app: rockcom-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rockcom-frontend
+  template:
+    metadata:
+      labels:
+        app: rockcom-frontend
+    spec:
+      containers:
+        - name: rockcom-frontend
+          image: 329976954374.dkr.ecr.eu-central-1.amazonaws.com/rockcom/frontend:1a0820742cc2533e2c97c3f9095dd06ecf87c1b4
+          ports:
+            - containerPort: 3000
