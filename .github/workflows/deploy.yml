@@ -56,6 +56,9 @@ jobs:
       - name: Update kube config
         run: aws eks update-kubeconfig --name rockcom --region eu-central-1
 
+      - name: Wait for kubeconfig to be ready
+        run: sleep 5
+
       - name: Deploy image to Amazon EKS
         run: |
           kubectl apply -f eks/aws-auth.yaml
@@ -102,6 +105,9 @@ jobs:
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name rockcom --region eu-central-1
+
+      - name: Wait for kubeconfig to be ready
+        run: sleep 5
 
       - name: Deploy image to Amazon EKS
         run: |
