@@ -58,6 +58,11 @@ jobs:
 #
 #          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
+      - name: Install AWS CLI v2
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
 
       - name: Update kube config
         run: |
@@ -103,14 +108,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push frontend Docker image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: rockcom/frontend
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
-          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+#      - name: Build, tag, and push frontend Docker image to Amazon ECR
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: rockcom/frontend
+#          IMAGE_TAG: ${{ github.sha }}
+#        run: |
+#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
+#          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
 #
 #  build_db:
