@@ -98,7 +98,7 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.21.3' # default is latest stable
+          version: 'v1.32.3' # default is latest stable
         id: install
 
       - name: Configure AWS credentials
