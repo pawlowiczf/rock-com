@@ -63,6 +63,7 @@ jobs:
       - name: Test kubectl
         run: |
           kubectl apply -f eks/aws-auth.yaml
+          kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
           kubectl get nodes
 
       - name: Wait for kubeconfig to be ready
