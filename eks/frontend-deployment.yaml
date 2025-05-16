@@ -20,6 +20,3 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
-          env:
-            - name: DEPLOY_TIMESTAMP
-              value: "${{ steps.date.outputs.timestamp }}"
