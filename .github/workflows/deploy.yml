@@ -27,7 +27,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
           aws-region: eu-central-1
 
-      - uses: azure/setup-kubectl@v4
+      - uses: azure/setup-kubectl@v1
         with:
           version: 'v1.32.3' # default is latest stable
         id: install
