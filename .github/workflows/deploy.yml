@@ -66,9 +66,9 @@ jobs:
 
       - name: Update kube config
         run: |
-#          aws eks update-kubeconfig --name rockcom --region eu-central-1
           kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
           kubectl version
+          
 
       - name: Check kubectl context
         run: kubectl config current-context
