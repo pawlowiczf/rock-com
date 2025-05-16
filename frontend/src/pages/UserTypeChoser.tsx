@@ -3,6 +3,7 @@ import "../styles/UserTypeChoser.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { HTTP_ADDRESS } from '../config.ts';
 
 type UserType = "Participant" | "Judge" | "Organizer" | "";
 
@@ -68,7 +69,7 @@ const UserTypeChoser: React.FC = () => {
                 };
                 console.log("Participant data:", participantData);
                 const response = await fetch(
-                    "http://localhost:8080/api/participant",
+                    `${HTTP_ADDRESS}/api/participant`,
                     {
                         method: "POST",
                         headers: {
