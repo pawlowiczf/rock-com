@@ -27,6 +27,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
           aws-region: eu-central-1
 
+      - uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.13' # default is latest stable
+        id: install
+      -
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -90,7 +95,7 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
-            version: 'default' # default is latest stable
+          version: 'v1.30.13' # default is latest stable
         id: install
 
       - name: Configure AWS credentials
