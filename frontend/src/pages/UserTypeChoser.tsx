@@ -2,7 +2,7 @@ import "../styles/Auth.css";
 import "../styles/UserTypeChoser.css";
 import { useState } from "react";
 import { useEffect } from "react";
-    import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type UserType = "Participant" | "Judge" | "Organizer" | "";
 
