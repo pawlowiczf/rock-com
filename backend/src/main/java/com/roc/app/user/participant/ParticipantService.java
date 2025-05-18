@@ -48,4 +48,5 @@ public class ParticipantService {
 
         return ParticipantResponseDto.fromModel(participant);
     }
+
 }

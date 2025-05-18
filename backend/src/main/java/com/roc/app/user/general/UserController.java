@@ -1,10 +1,14 @@
 package com.roc.app.user.general;
 
+import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.ParticipantMatchResponseDto;
 import com.roc.app.user.general.dto.UserCreateRequestDto;
 import com.roc.app.user.general.dto.UserResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController()
 @RequestMapping("/api/user")
@@ -25,4 +29,5 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
 }
