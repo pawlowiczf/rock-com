@@ -140,6 +140,7 @@ const CreateTournament: React.FC = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
+                credentials: "include",
             });
     
             if (!response.ok) {
@@ -165,6 +166,7 @@ const CreateTournament: React.FC = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify([competitionDate]),
+                credentials: "include",
             });
     
             if (!dateResponse.ok) {
