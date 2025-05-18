@@ -44,4 +44,5 @@ public class ParticipantService {
         Participant savedParticipant = participantRepository.save(participant);
         return ParticipantResponseDto.fromModel(savedParticipant);
     }
+
 }
