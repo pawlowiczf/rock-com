@@ -28,3 +28,8 @@ spec:
             name: nginx-config
 
 # kubectl apply -f nginx-deployment.yaml
+
+# aws ecr get-login-password --region eu-central-1 | kubectl create secret docker-registry aws-ecr-secret \
+#  --docker-server=329976954374.dkr.ecr.eu-central-1.amazonaws.com \
+#  --docker-username=AWS \
+#  --docker-password-stdin
