@@ -3,7 +3,7 @@ name: Build and deploy Docker images to AWS ECR
 on:
   push:
     branches:
-      - Feature/AWS-nginx2
+      - Feature/AWS-nginx
 
 jobs:
   build_backend:
@@ -24,6 +24,14 @@ jobs:
         with:
           version: 'v1.32.3' # default is latest stable
         id: install
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: kubernetes-rockcom
+          export_default_credentials: true
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -58,18 +66,15 @@ jobs:
 
           docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
-      - name: Setup kubeconfig
-        run: aws eks update-kubeconfig --region eu-central-1 --name rockcom
-
-      - name: Update kube config
-        run: kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom --region europe-central2
 
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-backend --ignore-not-found
-          kubectl apply -f eks/aws-auth.yaml --force
+          kubectl delete service rockcom-backend-service --ignore-not-found 
           kubectl apply -f eks/backend-deployment.yaml --force
-#          kubectl apply -f eks/backend-service.yaml
+          kubectl apply -f eks/backend-service.yaml --force
 
   build_frontend:
     runs-on: ubuntu-latest
@@ -82,6 +87,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: kubernetes-rockcom
+          export_default_credentials: true
 
       - uses: azure/setup-kubectl@v4
         with:
@@ -111,13 +124,13 @@ jobs:
       - name: Setup kubeconfig
         run: aws eks update-kubeconfig --region eu-central-1 --name rockcom
 
-      - name: Update kube config
-        run: kubectl config use-context arn:aws:eks:eu-central-1:329976954374:cluster/rockcom
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom --region europe-central2
 
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-frontend --ignore-not-found
-          kubectl apply -f eks/aws-auth.yaml --force
+          kubectl delete service rockcom-frontend-service--ignore-not-found 
           kubectl apply -f eks/frontend-deployment.yaml --force
-#          kubectl apply -f eks/frontend-service.yaml --force
+          kubectl apply -f eks/frontend-service.yaml --force
           
