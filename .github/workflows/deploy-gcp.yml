@@ -136,9 +136,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
           docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
-      - name: Setup kubeconfig
-        run: aws eks update-kubeconfig --region eu-central-1 --name rockcom
-
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-frontend --ignore-not-found
