@@ -39,6 +39,9 @@ jobs:
       - name: Install gcloud auth
         run: gcloud components install gke-gcloud-auth-plugin
 
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom --region europe-central2
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -59,28 +62,25 @@ jobs:
           parse-json-secrets: true
           name-transformation: none
 
-#      - name: Build, tag, and push backend Docker image to Amazon ECR
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: rockcom/backend
-#          IMAGE_TAG: ${{ github.sha }}
-#        run: |
-#          docker build \
-#          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-#          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-#          -f ./backend/Dockerfile ./backend
-#
-#          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+      - name: Build, tag, and push backend Docker image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: rockcom/backend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+          -f ./backend/Dockerfile ./backend
 
-      - name: Configure kubectl
-        run: gcloud container clusters get-credentials rockcom --region europe-central2
+          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-backend --ignore-not-found
-          kubectl delete service rockcom-backend-service --ignore-not-found 
+#          kubectl delete service rockcom-backend-service --ignore-not-found
           kubectl apply -f eks/backend-deployment.yaml --force
-          kubectl apply -f eks/backend-service.yaml --force
+#          kubectl apply -f eks/backend-service.yaml --force
 
   build_frontend:
     runs-on: ubuntu-latest
@@ -108,6 +108,9 @@ jobs:
       - name: Install gcloud auth
         run: gcloud components install gke-gcloud-auth-plugin
 
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom --region europe-central2
+
       - uses: azure/setup-kubectl@v4
         with:
           version: 'v1.32.3' # default is latest stable
@@ -124,25 +127,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-#      - name: Build, tag, and push frontend Docker image to Amazon ECR
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: rockcom/frontend
-#          IMAGE_TAG: ${{ github.sha }}
-#        run: |
-#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
-#          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+      - name: Build, tag, and push frontend Docker image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: rockcom/frontend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
+          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
       - name: Setup kubeconfig
         run: aws eks update-kubeconfig --region eu-central-1 --name rockcom
 
-      - name: Configure kubectl
-        run: gcloud container clusters get-credentials rockcom --region europe-central2
-
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-frontend --ignore-not-found
-          kubectl delete service rockcom-frontend-service --ignore-not-found 
+#          kubectl delete service rockcom-frontend-service --ignore-not-found
           kubectl apply -f eks/frontend-deployment.yaml --force
-          kubectl apply -f eks/frontend-service.yaml --force
+#          kubectl apply -f eks/frontend-service.yaml --force
           
