@@ -142,7 +142,7 @@ jobs:
       - name: Deploy image to Amazon EKS
         run: |
           kubectl delete deployment rockcom-frontend --ignore-not-found
-          kubectl delete service rockcom-frontend-service--ignore-not-found 
+          kubectl delete service rockcom-frontend-service --ignore-not-found 
           kubectl apply -f eks/frontend-deployment.yaml --force
           kubectl apply -f eks/frontend-service.yaml --force
           

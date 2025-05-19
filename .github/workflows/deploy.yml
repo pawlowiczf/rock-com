@@ -3,7 +3,7 @@ name: Build and deploy Docker images to AWS ECR
 on:
   push:
     branches:
-      - Feature/AWS-nginx2
+      - Feature/LeaveForNow
 
 jobs:
   build_backend:
