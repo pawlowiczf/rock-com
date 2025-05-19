@@ -3,9 +3,9 @@ removeAll:
 	kubectl delete service rockcom-backend-service
 	kubectl delete deployment rockcom-frontend
 	kubectl delete service rockcom-frontend-service
-	kubectl delete configmap nginx-config
-	kubectl delete deployment nginx
-	kubectl delete service nginx
+#	kubectl delete configmap nginx-config
+#	kubectl delete deployment nginx
+#	kubectl delete service nginx
 
 runAll:
 	kubectl apply -f backend-deployment.yaml
