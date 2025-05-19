@@ -10,7 +10,7 @@ data:
     }
 
     upstream Backend {
-        server rockcom-backend-service;
+        server rockcom-backend-service:8080;
     }
 
     server {
