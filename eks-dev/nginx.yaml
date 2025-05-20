@@ -1,0 +1,23 @@
+upstream Frontend {
+  server rockcom-frontend-dev;
+}
+
+upstream Backend {
+  server rockcom-backend-dev;
+}
+
+server {
+  listen 80;
+  
+  location / {
+    proxy_pass http://Frontend ; #
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+  
+  location /api/ {
+    proxy_pass http://Backend;  
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}

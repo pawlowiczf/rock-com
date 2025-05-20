@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rockcom-frontend-dev
+  labels:
+    app: rockcom-frontend-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rockcom-frontend-dev
+  template:
+    metadata:
+      labels:
+        app: rockcom-frontend-dev
+    spec:
+      containers:
+        - name: rockcom-frontend-dev
+          image: 329976954374.dkr.ecr.eu-central-1.amazonaws.com/rockcom/frontend-dev:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+      imagePullSecrets:
+        - name: aws-ecr-secret
