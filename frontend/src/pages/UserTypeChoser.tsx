@@ -67,9 +67,7 @@ const UserTypeChoser: React.FC = () => {
                     phoneNumber: "123456789",
                     birthDate: data.birthdate,
                 };
-                console.log("Participant data:", participantData);
-                console.log(HTTP_ADDRESS)
-                console.log(`${HTTP_ADDRESS}/api/participant`)
+
                 const response = await fetch(
                     `${HTTP_ADDRESS}/api/participant`,
                     {
