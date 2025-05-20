@@ -5,7 +5,7 @@ metadata:
   labels:
     app: rockcom-backend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: rockcom-backend
@@ -20,5 +20,29 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: deployment
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+
       imagePullSecrets:
         - name: aws-ecr-secret
+
+#kubectl create secret generic db-secret \
+#--from-literal=SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
+#--from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+#--from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
