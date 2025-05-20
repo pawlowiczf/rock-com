@@ -136,7 +136,7 @@ jobs:
           ECR_REPOSITORY: rockcom/frontend-dev
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileProduction -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./frontend/DockerfileRelease -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./frontend
           docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
       - name: Deploy image to Amazon EKS
