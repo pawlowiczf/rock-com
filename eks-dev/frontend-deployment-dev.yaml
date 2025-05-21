@@ -5,7 +5,7 @@ metadata:
   labels:
     app: rockcom-frontend-dev
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: rockcom-frontend-dev
@@ -20,5 +20,12 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
       imagePullSecrets:
         - name: aws-ecr-secret

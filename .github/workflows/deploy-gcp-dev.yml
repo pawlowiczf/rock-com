@@ -1,4 +1,4 @@
-name: Build and deploy Docker images to AWS ECR
+name: Build and deploy Docker images to AWS ECR GCP DEV
 
 on:
   push:
