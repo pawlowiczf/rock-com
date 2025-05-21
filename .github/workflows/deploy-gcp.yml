@@ -3,7 +3,7 @@ name: Build and deploy Docker images to AWS ECR GCP
 on:
   push:
     branches:
-      - refresh
+      - main
 
 jobs:
   build_backend:
