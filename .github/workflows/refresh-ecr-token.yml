@@ -5,12 +5,12 @@ on:
     branches:
       - refresh
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: '0 */10 * * *'
 
   workflow_dispatch:
 
 jobs:
-  build_backend:
+  refresh_token:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,8 +50,9 @@ jobs:
       - name: Configure kubectl
         run: gcloud container clusters get-credentials rockcom --region europe-central2
 
-      - name: Deploy image to Amazon EKS
+      - name: Refresh ECR secret on rockcom cluster
         run: |
+          kubectl config current-context
           kubectl create secret docker-registry aws-ecr-secret \
           --docker-server=329976954374.dkr.ecr.eu-central-1.amazonaws.com \
           --docker-username=AWS \
@@ -61,8 +62,9 @@ jobs:
       - name: Configure kubectl
         run: gcloud container clusters get-credentials rockcom-dev --region europe-central2
 
-      - name: Deploy image to Amazon EKS
+      - name: Refresh ECR secret on rockcom-dev cluster
         run: |
+          kubectl config current-context
           kubectl create secret docker-registry aws-ecr-secret \
           --docker-server=329976954374.dkr.ecr.eu-central-1.amazonaws.com \
           --docker-username=AWS \
