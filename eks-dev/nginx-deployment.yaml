@@ -42,3 +42,4 @@ spec:
 #  --docker-password-stdin
 
 # k9s --context gke_kubernetes-rockcom_europe-central2_rockcom
+# gcloud container clusters get-credentials rockcom --region europe-central2
