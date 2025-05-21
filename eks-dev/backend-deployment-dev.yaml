@@ -5,7 +5,7 @@ metadata:
   labels:
     app: rockcom-backend-dev
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: rockcom-backend-dev
@@ -20,6 +20,13 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: deployment
