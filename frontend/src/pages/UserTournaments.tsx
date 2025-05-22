@@ -12,7 +12,9 @@ const UserTournaments = () => {
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch("http://localhost:8080/api/competitions/upcoming");
+            const response = await fetch("http://localhost:8080/api/competitions/upcoming", {
+                credentials: "include",
+            });
             if (!response.ok) {
                 throw new Error("Nie udało się pobrać danych o nadchodzących turniejach.");
             }

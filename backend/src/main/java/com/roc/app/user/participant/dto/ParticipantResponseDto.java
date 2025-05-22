@@ -1,6 +1,5 @@
 package com.roc.app.user.participant.dto;
 
-import com.roc.app.user.general.User;
 import com.roc.app.user.participant.Participant;
 
 import java.time.LocalDate;
@@ -15,14 +14,13 @@ public record ParticipantResponseDto(
         LocalDate birthDate
 ) {
     public static ParticipantResponseDto fromModel(Participant participant) {
-        User details = participant.getUserDetails();
         return new ParticipantResponseDto(
-                participant.getId(),
-                details.getFirstName(),
-                details.getLastName(),
-                details.getEmail(),
-                details.getCity(),
-                details.getPhoneNumber(),
+                participant.getUserId(),
+                participant.getFirstName(),
+                participant.getLastName(),
+                participant.getEmail(),
+                participant.getCity(),
+                participant.getPhoneNumber(),
                 participant.getBirthDate()
         );
     }

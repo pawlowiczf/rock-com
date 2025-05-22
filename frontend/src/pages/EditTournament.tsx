@@ -66,7 +66,9 @@ const EditTournament: React.FC = () => {
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/competitions/"+id);
+                const response = await fetch("http://localhost:8080/api/competitions/"+id, {
+                    credentials: "include"
+                });
                 if (!response.ok) {
                     throw new Error("Błąd przy pobieraniu danych turnieju");
                 }
@@ -191,6 +193,7 @@ const EditTournament: React.FC = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(competitionData),
+                credentials: "include",
             });
 
             if (response.ok) {

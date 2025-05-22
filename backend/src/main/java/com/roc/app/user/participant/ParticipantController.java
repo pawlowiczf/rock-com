@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/participant")
+@RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantService participantService;
     private final MatchService matchService;

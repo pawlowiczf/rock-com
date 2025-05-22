@@ -12,7 +12,7 @@ CREATE TABLE brackets (
 
 -- Table: competition_dates
 CREATE TABLE competition_dates (
-    date_id int  NOT NULL,
+    date_id serial  NOT NULL,
     competition_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE referee_licences (
     referee_licence_id serial  NOT NULL,
     licence_type varchar(50)  NOT NULL,
     referee_id int  NOT NULL,
-    license varchar(50)  NOT NULL,
+    license varchar(50)  NOT NULL UNIQUE,
     CONSTRAINT referee_licences_pk PRIMARY KEY (referee_licence_id)
 );
 
@@ -98,8 +98,8 @@ CREATE TABLE users (
     user_id serial  NOT NULL,
     firstname varchar(50)  NOT NULL,
     lastname varchar(50)  NOT NULL,
-    email varchar(50)  NOT NULL,
-    password varchar(60)  NOT NULL,
+    email varchar(50)  NOT NULL UNIQUE,
+    password varchar(60) NOT NULL,
     city varchar(50)  NOT NULL,
     phone_number varchar(12)  NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (user_id)
