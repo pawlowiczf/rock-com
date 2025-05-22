@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "build:prod": "tsc -b && vite build --mode production",
     "build:release": "tsc -b && vite build --mode release",
+    "build:cloud": "tsc -b && vite build --mode cloud",
     "lint": "eslint .",
     "preview": "vite preview"
   },
