@@ -1,0 +1,32 @@
+# nginx-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    upstream Frontend {
+        server rockcom-frontend-service;
+    }
+
+    upstream Backend {
+        server rockcom-backend-service:8080;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://Frontend/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /api/ {
+            proxy_pass http://Backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+
+# kubectl apply -f nginx-configmap.yaml

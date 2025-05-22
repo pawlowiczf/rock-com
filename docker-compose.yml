@@ -37,7 +37,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: frontend/DockerfileECR
     container_name: frontend
     ports:
       - "3000:3000"

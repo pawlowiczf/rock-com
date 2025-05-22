@@ -1,0 +1,72 @@
+name: Refresh ECR kubernetes secret
+
+on:
+  push:
+    branches:
+      - refresh
+  schedule:
+    - cron: '0 */10 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  refresh_token:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.32.3' # default is latest stable
+        id: install
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: 'latest'
+          project_id: kubernetes-rockcom
+
+      - name: Install gcloud auth
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ROOT }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ROOT }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom --region europe-central2
+
+      - name: Refresh ECR secret on rockcom cluster
+        run: |
+          kubectl config current-context
+          kubectl create secret docker-registry aws-ecr-secret \
+          --docker-server=329976954374.dkr.ecr.eu-central-1.amazonaws.com \
+          --docker-username=AWS \
+          --docker-password="$(aws ecr get-login-password --region eu-central-1)" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Configure kubectl
+        run: gcloud container clusters get-credentials rockcom-dev --region europe-central2
+
+      - name: Refresh ECR secret on rockcom-dev cluster
+        run: |
+          kubectl config current-context
+          kubectl create secret docker-registry aws-ecr-secret \
+          --docker-server=329976954374.dkr.ecr.eu-central-1.amazonaws.com \
+          --docker-username=AWS \
+          --docker-password="$(aws ecr get-login-password --region eu-central-1)" \
+          --dry-run=client -o yaml | kubectl apply -f -
