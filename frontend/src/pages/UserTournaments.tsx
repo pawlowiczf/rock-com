@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import "../styles/UserSite.css";
+import { HTTP_ADDRESS } from '../config.ts';
 
 const UserTournaments = () => {
     const [tab, setTab] = useState(0);
@@ -12,7 +13,7 @@ const UserTournaments = () => {
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch("http://localhost:8080/api/competitions/upcoming", {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/upcoming`, {
                 credentials: "include",
             });
             if (!response.ok) {

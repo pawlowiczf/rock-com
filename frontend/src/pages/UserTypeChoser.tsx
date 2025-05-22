@@ -71,7 +71,7 @@ const UserTypeChoser: React.FC = () => {
                 };
 
                 const response = await fetch(
-                    "http://localhost:8080/api/participants",
+                    `${HTTP_ADDRESS}/api/participants`,
 
                     {
                         method: "POST",
