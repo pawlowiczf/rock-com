@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/competitions").hasAuthority(UserRole.ORGANIZER.getAuthority())
                         .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginProcessingUrl("/login")
+                        .loginProcessingUrl("/api/login")
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                         })
@@ -63,7 +63,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) ->
                                 writeToResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Authentication is required to access this resource.")))
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/api/logout")
                         .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))

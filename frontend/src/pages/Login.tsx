@@ -1,6 +1,7 @@
 import "../styles/Auth.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { HTTP_ADDRESS } from "../config.ts";
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState<string>("");
@@ -17,7 +18,7 @@ const Login: React.FC = () => {
         formData.append("username", email);
         formData.append("password", password);
         try {
-            const response = await fetch("http://localhost:8080/login", {
+            const response = await fetch(`${HTTP_ADDRESS}/api/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
