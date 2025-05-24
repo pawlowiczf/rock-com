@@ -70,6 +70,7 @@ public class CompetitionService {
         Competition competition = competitionRepository.findById(id)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
 
+        competition.setName(competitionDTO.name());
         competition.setType(competitionDTO.type());
         competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
         competition.setAvailableCourts(competitionDTO.availableCourts());

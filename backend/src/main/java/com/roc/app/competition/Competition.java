@@ -24,7 +24,7 @@ public class Competition {
     private Integer competitionId;
 
     @Column(name = FieldNames.NAME, nullable = false)
-    private String competitionName;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.TYPE, nullable = false)

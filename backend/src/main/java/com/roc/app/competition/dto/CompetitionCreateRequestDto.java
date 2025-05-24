@@ -7,7 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CompetitionCreateRequestDto(
-
+    @NotBlank
+    String name,
 
     @NotNull(message = "Competition type is required")
     CompetitionType type,
