@@ -35,6 +35,7 @@ public record CompetitionCreateRequestDto(
     @Size(max = 20, message = "Postal code must not exceed 20 characters")
     String postalCode,
 
+    @NotNull
     Boolean registrationOpen
 ){
 }
