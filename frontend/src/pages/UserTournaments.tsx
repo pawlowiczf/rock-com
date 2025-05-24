@@ -100,7 +100,7 @@ const UserTournaments = () => {
                             <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
                                 <CardContent className="card-content">
                                     <Typography variant="h6" color="secondary">
-                                        {tournament.type} {tournament.competitionId}
+                                        {tournament.type} {tournament.name}
                                     </Typography>
                                     <div>
                                         <Typography variant="body2" color="textSecondary">

@@ -59,20 +59,6 @@ public class CompetitionService {
 
     @Transactional
     public CompetitionResponseDto createCompetition(CompetitionCreateRequestDto competitionDTO) {
-
-        if (competitionDTO.registrationOpen() == null) {
-            competitionDTO = new CompetitionCreateRequestDto(
-                    competitionDTO.type(),
-                    competitionDTO.matchDurationMinutes(),
-                    competitionDTO.availableCourts(),
-                    competitionDTO.participantsLimit(),
-                    competitionDTO.streetAddress(),
-                    competitionDTO.city(),
-                    competitionDTO.postalCode(),
-                    false
-            );
-        }
-
         Competition competition = competitionMapper.mapToEntity(competitionDTO);
         Competition savedCompetition = competitionRepository.save(competition);
         return competitionMapper.mapToDto(savedCompetition);
@@ -84,6 +70,7 @@ public class CompetitionService {
         Competition competition = competitionRepository.findById(id)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
 
+        competition.setName(competitionDTO.name());
         competition.setType(competitionDTO.type());
         competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
         competition.setAvailableCourts(competitionDTO.availableCourts());
@@ -91,10 +78,7 @@ public class CompetitionService {
         competition.setStreetAddress(competitionDTO.streetAddress());
         competition.setCity(competitionDTO.city());
         competition.setPostalCode(competitionDTO.postalCode());
-
-        if (competitionDTO.registrationOpen() != null) {
-            competition.setRegistrationOpen(competitionDTO.registrationOpen());
-        }
+        competition.setRegistrationOpen(competitionDTO.registrationOpen());
 
         Competition updatedCompetition = competitionRepository.save(competition);
         return competitionMapper.mapToDto(updatedCompetition);

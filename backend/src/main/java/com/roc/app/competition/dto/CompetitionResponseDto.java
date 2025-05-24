@@ -7,8 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CompetitionResponseDto(
-
+        @NotNull
         Integer competitionId,
+
+        @NotBlank
+        String name,
 
         @NotNull(message = "Competition type is required")
         CompetitionType type,
@@ -37,5 +40,4 @@ public record CompetitionResponseDto(
         String postalCode,
 
         Boolean registrationOpen
-
 ) {}

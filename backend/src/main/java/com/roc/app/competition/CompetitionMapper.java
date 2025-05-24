@@ -11,6 +11,7 @@ public class CompetitionMapper {
     CompetitionResponseDto mapToDto(Competition competition) {
         return new CompetitionResponseDto(
                 competition.getCompetitionId(),
+                competition.getName(),
                 competition.getType(),
                 competition.getMatchDurationMinutes(),
                 competition.getAvailableCourts(),
@@ -25,6 +26,7 @@ public class CompetitionMapper {
 
     Competition mapToEntity(CompetitionCreateRequestDto dto) {
         return Competition.builder()
+                .name(dto.name())
                 .type(dto.type())
                 .matchDurationMinutes(dto.matchDurationMinutes())
                 .availableCourts(dto.availableCourts())

@@ -7,7 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CompetitionCreateRequestDto(
-
+    @NotBlank
+    String name,
 
     @NotNull(message = "Competition type is required")
     CompetitionType type,
@@ -35,6 +36,7 @@ public record CompetitionCreateRequestDto(
     @Size(max = 20, message = "Postal code must not exceed 20 characters")
     String postalCode,
 
+    @NotNull
     Boolean registrationOpen
 ){
 }

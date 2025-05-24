@@ -44,7 +44,7 @@ const EditTournament: React.FC = () => {
 
     const [formData, setFormData] = useState({
         type: "TENNIS_OUTDOOR",
-        name: "Wielki Tenis",
+        name: "",
         fromDate: "2025-12-12",
         toDate: "2025-12-14",
         location: "Stadion Wisły",
@@ -172,7 +172,7 @@ const EditTournament: React.FC = () => {
 
     const submitTournamentData = async (data: typeof formData, open : boolean) => {
         const competitionData = {
-            competitionId: null,
+            competitionId: id,
             type: data.type,
             name: data.name,
             fromDate: data.fromDate,
