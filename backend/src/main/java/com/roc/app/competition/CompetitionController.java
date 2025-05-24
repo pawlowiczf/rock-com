@@ -1,5 +1,6 @@
 package com.roc.app.competition;
 
+import com.roc.app.competition.dto.CompetitionDateResponseDto;
 import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CompetitionController {
 
     private final CompetitionService competitionService;
+    private final CompetitionDateService competitionDateService;
 
     @GetMapping
     public ResponseEntity<List<CompetitionResponseDto>> getAllCompetitions() {
@@ -71,6 +73,12 @@ public class CompetitionController {
     @GetMapping("/upcoming")
     public List<UpcomingCompetitionDto> getUpcomingCompetitions() {
         return competitionService.getUpcomingCompetitions();
+    }
+
+    @GetMapping("/{id}/dates")
+    public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
+        List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
+        return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 }
 

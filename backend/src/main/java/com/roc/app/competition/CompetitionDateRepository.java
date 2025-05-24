@@ -3,6 +3,7 @@ package com.roc.app.competition;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface CompetitionDateRepository extends JpaRepository<CompetitionDate
             "ORDER BY MIN(cd.startTime) ASC ")
     List<UpcomingCompetitionDto> findUpcomingCompetitions();
 
+    @Query("SELECT cd FROM CompetitionDate cd WHERE cd.competition.competitionId = :competitionId ORDER BY cd.startTime")
+    List<CompetitionDate> findAllByCompetitionId(@Param("competitionId") Integer competitionId);
 }
