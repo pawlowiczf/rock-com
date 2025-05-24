@@ -67,12 +67,6 @@ public class Competition {
         public static final String POSTAL_CODE = "postal_code";
         public static final String REGISTRATION_OPEN = "registration_open";
     }
-
-    // Used in test for matchService
-    public Competition(Integer competitionId) {
-        this.competitionId = competitionId;
-    }
-
 }
 
 
