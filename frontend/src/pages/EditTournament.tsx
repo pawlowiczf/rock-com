@@ -8,6 +8,7 @@ import PingPongIcon from "../assets/icons/pingpong.svg";
 import BadmintonIcon from "../assets/icons/badminton.svg";
 import TextField from '@mui/material/TextField';
 import z from "zod";
+import { HTTP_ADDRESS } from '../config.ts';
 
 const TournamentSchema = z.object({
     type: z.string(),
@@ -66,7 +67,9 @@ const EditTournament: React.FC = () => {
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/competitions/"+id);
+                const response = await fetch(`${HTTP_ADDRESS}/api/competitions/`+id, {
+                    credentials: "include"
+                });
                 if (!response.ok) {
                     throw new Error("Błąd przy pobieraniu danych turnieju");
                 }
@@ -185,12 +188,13 @@ const EditTournament: React.FC = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/competitions/" + id , {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/` + id , {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(competitionData),
+                credentials: "include",
             });
 
             if (response.ok) {

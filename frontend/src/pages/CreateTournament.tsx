@@ -5,6 +5,7 @@ import PingPongIcon from "../assets/icons/pingpong.svg";
 import BadmintonIcon from "../assets/icons/badminton.svg";
 import TextField from "@mui/material/TextField";
 import z from "zod";
+import { HTTP_ADDRESS } from '../config.ts';
 
 const TournamentSchema = z.object({
     type: z.string(),
@@ -136,10 +137,11 @@ const CreateTournament: React.FC = () => {
     const submitTournamentData = async (data: any) => {
         try {
             // 1. Utwórz turniej
-            const response = await fetch("http://localhost:8080/api/competitions", {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
+                credentials: "include",
             });
     
             if (!response.ok) {
@@ -161,12 +163,13 @@ const CreateTournament: React.FC = () => {
             };
     
             // 4. Wyślij daty turnieju
-            const dateResponse = await fetch("http://localhost:8080/api/competitions-dates", {
+            const dateResponse = await fetch(`${HTTP_ADDRESS}/api/competitions-dates`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify([competitionDate]),
+                credentials: "include",
             });
-    
+
             if (!dateResponse.ok) {
                 const error = await dateResponse.json();
                 alert("Wystąpił błąd przy zapisie dat turnieju");
@@ -174,18 +177,18 @@ const CreateTournament: React.FC = () => {
                 setIsLoading(false);
                 return;
             }
-    
+
             // 5. Sukces
             alert("Turniej został pomyślnie stworzony!");
             window.location.reload();
-    
+
         } catch (error) {
             alert("Błąd połączenia z serwerem.");
         } finally {
             setIsLoading(false);
         }
     };
-    
+
 
     const disciplines = [
         { name: "TENNIS_OUTDOOR", src: TennisIcon, alt: "Tennis" },

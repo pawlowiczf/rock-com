@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Tabs, Tab } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../styles/UserSite.css";
+import { HTTP_ADDRESS } from '../config.ts';
 
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
@@ -12,7 +13,9 @@ const OrganizerTournaments = () => {
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch("http://localhost:8080/api/competitions/upcoming");
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/upcoming`, {
+                credentials: "include",
+            });
             if (!response.ok) {
                 throw new Error("Nie udało się pobrać danych o nadchodzących turniejach.");
             }

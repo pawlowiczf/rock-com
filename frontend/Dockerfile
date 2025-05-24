@@ -27,7 +27,7 @@ COPY package*.json ./
 RUN npm install --omit=dev
 
 # Copy built assets from builder stage
-COPY --from=builder /app/build ./build
+COPY --from=builder /app/dist ./build
 
 # If you're using a custom server (like Express), copy it too
 # COPY server.js ./

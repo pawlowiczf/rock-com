@@ -1,5 +1,7 @@
 package com.roc.app.user.referee.general;
 
+import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.RefereeMatchResponseDto;
 import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import com.roc.app.user.referee.general.dto.RefereeCreateRequestDto;
 import com.roc.app.user.referee.general.dto.RefereeResponseDto;
@@ -17,10 +19,12 @@ import java.util.List;
 public class RefereeController {
     private final RefereeService refereeService;
     private final RefereeLicenceService refereeLicenceService;
+    private final MatchService matchService;
 
-    public RefereeController(RefereeService refereeService, RefereeLicenceService refereeLicenceService) {
+    public RefereeController(RefereeService refereeService, RefereeLicenceService refereeLicenceService, MatchService matchService) {
         this.refereeService = refereeService;
         this.refereeLicenceService = refereeLicenceService;
+        this.matchService = matchService;
     }
 
     @PostMapping
@@ -33,5 +37,10 @@ public class RefereeController {
     public ResponseEntity<List<RefereeLicenceResponseDto>> getRefereeLicences(@PathVariable long refereeId) {
         List<RefereeLicenceResponseDto> licences = refereeLicenceService.getRefereeLicencesByRefereeId(refereeId);
         return ResponseEntity.ok(licences);
+    }
+
+    @GetMapping("/{refereeId}/matches")
+    public ResponseEntity<List<RefereeMatchResponseDto>> getRefereeMatches(@PathVariable Integer refereeId) {
+        return ResponseEntity.ok(matchService.getRefereeMatches(refereeId));
     }
 }
