@@ -103,7 +103,7 @@ class MatchServiceTest {
     void updateMatch_updatesExistingMatch() {
         Match existingMatch = Match.builder()
                 .matchId(200)
-                .competition(new Competition(1))
+                .competition(Competition.builder().competitionId(1).build())
                 .player1Id(10)
                 .player2Id(20)
                 .refereeId(30)
