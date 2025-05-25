@@ -7,6 +7,17 @@
 
 .create-tournament-input-group {
   margin-bottom: 1rem;
+  display: flex;
+}
+
+.create-tournament-location {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.create-tournament-location > * {
+  flex: 1;
 }
 
 .create-tournament-input-group .MuiTextField-root {
