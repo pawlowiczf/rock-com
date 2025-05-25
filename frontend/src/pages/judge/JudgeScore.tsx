@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import React, { useState } from "react";
-import "../styles/UserSite.css";
+import "../../styles/UserSite.css";
 
 const matches = [
     {

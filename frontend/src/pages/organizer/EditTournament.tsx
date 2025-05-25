@@ -1,14 +1,14 @@
-import "../styles/EditTournament.css";
+import "../../styles/EditTournament.css";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import DeleteIcon from "../assets/icons/cross.svg";
-import TennisIcon from "../assets/icons/tennis.svg";
-import PingPongIcon from "../assets/icons/pingpong.svg";
-import BadmintonIcon from "../assets/icons/badminton.svg";
+import DeleteIcon from "../../assets/icons/cross.svg";
+import TennisIcon from "../../assets/icons/tennis.svg";
+import PingPongIcon from "../../assets/icons/pingpong.svg";
+import BadmintonIcon from "../../assets/icons/badminton.svg";
 import TextField from '@mui/material/TextField';
 import z from "zod";
-import { HTTP_ADDRESS } from '../config.ts';
+import { HTTP_ADDRESS } from '../../config.ts';
 
 const TournamentSchema = z.object({
     type: z.string(),

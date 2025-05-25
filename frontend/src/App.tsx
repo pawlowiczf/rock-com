@@ -3,20 +3,20 @@ import { LoadScript } from "@react-google-maps/api";
 
 import TopBar from "./pages/TopBar";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import AccountCreating from "./pages/AccountCreating";
-import UserTypeChoser from "./pages/UserTypeChoser";
-import JudgeLicence from "./pages/JudgeLicence";
-import RegisterInformation from "./pages/RegisterInformation";
-import CreateTournament from "./pages/CreateTournament";
-import EditTournament from "./pages/EditTournament";
-import EditMatch from "./pages/EditMatch";
+import Register from "./pages/register/Register.tsx";
+import AccountCreating from "./pages/register/AccountCreating.tsx";
+import UserTypeChoser from "./pages/register/UserTypeChoser.tsx";
+import JudgeLicence from "./pages/register/JudgeLicence.tsx";
+import RegisterInformation from "./pages/register/RegisterInformation.tsx";
+import CreateTournament from "./pages/organizer/CreateTournament.tsx";
+import EditTournament from "./pages/organizer/EditTournament.tsx";
+import EditMatch from "./pages/organizer/EditMatch.tsx";
 import "./styles/App.css";
-import ParticipantProfile from "./pages/ParticipantProfile";
-import UserTournaments from "./pages/UserTournaments";
-import OrganizerTournaments from "./pages/OrganizerTournaments";
-import UpcomingMatches from "./pages/UpcomingMatches";
-import JudgeScore from "./pages/JudgeScore";
+import ParticipantProfile from "./pages/user/ParticipantProfile.tsx";
+import UserTournaments from "./pages/user/UserTournaments.tsx";
+import OrganizerTournaments from "./pages/organizer/OrganizerTournaments.tsx";
+import UpcomingMatches from "./pages/user/UpcomingMatches.tsx";
+import JudgeScore from "./pages/judge/JudgeScore.tsx";
 import {HTTP_ADDRESS} from "./config.ts"
 
 function App() {

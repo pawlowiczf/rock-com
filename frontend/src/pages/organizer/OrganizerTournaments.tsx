@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
-import "../styles/UserSite.css";
-import { HTTP_ADDRESS } from '../config.ts';
+import { Card, CardContent, Typography, Tabs, Tab } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import "../../styles/UserSite.css";
+import { HTTP_ADDRESS } from '../../config.ts';
 
-const UserTournaments = () => {
+const OrganizerTournaments = () => {
+    const navigate = useNavigate();
     const [tab, setTab] = useState(0);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [selectedTournament, setSelectedTournament] = useState<any>(null);
     const [upcomingTournaments, setUpcomingTournaments] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -34,26 +34,9 @@ const UserTournaments = () => {
         fetchUpcomingTournaments();
     }, []);
 
-    const handleOpenDialog = (tournament: any) => {
-        setSelectedTournament(tournament);
-        setOpenDialog(true);
+    const handleEditTournament = (id: number) => {
+        navigate("/tournaments/edit/"+id);
     };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setSelectedTournament(null);
-    };
-
-    const handleProceedToPayment = () => {
-        console.log(`Proceeding to payment for: ${selectedTournament.name}`);
-        handleJoinTournament(selectedTournament.competitionId);
-        handleCloseDialog();
-    };
-
-    const handleJoinTournament = (tournamentId: number) => {
-        console.log(`Dołączono do turnieju o ID: ${tournamentId}`);
-    };
-
 
     const filteredTournaments = upcomingTournaments.filter((tournament) => {
         if (tab === 0) return tournament.registrationOpen;
@@ -121,7 +104,7 @@ const UserTournaments = () => {
                                         onClick={
                                             !tournament.registrationOpen
                                                 ? undefined
-                                                : () => handleOpenDialog(tournament)
+                                                : () => handleEditTournament(tournament.competitionId)
                                         }
                                         style={{
                                             backgroundColor:
@@ -130,37 +113,17 @@ const UserTournaments = () => {
                                         }}
                                         disabled={!tournament.registrationOpen}
                                     >
-                                        Dołącz
+                                        Edytuj
                                     </button>
                                 </CardContent>
                             </Card>
                         ))
                     )}
                 </div>
-                <Dialog open={openDialog} onClose={handleCloseDialog}>
-                    <DialogTitle>Dołącz do turnieju</DialogTitle>
-                    <DialogContent>
-                        {selectedTournament && (
-                            <Typography variant="body1">
-                                Czy potwierdzasz zapisanie się na zawody: <strong>{selectedTournament.type}</strong><br />
-                                Data: {new Date(selectedTournament.startTime).toLocaleDateString()} <br />
-                                Lokalizacja: {selectedTournament.city} <br />
-                                Koszt zapisu: <strong>300zł</strong> <br />
-                            </Typography>
-                        )}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog} color="secondary">
-                            Anuluj
-                        </Button>
-                        <Button onClick={handleProceedToPayment} variant="contained" color="primary">
-                            Tak, przejdź do płatności
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+            
             </div>
         </div>
     );
 };
 
-export default UserTournaments;
+export default OrganizerTournaments;

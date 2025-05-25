@@ -1,4 +1,4 @@
-import "../styles/EditMatch.css";
+import "../../styles/EditMatch.css";
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 
