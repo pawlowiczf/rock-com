@@ -117,6 +117,7 @@ const CreateTournament: React.FC = () => {
             const streetAddress = `${route} ${streetNumber}`.trim();
 
             const competitionData = {
+                name: formData.name,
                 type: formData.type,
                 matchDurationMinutes: timeToMinutes(formData.matchTime),
                 availableCourts: Number(formData.courts),

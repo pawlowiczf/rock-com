@@ -24,7 +24,7 @@ public class Competition {
     private Integer competitionId;
 
     @Column(name = FieldNames.NAME, nullable = false)
-    private String competitionName;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.TYPE, nullable = false)
@@ -67,12 +67,6 @@ public class Competition {
         public static final String POSTAL_CODE = "postal_code";
         public static final String REGISTRATION_OPEN = "registration_open";
     }
-
-    // Used in test for matchService
-    public Competition(Integer competitionId) {
-        this.competitionId = competitionId;
-    }
-
 }
 
 
