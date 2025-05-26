@@ -35,14 +35,14 @@ public class CompetitionParticipant {
     @AllArgsConstructor
     public static class CompetitionParticipantId implements Serializable {
         private Integer competitionId;
-        private Integer participantId;
+        private Long participantId;
     }
 
     public static final class FieldNames {
         public static final String TABLE_NAME = "competition_participants";
         public static final String COMPETITION_ID = "competition_id";
         public static final String PARTICIPANT_ID = "participant_id";
-        public static final String PARTICIPANT_STATUS = "participant_status";
+        public static final String PARTICIPANT_STATUS = "status";
         public static final String STATUS_CHANGE_DATE = "status_change_date";
     }
 }
