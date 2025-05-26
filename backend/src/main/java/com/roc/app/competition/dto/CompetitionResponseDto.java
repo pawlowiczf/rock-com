@@ -4,6 +4,7 @@ import com.roc.app.competition.CompetitionType;
 
 public record CompetitionResponseDto(
         Integer competitionId,
+        String name,
         CompetitionType type,
         Integer matchDurationMinutes,
         Integer availableCourts,

@@ -10,7 +10,7 @@ import java.util.List;
 public interface CompetitionDateRepository extends JpaRepository<CompetitionDate, Integer> {
 
     @Query("SELECT new com.roc.app.competition.dto.UpcomingCompetitionDto(" +
-            "c.competitionId, c.type, c.city, MIN(cd.startTime), MAX(cd.endTime), c.registrationOpen) " +
+            "c.competitionId, c.name, c.type, c.city, MIN(cd.startTime), MAX(cd.endTime), c.registrationOpen) " +
             "FROM CompetitionDate cd " +
             "JOIN cd.competition c " +
             "WHERE cd.startTime > CURRENT_TIMESTAMP " +
