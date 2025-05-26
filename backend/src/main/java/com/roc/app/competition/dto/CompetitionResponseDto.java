@@ -56,4 +56,19 @@ public record CompetitionResponseDto(
                         .registrationOpen(registrationOpen)
                         .build();
         }
+
+        public static CompetitionResponseDto fromModel(Competition competition) {
+                return new CompetitionResponseDto(
+                        competition.getCompetitionId(),
+                        competition.getName(),
+                        competition.getType(),
+                        competition.getMatchDurationMinutes(),
+                        competition.getAvailableCourts(),
+                        competition.getParticipantsLimit(),
+                        competition.getStreetAddress(),
+                        competition.getCity(),
+                        competition.getPostalCode(),
+                        competition.getRegistrationOpen()
+                );
+        }
 }

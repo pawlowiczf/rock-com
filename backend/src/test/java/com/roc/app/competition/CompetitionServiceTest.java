@@ -23,10 +23,6 @@ class CompetitionServiceTest {
 
     @Mock
     private CompetitionRepository competitionRepository;
-    @Mock
-    private CompetitionDateRepository competitionDateRepository;
-    @Spy
-    private CompetitionMapper competitionMapper = new CompetitionMapper();
 
     @InjectMocks
     private CompetitionService competitionService;
