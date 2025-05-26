@@ -12,7 +12,7 @@ const TournamentSchema = z.object({
     name: z.string().min(1, "Nazwa jest wymagana"),
     fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
     toDate: z.string().min(1, "Data zakończenia jest wymagana"),
-    location: z.string().min(1, "Lokalizacja jest wymagana"),
+    streetAddress: z.string().min(1, "Lokalizacja jest wymagana"),
     courts: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Liczba boisk musi być większa od 0",
     }),
@@ -62,7 +62,7 @@ const CreateTournament: React.FC = () => {
         name: "",
         fromDate: "",
         toDate: "",
-        location: "",
+        streetAddress: "",
         courts: "",
         participants: "",
         matchTime: "",
@@ -102,7 +102,7 @@ const CreateTournament: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const result = await geocodeAddress(formData.location);
+            const result = await geocodeAddress(formData.streetAddress);
             const components = result.address_components;
             let city = '', postalCode = '', streetNumber = '', route = '';
 

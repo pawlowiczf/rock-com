@@ -64,8 +64,6 @@
     align-items: left;
 }
 
-
-
 .MuiDialogActions-root .MuiButton-root.MuiButton-textSecondary {
     color: #a020f0;
 }
@@ -73,4 +71,16 @@
 .MuiDialogActions-root .MuiButton-root.MuiButton-containedPrimary {
     background-color: #a020f0;
     color: white;
+}
+
+
+.MuiTypography-colorPrimary {
+    color: #a020f0 !important;
+}
+
+.MuiTab-root.Mui-selected {
+    color: #a020f0 !important;
+}
+.MuiTabs-indicator {
+    background-color: #a020f0 !important;
 }
