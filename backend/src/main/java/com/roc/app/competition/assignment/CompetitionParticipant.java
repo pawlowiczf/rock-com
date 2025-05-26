@@ -1,4 +1,4 @@
-package com.roc.app.competitionAssignment;
+package com.roc.app.competition.assignment;
 
 import com.roc.app.user.participant.ParticipantStatus;
 import jakarta.persistence.*;
@@ -21,7 +21,7 @@ public class CompetitionParticipant {
 
     @Id
     @Column(name = FieldNames.PARTICIPANT_ID)
-    private Integer participantId;
+    private Long participantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.PARTICIPANT_STATUS, nullable = false)
