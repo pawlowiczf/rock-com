@@ -19,8 +19,12 @@ public class CompetitionParticipantService {
     public CompetitionParticipantResponseDto enroll(Competition competition, Participant participant) {
         Integer competitionId = competition.getCompetitionId();
 
+        if (competitionParticipantRepository.isEnrolled(competitionId, participant.getUserId())) {
+            throw new ParticipantAlreadyEnrolledException(participant.getUserId(), competitionId);
+        }
+
         CompetitionParticipant competitionParticipant = new CompetitionParticipant(
-                competitionId
+                competitionId,
                 participant.getUserId(),
                 ParticipantStatus.WAITING_LIST,
                 LocalDateTime.now()
