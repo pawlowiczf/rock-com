@@ -30,6 +30,8 @@ public class CompetitionParticipantService {
             competitionParticipant.setParticipantStatus(ParticipantStatus.CONFIRMED);
         }
 
+        competitionParticipantRepository.save(competitionParticipant);
+
         ParticipantResponseDto participantResponseDto = ParticipantResponseDto.fromModel(participant);
 
         return CompetitionParticipantResponseDto.fromModel(competitionParticipant, participantResponseDto);
