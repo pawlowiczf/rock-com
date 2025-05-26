@@ -20,7 +20,7 @@ public class CompetitionParticipantService {
         Integer competitionId = competition.getCompetitionId();
 
         CompetitionParticipant competitionParticipant = new CompetitionParticipant(
-                competition.getCompetitionId(),
+                competitionId
                 participant.getUserId(),
                 ParticipantStatus.WAITING_LIST,
                 LocalDateTime.now()
