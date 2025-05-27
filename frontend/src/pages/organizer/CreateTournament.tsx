@@ -13,13 +13,15 @@ const BaseSchema = z.object({
     name: z.string().min(1, "Nazwa jest wymagana"),
     fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
     toDate: z.string().min(1, "Data zakończenia jest wymagana"),
-    courts: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
+    courts: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Liczba boisk musi być większa od 0"
     }),
     matchTime: z.string().min(1, "Czas trwania meczu jest wymagany"),
-    streetAddress: z.string().min(2, "Limit uczestników musi wynosić conajmniej 2"),
-    city: z.string(),
-    postalCode: z.string().regex(/^[0-9]{2}-[0-9]{3}$/, "Kod pocztowy musi być w formacie xx-xxx")
+    streetAddress: z.string().min(1, "Adres ulicy jest wymagany"),
+    city: z.string().min(1, "Miasto jest wymagane"),
+    postalCode: z
+        .string()
+        .regex(/^[0-9]{2}-[0-9]{3}$/, "Kod pocztowy musi być w formacie xx-xxx, gdzie x oznacza cyfrę")
 });
 
 const StepOneSchema = BaseSchema.pick({
@@ -27,25 +29,27 @@ const StepOneSchema = BaseSchema.pick({
     fromDate: true,
     toDate: true,
     matchTime: true
-}).refine((data) => new Date(data.toDate) >= new Date(data.fromDate), {
-    message: "Data zakończenia musi być po dacie rozpoczęcia",
-    path: ["toDate"]
-}).refine(
-    (data) => new Date(data.fromDate) >= new Date(),{
-        message:"Data rozpoczęcia musi być w przyszłości",
+})
+    .refine((data) => new Date(data.toDate) >= new Date(data.fromDate), {
+        message: "Data zakończenia musi być po dacie rozpoczęcia",
+        path: ["toDate"]
+    })
+    .refine((data) => new Date(data.fromDate) >= new Date(), {
+        message: "Data rozpoczęcia musi być w przyszłości",
         path: ["fromDate"]
-    }
-);
+    });
 
 const StepTwoSchema = z.record(
     z.string(),
-    z.object({
-        from: z.string().min(1, "Godzina rozpoczęcia jest wymagana"),
-        to: z.string().min(1, "Godzina zakończenia jest wymagana")
-    }).refine(data => data.from < data.to, {
-        message: "Godzina zakończenia musi być po godzinie rozpoczęcia",
-        path: ["to"]
-    })
+    z
+        .object({
+            from: z.string().min(1, "Godzina rozpoczęcia jest wymagana"),
+            to: z.string().min(1, "Godzina zakończenia jest wymagana")
+        })
+        .refine((data) => data.from < data.to, {
+            message: "Godzina zakończenia musi być po godzinie rozpoczęcia",
+            path: ["to"]
+        })
 );
 
 const StepThreeSchema = BaseSchema.pick({
@@ -54,7 +58,6 @@ const StepThreeSchema = BaseSchema.pick({
     city: true,
     courts: true
 });
-
 
 const timeToMinutes = (time) => {
     const [hours = 0, minutes = 0] = time.split(":").map(Number);
@@ -89,11 +92,11 @@ const CreateTournament = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleDisciplineSelect = (discipline) => {
-        setFormData(prev => ({ ...prev, type: discipline }));
+        setFormData((prev) => ({ ...prev, type: discipline }));
     };
 
     const validateStep = (schema, data) => {
@@ -103,7 +106,7 @@ const CreateTournament = () => {
             return true;
         }
         const newErrors = {};
-        result.error.errors.forEach(err => {
+        result.error.errors.forEach((err) => {
             const [day, field] = err.path;
             if (field) {
                 newErrors[day] = {
@@ -119,7 +122,6 @@ const CreateTournament = () => {
         return false;
     };
 
-
     const days = useMemo(() => {
         const result = [];
         const start = new Date(formData.fromDate);
@@ -131,7 +133,6 @@ const CreateTournament = () => {
     }, [formData.fromDate, formData.toDate]);
 
     const handleSubmit = async (e) => {
-        console.log("Submitting...");
         e.preventDefault();
         if (!validateStep(StepThreeSchema, formData)) return;
 
@@ -148,8 +149,6 @@ const CreateTournament = () => {
                 postalCode: formData.postalCode,
                 registrationOpen: true
             };
-
-            console.log(competitionData);
 
             const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
                 method: "POST",
@@ -186,23 +185,38 @@ const CreateTournament = () => {
     };
 
     const renderStep1 = () => (
-        <form className="create-tournament-form" onSubmit={e => {
-            e.preventDefault();
-            if (validateStep(StepOneSchema, formData)) setStep(2);
-        }}>
+        <form
+            className="create-tournament-form"
+            onSubmit={(e) => {
+                e.preventDefault();
+                if (validateStep(StepOneSchema, formData)) setStep(2);
+            }}
+        >
             <div className="discipline-icons">
-                {disciplineIcons.map(d => (
-                    <button key={d.name} type="button" onClick={() => handleDisciplineSelect(d.name)}
-                            className={`discipline-icon-button ${formData.type === d.name ? "selected" : ""}`}>
+                {disciplineIcons.map((d) => (
+                    <button
+                        key={d.name}
+                        type="button"
+                        onClick={() => handleDisciplineSelect(d.name)}
+                        className={`discipline-icon-button ${formData.type === d.name ? "selected" : ""}`}
+                    >
                         <img src={d.src} alt={d.name} />
                     </button>
                 ))}
             </div>
-            {["name", "fromDate", "toDate", "matchTime"].map(name => (
+            {["name", "fromDate", "toDate", "matchTime"].map((name) => (
                 <div className="create-tournament-input-group" key={name}>
                     <TextField
                         name={name}
-                        label={name === "name" ? "Nazwa" : name === "fromDate" ? "Od" : name === "toDate" ? "Do" : "Czas trwania meczu"}
+                        label={
+                            name === "name"
+                                ? "Nazwa"
+                                : name === "fromDate"
+                                    ? "Od"
+                                    : name === "toDate"
+                                        ? "Do"
+                                        : "Czas trwania meczu"
+                        }
                         type={name.includes("Date") ? "date" : name === "matchTime" ? "time" : "text"}
                         value={formData[name]}
                         onChange={handleChange}
@@ -214,16 +228,21 @@ const CreateTournament = () => {
                     />
                 </div>
             ))}
-            <button type="submit" className="create-tournament-button">Dalej</button>
+            <button type="submit" className="create-tournament-button">
+                Dalej
+            </button>
         </form>
     );
 
     const renderStep2 = () => (
-        <form className="create-tournament-form" onSubmit={e => {
-            e.preventDefault();
-            if (validateStep(StepTwoSchema, dailyTimes)) setStep(3);
-        }}>
-            {days.map(day => (
+        <form
+            className="create-tournament-form"
+            onSubmit={(e) => {
+                e.preventDefault();
+                if (validateStep(StepTwoSchema, dailyTimes)) setStep(3);
+            }}
+        >
+            {days.map((day) => (
                 <div key={day}>
                     <label>{day}</label>
                     <div className="create-tournament-input-group">
@@ -231,10 +250,12 @@ const CreateTournament = () => {
                             type="time"
                             label="Od"
                             value={dailyTimes[day]?.from || ""}
-                            onChange={e => setDailyTimes(prev => ({
-                                ...prev,
-                                [day]: { ...prev[day], from: e.target.value }
-                            }))}
+                            onChange={(e) =>
+                                setDailyTimes((prev) => ({
+                                    ...prev,
+                                    [day]: { ...prev[day], from: e.target.value }
+                                }))
+                            }
                             error={!!errors[day]?.from}
                             helperText={errors[day]?.from}
                             InputLabelProps={{ shrink: true }}
@@ -246,10 +267,12 @@ const CreateTournament = () => {
                             type="time"
                             label="Do"
                             value={dailyTimes[day]?.to || ""}
-                            onChange={e => setDailyTimes(prev => ({
-                                ...prev,
-                                [day]: { ...prev[day], to: e.target.value }
-                            }))}
+                            onChange={(e) =>
+                                setDailyTimes((prev) => ({
+                                    ...prev,
+                                    [day]: { ...prev[day], to: e.target.value }
+                                }))
+                            }
                             error={!!errors[day]?.to}
                             helperText={errors[day]?.to}
                             InputLabelProps={{ shrink: true }}
@@ -259,8 +282,12 @@ const CreateTournament = () => {
                 </div>
             ))}
             <div className="create-tournament-button-group">
-                <button type="button" onClick={() => setStep(1)} className="create-tournament-button">Wróć</button>
-                <button type="submit" className="create-tournament-button">Dalej</button>
+                <button type="button" onClick={() => setStep(1)} className="create-tournament-button">
+                    Wróć
+                </button>
+                <button type="submit" className="create-tournament-button">
+                    Dalej
+                </button>
             </div>
         </form>
     );
@@ -295,13 +322,14 @@ const CreateTournament = () => {
                     label="Miasto"
                     value={formData.city}
                     onChange={handleChange}
+                    error={!!errors.city}
+                    helperText={errors.city}
                     type="text"
                     fullWidth
                     required
                 />
             </div>
             <div className="create-tournament-input-group">
-
                 <TextField
                     name="courts"
                     label="Liczba boisk"
@@ -315,7 +343,9 @@ const CreateTournament = () => {
                 />
             </div>
             <div className="create-tournament-button-group">
-                <button type="button" onClick={() => setStep(2)} className="create-tournament-button">Wróć</button>
+                <button type="button" onClick={() => setStep(2)} className="create-tournament-button">
+                    Wróć
+                </button>
                 <button type="submit" className="create-tournament-button" disabled={isLoading}>
                     {isLoading ? <CircularProgress size={20} /> : "Utwórz"}
                 </button>

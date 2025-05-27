@@ -1,7 +1,6 @@
 import "../../styles/EditTournament.css";
 import { useState, useEffect, JSX } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/icons/cross.svg";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
@@ -13,14 +12,20 @@ import { HTTP_ADDRESS } from "../../config.ts";
 const TournamentSchema = z.object({
     type: z.string(),
     name: z.string().min(1, "Nazwa jest wymagana"),
-    streetAddress: z.string().min(1, "Lokalizacja jest wymagana"),
-    availableCourts: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
-        message: "Liczba boisk musi być większa od 0"
-    }),
-    participantsLimit: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
-        message: "Limit uczestników musi być większy od 0"
-    }),
-    matchDurationMinutes: z.string().min(1, "Czas trwania meczu jest wymagany"),
+    streetAddress: z.string().min(1, "Adres ulicy jest wymagany"),
+    availableCourts: z
+        .string()
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+            message: "Liczba boisk musi być większa od 0"
+        }),
+    participantsLimit: z
+        .string()
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 2, {
+            message: "Limit uczestników musi być conajmniej 2"
+        }),
+    matchDurationMinutes: z
+        .string()
+        .min(1, "Czas trwania meczu jest wymagany"),
     city: z.string().min(1, "Miasto jest wymagane"),
     postalCode: z.string().regex(/^[0-9]{2}-[0-9]{3}$/, "Kod pocztowy musi być w formacie xx-xxx")
 });
@@ -33,7 +38,6 @@ declare global {
 
 const EditTournament: () => JSX.Element = () => {
     const { id } = useParams<{ id: string }>();
-
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -55,19 +59,21 @@ const EditTournament: () => JSX.Element = () => {
         "Piotr Budynek, M, 34l."
     ]);
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
                 const response = await fetch(`${HTTP_ADDRESS}/api/competitions/` + id, {
                     credentials: "include"
                 });
-                if (!response.ok) {
-                    throw new Error("Błąd przy pobieraniu danych turnieju");
-                }
+
+                if (!response.ok) throw new Error("Błąd przy pobieraniu danych turnieju");
 
                 const data = await response.json();
 
-                setFormData(prev => ({
+                setFormData((prev) => ({
                     ...prev,
                     type: data.type || prev.type,
                     name: data.name || prev.name,
@@ -87,16 +93,12 @@ const EditTournament: () => JSX.Element = () => {
         fetchTournamentData();
     }, []);
 
-
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [isLoading, setIsLoading] = useState(false);
-
     const removeParticipant = (index: number) => {
-        setParticipants(prev => prev.filter((_, i) => i !== index));
+        setParticipants((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleDisciplineSelect = (discipline: string) => {
-        setFormData(prev => ({ ...prev, type: discipline }));
+        setFormData((prev) => ({ ...prev, type: discipline }));
     };
 
     const validateForm = () => {
@@ -107,7 +109,7 @@ const EditTournament: () => JSX.Element = () => {
         } catch (e) {
             if (e instanceof z.ZodError) {
                 const newErrors: Record<string, string> = {};
-                e.errors.forEach(err => {
+                e.errors.forEach((err) => {
                     const field = err.path[0] as string;
                     newErrors[field] = err.message;
                 });
@@ -140,7 +142,6 @@ const EditTournament: () => JSX.Element = () => {
         };
 
         console.log(competitionData);
-
 
         try {
             const response = await fetch(`${HTTP_ADDRESS}/api/competitions/` + id, {
@@ -179,6 +180,7 @@ const EditTournament: () => JSX.Element = () => {
         const m = (minutes % 60).toString().padStart(2, "0");
         return `${h}:${m}`;
     };
+
     const disciplines = [
         { name: "TENNIS_OUTDOOR", src: TennisIcon, alt: "Tennis" },
         { name: "TABLE_TENNIS", src: PingPongIcon, alt: "Ping Pong" },
@@ -230,6 +232,7 @@ const EditTournament: () => JSX.Element = () => {
                                     helperText={errors.streetAddress}
                                 />
                             </div>
+
                             <div className="create-tournament-location">
                                 <TextField
                                     name="postalCode"
@@ -247,6 +250,8 @@ const EditTournament: () => JSX.Element = () => {
                                     label="Miasto"
                                     value={formData.city}
                                     type="text"
+                                    error={!!errors.city}
+                                    helperText={errors.city}
                                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                                     fullWidth
                                     required
@@ -295,9 +300,7 @@ const EditTournament: () => JSX.Element = () => {
                                 <button className="create-tournament-button">Edytuj daty</button>
                             </div>
 
-                            <div className="edit-tournament-participantsLimit-header">
-                                Lista uczestników
-                            </div>
+                            <div className="edit-tournament-participantsLimit-header">Lista uczestników</div>
 
                             {participantsLimit.map((p, i) => (
                                 <div key={i} className="edit-tournament-participant-item">
@@ -314,18 +317,12 @@ const EditTournament: () => JSX.Element = () => {
                     </div>
 
                     <div className="edit-tournament-button-group">
-                        <button
-                            className="edit-tournament-button accept"
-                            onClick={(e) => handleSubmit(e, true)}
-                            type="submit"
-                        >
+                        <button className="edit-tournament-button accept" onClick={(e) => handleSubmit(e, true)}
+                                type="submit">
                             AKCEPTUJ
                         </button>
-                        <button
-                            className="edit-tournament-button start"
-                            onClick={(e) => handleSubmit(e, false)}
-                            type="submit"
-                        >
+                        <button className="edit-tournament-button start" onClick={(e) => handleSubmit(e, false)}
+                                type="submit">
                             ROZPOCZNIJ
                         </button>
                     </div>
@@ -336,4 +333,3 @@ const EditTournament: () => JSX.Element = () => {
 };
 
 export default EditTournament;
-z;
