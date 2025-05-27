@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -94,7 +95,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralExceptions(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
+
+        if (responseStatus == null) {
+            return handleGenericException(ex);
+        }
+        return handleExceptionWithResponseStatus(ex, responseStatus);
+    }
+
+    private ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal server error",
@@ -102,5 +112,16 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<ErrorResponse> handleExceptionWithResponseStatus(Exception ex, ResponseStatus responseStatus) {
+        int code = responseStatus.code().value();
+        ErrorResponse errorResponse = new ErrorResponse(
+                code,
+                code >= 500 ? "Internal server error" : "Bad request",
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, responseStatus.code());
     }
 }
