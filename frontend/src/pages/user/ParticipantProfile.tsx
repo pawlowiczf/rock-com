@@ -1,10 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { TextField, IconButton, Avatar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import "../../styles/UserSite.css";
+import pages from "../Guard/Guard";
 
 const ParticipantProfile = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
+        const registrationData1 = sessionStorage.getItem("permissions")?.toLowerCase();
+        console.log("Permissions:", registrationData);
+        console.log("Permissions1:", registrationData1);
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+        if (!isLoggedIn || isLoggedIn !== "true") {
+            navigate("/login");
+        }
+        if (registrationData) {
+            if (
+                !pages
+                    .filter((page) =>
+                        page.permissions.includes(registrationData),
+                    )
+                    .flatMap((page) => page.path)
+                    .includes("/profile")
+            ) {
+                navigate("/login");
+            }
+        }
+        if (!registrationData) {
+            navigate("/login");
+        }
+    }, []);
+
     const placeholderAvatar = "./assets/avatar-placeholder.jpg";
 
     const [profileData, setProfileData] = useState({
@@ -14,6 +44,8 @@ const ParticipantProfile = () => {
         email: "piotr.budynek@gmail.com",
         phone: "Numer telefonu",
     });
+
+    
 
     const [editField, setEditField] = useState<string | null>(null);
 

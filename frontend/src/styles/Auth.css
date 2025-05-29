@@ -6,7 +6,6 @@
     padding: 1rem;
 }
 
-
 .auth-window {
     width: 100%;
     max-width: 500px;
@@ -52,18 +51,18 @@
 }
 
 .auth-input-group input::-webkit-input-placeholder {
-    font-family: "Roboto",sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 .auth-input-group input:-ms-input-placeholder {
-    font-family: "Roboto",sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 .auth-input-group input:-moz-placeholder {
-    font-family:  "Roboto",sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 .auth-input-group input::-moz-placeholder {
-    font-family:  "Roboto",sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 .auth-select {
@@ -88,7 +87,6 @@
 .auth-button:hover {
     background-color: #8a1dd8;
 }
-
 
 .add-button {
     background-color: transparent;
@@ -128,19 +126,20 @@
     padding: 0.5rem;
     background: transparent;
     cursor: pointer;
-    transition: filter 0.2s ease, border-color 0.2s ease;
+    transition:
+        filter 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .discipline-button img {
     width: 2.5rem;
     height: 2.5rem;
     filter: none;
-
 }
 
 .discipline-button.selected img {
-    filter: grayscale(100%) brightness(0) saturate(100%) invert(19%) sepia(84%) saturate(7476%) hue-rotate(268deg) brightness(94%) contrast(108%);
-
+    filter: grayscale(100%) brightness(0) saturate(100%) invert(19%) sepia(84%)
+        saturate(7476%) hue-rotate(268deg) brightness(94%) contrast(108%);
 }
 .auth-bottom-text {
     margin-top: 1rem;

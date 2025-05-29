@@ -42,6 +42,8 @@ public abstract class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+    
+    
 
     public static final class FieldNames {
         public static final String ID = "user_id";
