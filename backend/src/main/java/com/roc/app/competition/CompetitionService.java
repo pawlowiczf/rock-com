@@ -18,11 +18,10 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionDateRepository competitionDateRepository;
-    private final CompetitionMapper competitionMapper;
 
     public List<CompetitionResponseDto> getAllCompetitions() {
         return competitionRepository.findAll().stream()
-                .map(competitionMapper::mapToDto)
+                .map(CompetitionResponseDto::fromModel)
                 .collect(Collectors.toList());
     }
 
@@ -35,33 +34,33 @@ public class CompetitionService {
         }
 
         return competitionRepository.findByType(competitionTypeEnum).stream()
-                .map(competitionMapper::mapToDto)
+                .map(CompetitionResponseDto::fromModel)
                 .collect(Collectors.toList());
     }
 
     public List<CompetitionResponseDto> getOpenCompetitions() {
         return competitionRepository.findByRegistrationOpen(true).stream()
-                .map(competitionMapper::mapToDto)
+                .map(CompetitionResponseDto::fromModel)
                 .collect(Collectors.toList());
     }
 
     public List<CompetitionResponseDto> getCompetitionsByCity(String city) {
         return competitionRepository.findByCity(city).stream()
-                .map(competitionMapper::mapToDto)
+                .map(CompetitionResponseDto::fromModel)
                 .collect(Collectors.toList());
     }
 
     public CompetitionResponseDto getCompetitionById(Integer id) {
         return competitionRepository.findById(id)
-                .map(competitionMapper::mapToDto)
+                .map(CompetitionResponseDto::fromModel)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
     }
 
     @Transactional
     public CompetitionResponseDto createCompetition(CompetitionCreateRequestDto competitionDTO) {
-        Competition competition = competitionMapper.mapToEntity(competitionDTO);
+        Competition competition = competitionDTO.toModel();
         Competition savedCompetition = competitionRepository.save(competition);
-        return competitionMapper.mapToDto(savedCompetition);
+        return CompetitionResponseDto.fromModel(savedCompetition);
     }
 
 
@@ -81,7 +80,7 @@ public class CompetitionService {
         competition.setRegistrationOpen(competitionDTO.registrationOpen());
 
         Competition updatedCompetition = competitionRepository.save(competition);
-        return competitionMapper.mapToDto(updatedCompetition);
+        return CompetitionResponseDto.fromModel(updatedCompetition);
     }
 
 
