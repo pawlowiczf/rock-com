@@ -28,9 +28,9 @@ const OrganizerTournaments = () => {
                         page.permissions.includes(registrationData),
                     )
                     .flatMap((page) => page.path)
-                    .includes("/tournaments/edit/:id")
+                    .includes("/organizer/tournaments")
             ) {
-                navigate("/organizer/tournaments");
+                navigate("/profile");
             }
         }
         if (!registrationData) {

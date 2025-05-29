@@ -28,17 +28,27 @@ const TopBar: React.FC = () => {
         console.log("Permissions:", registrationData);
         if (registrationData) {
             setPermissions(registrationData.toLowerCase());
-            const userPages = pages
-                .filter((page) => page.permissions.includes(registrationData))
-                .filter((page) => page.constraints === "normal");
-            console.log("User Pages:", userPages);
-            const paths = userPages.flatMap((page) => page.path);
+            let paths: string[] = [];
+            if (window.location.pathname === "/login") {
+                paths = [];
+            }
+            else{
+                const userPages = pages
+                    .filter((page) => page.permissions.includes(registrationData))
+                    .filter((page) => page.constraints === "normal");
+                console.log("User Pages:", userPages);
+                paths = userPages.flatMap((page) => page.path);
+            }
             setFilteredPages(paths);
             console.log("Filtered Pages:", filteredPages);
         } else {
             setFilteredPages([]);
         }
-        if (!registrationData) {
+        if (
+            !registrationData &&
+            !window.location.pathname.startsWith("/register")
+        ) {
+            console.log(window.location.pathname);
             console.log("No permissions found, redirecting to login.");
             navigate("/login");
         }
@@ -60,36 +70,39 @@ const TopBar: React.FC = () => {
     return (
         <AppBar position="static" color="default">
             <Toolbar>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
-                    sx={{ mr: 2 }}
-                    onClick={handleMenuClick}
-                >
-                    <MenuIcon />
-                </IconButton>
-                <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    {filteredPages.map((path) => (
-                        <MenuItem
-                            key={path}
-                            onClick={() => handleNavigate(path)}
+                {window.location.pathname !== "/login" && (
+                    <>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                            onClick={handleMenuClick}
                         >
-                            {path === "/login"
-                                ? "Logout"
-                                : path
-                                      .split("/")
-                                      .filter(Boolean)
-                                      .map(
-                                          (char) =>
-                                              char.charAt(0).toUpperCase() +
-                                              char.slice(1),
-                                      )
-                                      .join(" ")}
-                        </MenuItem>
-                    ))}
-                </Menu>
-
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                            {filteredPages.map((path) => (
+                                <MenuItem
+                                    key={path}
+                                    onClick={() => handleNavigate(path)}
+                                >
+                                    {path === "/login"
+                                        ? "Logout"
+                                        : path
+                                            .split("/")
+                                            .filter(Boolean)
+                                            .map(
+                                                (char) =>
+                                                    char.charAt(0).toUpperCase() +
+                                                    char.slice(1),
+                                            )
+                                            .join(" ")}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </>
+                )}
                 <Typography
                     variant="h6"
                     component="div"

@@ -21,10 +21,6 @@ import JudgeScore from "./pages/judge/JudgeScore";
 function App() {
     return (
         <>
-            <LoadScript
-                googleMapsApiKey="AIzaSyARWy34KH0FwqnZeF4scwrJeXMoRHm7i9A"
-                libraries={["places"]}
-            >
                 <Router>
                     <div className="App">
                         <TopBar />
@@ -84,7 +80,6 @@ function App() {
                         </Routes>
                     </div>
                 </Router>
-            </LoadScript>
         </>
     );
 }

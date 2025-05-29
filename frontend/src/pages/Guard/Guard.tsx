@@ -9,7 +9,12 @@ const pages = [
         constraints: "register",
     },
     {
-        path: ["/login", "/profile", "/matches", "/tournaments"],
+        path: ["/matches", "/tournaments"],
+        permissions: ["participant"],
+        constraints: "normal",
+    },
+    {
+        path: ["/login", "/profile"],
         permissions: ["participant", "judge", "organizer"],
         constraints: "normal",
     },
@@ -19,10 +24,16 @@ const pages = [
         constraints: "normal",
     },
     {
-        path: ["/tournaments/create", "/tournaments/edit/:id", "/matches/edit"],
+        path: ["/tournaments/create", "/organizer/tournaments"],
         permissions: ["organizer"],
         constraints: "normal",
     },
+    {
+        path: [ "/tournaments/edit/:id", "/matches/edit"],
+        permissions: ["organizer"],
+        constraints: "edit",
+
+    }
 ];
 
 export default pages;

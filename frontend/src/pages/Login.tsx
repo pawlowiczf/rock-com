@@ -12,7 +12,8 @@ const Login: React.FC = () => {
     useEffect(() => {
         sessionStorage.setItem("permissions", "");
         sessionStorage.setItem("isLoggedIn", "false");
-    }, [navigate]);
+        sessionStorage.setItem("userId", "");
+    }, []);
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -46,6 +47,20 @@ const Login: React.FC = () => {
                     throw new Error("Błąd podczas pobierania uprawnień");
                 }
                 const permissions = await permissionsResponse.text();
+
+
+                const idResponse = await fetch(
+                    `${HTTP_ADDRESS}/api/users/id/${email}`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                    },
+                );
+                if (!idResponse.ok) {
+                    throw new Error("Błąd podczas pobierania ID użytkownika");
+                }
+                const userId = await idResponse.text();
+                sessionStorage.setItem("userId", userId);
                 sessionStorage.setItem("isLoggedIn", "true");
                 sessionStorage.setItem("permissions", permissions);
                 navigate("/profile");

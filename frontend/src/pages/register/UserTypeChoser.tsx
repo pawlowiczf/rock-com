@@ -40,7 +40,7 @@ const UserTypeChoser: React.FC = () => {
         );
         const updatedData = { ...prevData, userType };
         sessionStorage.setItem("registrationData", JSON.stringify(updatedData));
-
+        console.log("Updated registration data:", updatedData);
         if (userType === "Judge") {
             navigate("/register/judge");
         } else {

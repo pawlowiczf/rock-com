@@ -110,9 +110,9 @@ const CreateTournament = () => {
                         page.permissions.includes(registrationData),
                     )
                     .flatMap((page) => page.path)
-                    .includes("/judge/score")
+                    .includes("/tournaments/create")
             ) {
-                navigate("/tournaments/create");
+                navigate("/profile");
             }
         }
         if (!registrationData) {
