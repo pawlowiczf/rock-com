@@ -36,7 +36,7 @@ const Login: React.FC = () => {
             console.log("Zalogowano pomyślnie:", response);
             try {
                 const permissionsResponse = await fetch(
-                    `${HTTP_ADDRESS}/api/permissions/${email}`,
+                    `${HTTP_ADDRESS}/api/users/authorities/${email}`,
                     {
                         method: "GET",
                         credentials: "include",
