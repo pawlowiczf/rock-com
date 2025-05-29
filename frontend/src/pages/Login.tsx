@@ -1,5 +1,5 @@
 import "../styles/Auth.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HTTP_ADDRESS } from "../config.ts";
 
@@ -9,6 +9,10 @@ const Login: React.FC = () => {
     const [error, setError] = useState<string>("");
     const navigate = useNavigate();
 
+    useEffect(() => {
+        sessionStorage.setItem("permissions", "");
+        sessionStorage.setItem("isLoggedIn", "false");
+    }, [navigate]);
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -29,16 +33,31 @@ const Login: React.FC = () => {
             if (!response.ok) {
                 throw new Error("Niepoprawne dane logowania");
             }
-            navigate("/profile")
-
-        } catch(error) {
+            console.log("Zalogowano pomyślnie:", response);
+            try {
+                const permissionsResponse = await fetch(
+                    `${HTTP_ADDRESS}/api/permissions/${email}`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                    },
+                );
+                if (!permissionsResponse.ok) {
+                    throw new Error("Błąd podczas pobierania uprawnień");
+                }
+                const permissions = await permissionsResponse.text();
+                sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("permissions", permissions);
+                navigate("/profile");
+            } catch (error) {
+                console.error("Błąd podczas ustawiania sesji:", error);
+                setError("Błąd podczas logowania. Spróbuj ponownie.");
+            }
+        } catch (error) {
             console.log(error);
             setError("Niepoprawne dane logowania");
         }
-    }
-    
-
-
+    };
 
     return (
         <div className="auth-container">
