@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Tabs, Tab } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import "../styles/UserSite.css";
-import { HTTP_ADDRESS } from '../config.ts';
+import "../../styles/UserSite.css";
+import { HTTP_ADDRESS } from '../../config.ts';
+import TennisIcon from "../../assets/icons/tennis.svg";
+import PingPongIcon from "../../assets/icons/pingpong.svg";
+import BadmintonIcon from "../../assets/icons/badminton.svg";
 
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
@@ -44,6 +47,18 @@ const OrganizerTournaments = () => {
         return false; 
     });
 
+    function getIcon(type: string): object {
+        switch (type) {
+            case "TENNIS_OUTDOOR":
+                return TennisIcon;
+            case "TABLE_TENNIS":
+                return PingPongIcon;
+            case "BADMINTON":
+                return BadmintonIcon;
+        }
+    }
+
+
     return (
         <div
             className="user-site-container"
@@ -56,11 +71,11 @@ const OrganizerTournaments = () => {
             <div className="user-site-window">
                 <Typography
                     textAlign="center"
-                    color="primary"
+                    color="#a020f0"
                     variant="h6"
                     gutterBottom
                 >
-                    Turnieje tenisa ziemnego
+                    Turnieje
                 </Typography>
                 <Tabs
                     value={tab}
@@ -82,9 +97,13 @@ const OrganizerTournaments = () => {
                         filteredTournaments.map((tournament) => (
                             <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
                                 <CardContent className="card-content">
-                                    <Typography variant="h6" color="secondary">
-                                        {tournament.type} {tournament.name}
-                                    </Typography>
+                                    <div>
+                                        <img src={getIcon(tournament.type)} alt={tournament.type}
+                                             style={{ width: "24px", height: "24px" }} />
+                                        <Typography variant="h6" color="secondary">
+                                            {tournament.name}
+                                        </Typography>
+                                    </div>
                                     <div>
                                         <Typography variant="body2" color="textSecondary">
                                             Data:{" "}

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "../styles/Auth.css";
-import "../styles/UserTypeChoser.css";
-import tennisIcon from "../assets/icons/tennis.svg";
-import pingpongIcon from "../assets/icons/pingpong.svg";
-import badmintonIcon from "../assets/icons/badminton.svg";
+import "../../styles/Auth.css";
+import "../../styles/UserTypeChoser.css";
+import tennisIcon from "../../assets/icons/tennis.svg";
+import pingpongIcon from "../../assets/icons/pingpong.svg";
+import badmintonIcon from "../../assets/icons/badminton.svg";
 import { useNavigate } from "react-router-dom";
 
 const JudgeLicence: React.FC = () => {

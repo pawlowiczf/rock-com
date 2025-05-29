@@ -105,6 +105,15 @@ CREATE TABLE users (
     CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
 
+WITH inserted_user AS (
+INSERT INTO users (firstname, lastname, email, password, city, phone_number)
+VALUES ('Admin', 'Admin', 'admin@admin.admin', '$2a$10$.4d01rYf47HRMx8d5/iuU.0R9j0KOZWm1SRnmkQm.1Upx8XteWwla', 'Kraków', '1234556789')
+    RETURNING user_id
+    )
+INSERT INTO organizers (user_id, is_admin)
+SELECT user_id, true
+FROM inserted_user;
+
 -- foreign keys
 -- Reference: Table_14_competitions (table: competition_referees)
 ALTER TABLE competition_referees ADD CONSTRAINT Table_14_competitions

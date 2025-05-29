@@ -1,5 +1,5 @@
-import "../styles/Auth.css";
-import "../styles/AccountCreating.css";
+import "../../styles/Auth.css";
+import "../../styles/AccountCreating.css";
 
 import React, { useEffect } from "react";
 import { useState } from "react";

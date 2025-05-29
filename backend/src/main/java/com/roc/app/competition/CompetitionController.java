@@ -2,6 +2,7 @@ package com.roc.app.competition;
 
 import com.roc.app.competition.assignment.CompetitionParticipantService;
 import com.roc.app.competition.assignment.dto.CompetitionParticipantResponseDto;
+import com.roc.app.competition.dto.CompetitionDateResponseDto;
 import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
@@ -22,6 +23,7 @@ public class CompetitionController {
 
     private final CompetitionService competitionService;
     private final CompetitionParticipantService competitionParticipantService;
+    private final CompetitionDateService competitionDateService;
 
     @GetMapping
     public ResponseEntity<List<CompetitionResponseDto>> getAllCompetitions() {
@@ -86,6 +88,11 @@ public class CompetitionController {
         CompetitionParticipantResponseDto responseDto = competitionParticipantService.enroll(competition, participant);
 
         return ResponseEntity.ok(responseDto);
+      
+    @GetMapping("/{id}/dates")
+    public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
+        List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
+        return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 }
 

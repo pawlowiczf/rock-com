@@ -9,6 +9,16 @@
   margin-bottom: 1rem;
 }
 
+.create-tournament-location {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.create-tournament-location > * {
+  flex: 1;
+}
+
 .create-tournament-input-group .MuiTextField-root {
   width: 100%;
   background-color: transparent;
@@ -154,7 +164,7 @@
 
 .MuiOutlinedInput-root {
   border-radius: 8px;
-  background-color: A !important;
+  background-color: white !important;
 }
 
 .MuiOutlinedInput-notchedOutline {
