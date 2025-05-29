@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TextField, IconButton, Avatar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
-import "../styles/UserSite.css";
+import "../../styles/UserSite.css";
 
 const ParticipantProfile = () => {
     const placeholderAvatar = "./assets/avatar-placeholder.jpg";

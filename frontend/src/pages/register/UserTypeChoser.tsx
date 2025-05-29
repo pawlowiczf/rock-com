@@ -1,9 +1,9 @@
-import "../styles/Auth.css";
-import "../styles/UserTypeChoser.css";
+import "../../styles/Auth.css";
+import "../../styles/UserTypeChoser.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { HTTP_ADDRESS } from '../config.ts';
+import { HTTP_ADDRESS } from '../../config.ts';
 
 type UserType = "Participant" | "Judge" | "Organizer" | "";
 

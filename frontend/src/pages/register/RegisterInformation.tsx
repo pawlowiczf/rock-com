@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import "../styles/Auth.css";
-import "../styles/UserTypeChoser.css";
+import "../../styles/Auth.css";
+import "../../styles/UserTypeChoser.css";
 import { useNavigate } from "react-router-dom";
 
 const RegisterInformation: React.FC = () => {

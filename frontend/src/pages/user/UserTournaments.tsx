@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
-import "../styles/UserSite.css";
-import { HTTP_ADDRESS } from '../config.ts';
+import "../../styles/UserSite.css";
+import { HTTP_ADDRESS } from '../../config.ts';
 
 const UserTournaments = () => {
     const [tab, setTab] = useState(0);

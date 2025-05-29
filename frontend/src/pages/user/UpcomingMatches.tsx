@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import "../styles/UserSite.css";
+import "../../styles/UserSite.css";
 
 const matches = [
     {
