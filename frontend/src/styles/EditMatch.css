@@ -18,7 +18,7 @@
 
 .edit-match-header {
     margin-top: 0rem;
-    color: #A020F0;
+    color: #a020f0;
     text-align: center;
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
@@ -27,7 +27,7 @@
 .edit-match-form {
     display: flex;
     flex-direction: column;
-    width:95%;
+    width: 95%;
 }
 
 .edit-match-input-group {
@@ -45,7 +45,7 @@
 
 .edit-match-input-group input:focus,
 .MuiTextField-root input:focus {
-    border-color: #A020F0;
+    border-color: #a020f0;
 }
 
 .icon-input .input-icon {
@@ -53,7 +53,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #A020F0;
+    color: #a020f0;
 }
 
 .edit-match-participants-header {
@@ -79,9 +79,8 @@
 }
 
 .edit-match-input-item:focus {
-   border-color: #A020F0;
+    border-color: #a020f0;
 }
-
 
 .edit-match-input-item:hover {
     border-color: black;
@@ -102,10 +101,9 @@
 }
 
 .edit-match-button {
-    background-color: #6400C8;
+    background-color: #6400c8;
     color: white;
 }
-
 
 /* Stylizacja TextField */
 .MuiTextField-root {

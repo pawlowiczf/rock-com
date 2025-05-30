@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import {
+    Card,
+    CardContent,
+    Typography,
+    Tabs,
+    Tab,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+} from "@mui/material";
 import "../../styles/UserSite.css";
-import { HTTP_ADDRESS } from '../../config.ts';
+import { HTTP_ADDRESS } from "../../config.ts";
 
 const UserTournaments = () => {
     const [tab, setTab] = useState(0);
@@ -13,14 +24,19 @@ const UserTournaments = () => {
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/upcoming`, {
-                credentials: "include",
-            });
+            const response = await fetch(
+                `${HTTP_ADDRESS}/api/competitions/upcoming`,
+                {
+                    credentials: "include",
+                },
+            );
             if (!response.ok) {
-                throw new Error("Nie udało się pobrać danych o nadchodzących turniejach.");
+                throw new Error(
+                    "Nie udało się pobrać danych o nadchodzących turniejach.",
+                );
             }
             const data = await response.json();
-            console.log(data)
+            console.log(data);
             setUpcomingTournaments(data);
         } catch (error) {
             alert(error);
@@ -28,7 +44,6 @@ const UserTournaments = () => {
             setIsLoading(false);
         }
     };
-
 
     useEffect(() => {
         fetchUpcomingTournaments();
@@ -54,11 +69,10 @@ const UserTournaments = () => {
         console.log(`Dołączono do turnieju o ID: ${tournamentId}`);
     };
 
-
     const filteredTournaments = upcomingTournaments.filter((tournament) => {
         if (tab === 0) return tournament.registrationOpen;
-        if (tab === 1) return !tournament.registrationOpen; 
-        return false; 
+        if (tab === 1) return !tournament.registrationOpen;
+        return false;
     });
 
     return (
@@ -92,27 +106,48 @@ const UserTournaments = () => {
                 </Tabs>
                 <div className="tournament-list">
                     {isLoading ? (
-                        <Typography variant="h6" color="primary" textAlign="center">
+                        <Typography
+                            variant="h6"
+                            color="primary"
+                            textAlign="center"
+                        >
                             Ładowanie turniejów...
                         </Typography>
                     ) : (
                         filteredTournaments.map((tournament) => (
-                            <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
+                            <Card
+                                key={tournament.competitionId}
+                                sx={{ margin: "16px 0" }}
+                            >
                                 <CardContent className="card-content">
                                     <Typography variant="h6" color="secondary">
                                         {tournament.type} {tournament.name}
                                     </Typography>
                                     <div>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                        >
                                             Data:{" "}
                                             <span style={{ color: "purple" }}>
-                                                {new Date(tournament.startTime).toLocaleDateString()} - {new Date(tournament.endTime).toLocaleDateString()}
+                                                {new Date(
+                                                    tournament.startTime,
+                                                ).toLocaleDateString()}{" "}
+                                                -{" "}
+                                                {new Date(
+                                                    tournament.endTime,
+                                                ).toLocaleDateString()}
                                             </span>
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                        >
                                             Status:{" "}
                                             <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
+                                                {tournament.registrationOpen
+                                                    ? "Otwarte"
+                                                    : "Zakończone"}
                                             </span>
                                         </Typography>
                                     </div>
@@ -121,12 +156,19 @@ const UserTournaments = () => {
                                         onClick={
                                             !tournament.registrationOpen
                                                 ? undefined
-                                                : () => handleOpenDialog(tournament)
+                                                : () =>
+                                                      handleOpenDialog(
+                                                          tournament,
+                                                      )
                                         }
                                         style={{
                                             backgroundColor:
-                                                !tournament.registrationOpen ? "gray" : undefined,
-                                            cursor: !tournament.registrationOpen ? "not-allowed" : "pointer",
+                                                !tournament.registrationOpen
+                                                    ? "gray"
+                                                    : undefined,
+                                            cursor: !tournament.registrationOpen
+                                                ? "not-allowed"
+                                                : "pointer",
                                         }}
                                         disabled={!tournament.registrationOpen}
                                     >
@@ -142,8 +184,14 @@ const UserTournaments = () => {
                     <DialogContent>
                         {selectedTournament && (
                             <Typography variant="body1">
-                                Czy potwierdzasz zapisanie się na zawody: <strong>{selectedTournament.type}</strong><br />
-                                Data: {new Date(selectedTournament.startTime).toLocaleDateString()} <br />
+                                Czy potwierdzasz zapisanie się na zawody:{" "}
+                                <strong>{selectedTournament.type}</strong>
+                                <br />
+                                Data:{" "}
+                                {new Date(
+                                    selectedTournament.startTime,
+                                ).toLocaleDateString()}{" "}
+                                <br />
                                 Lokalizacja: {selectedTournament.city} <br />
                                 Koszt zapisu: <strong>300zł</strong> <br />
                             </Typography>
@@ -153,7 +201,11 @@ const UserTournaments = () => {
                         <Button onClick={handleCloseDialog} color="secondary">
                             Anuluj
                         </Button>
-                        <Button onClick={handleProceedToPayment} variant="contained" color="primary">
+                        <Button
+                            onClick={handleProceedToPayment}
+                            variant="contained"
+                            color="primary"
+                        >
                             Tak, przejdź do płatności
                         </Button>
                     </DialogActions>

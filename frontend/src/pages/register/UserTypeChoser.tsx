@@ -3,7 +3,7 @@ import "../../styles/UserTypeChoser.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { HTTP_ADDRESS } from '../../config.ts';
+import { HTTP_ADDRESS } from "../../config.ts";
 
 type UserType = "Participant" | "Judge" | "Organizer" | "";
 
@@ -40,7 +40,7 @@ const UserTypeChoser: React.FC = () => {
         );
         const updatedData = { ...prevData, userType };
         sessionStorage.setItem("registrationData", JSON.stringify(updatedData));
-
+        console.log("Updated registration data:", updatedData);
         if (userType === "Judge") {
             navigate("/register/judge");
         } else {
@@ -85,8 +85,7 @@ const UserTypeChoser: React.FC = () => {
                 if (!response.ok) {
                     throw new Error("Failed to register participant");
                 }
-            }
-            else{
+            } else {
                 navigate("/register/information");
             }
         } catch (error) {

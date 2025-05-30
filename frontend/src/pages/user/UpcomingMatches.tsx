@@ -1,5 +1,8 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import "../../styles/UserSite.css";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import pages from "../Guard/Guard";
 
 const matches = [
     {
@@ -33,6 +36,30 @@ const matches = [
 ];
 
 const UpcomingMatches = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+        if (!isLoggedIn || isLoggedIn !== "true") {
+            navigate("/login");
+        }
+        if (registrationData) {
+            if (
+                !pages
+                    .filter((page) =>
+                        page.permissions.includes(registrationData),
+                    )
+                    .flatMap((page) => page.path)
+                    .includes("/matches")
+            ) {
+                navigate("/profile");
+            }
+        }
+        if (!registrationData) {
+            navigate("/login");
+        }
+    }, []);
+
     return (
         <div
             className="user-site-container"

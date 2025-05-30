@@ -82,12 +82,13 @@ public class CompetitionController {
 
     @PostMapping("/{id}/enroll")
     public ResponseEntity<CompetitionParticipantResponseDto> enrollIntoCompetition(@PathVariable Integer id, Authentication authentication) {
-        Participant participant= (Participant) authentication.getPrincipal();
+        Participant participant = (Participant) authentication.getPrincipal();
         Competition competition = competitionService.getCompetitionById(id).toModel();
 
         CompetitionParticipantResponseDto responseDto = competitionParticipantService.enroll(competition, participant);
 
         return ResponseEntity.ok(responseDto);
+    }
       
     @GetMapping("/{id}/dates")
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {

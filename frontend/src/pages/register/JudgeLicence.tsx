@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "../../styles/Auth.css";
 import "../../styles/UserTypeChoser.css";
 import tennisIcon from "../../assets/icons/tennis.svg";
@@ -8,9 +8,16 @@ import { useNavigate } from "react-router-dom";
 
 const JudgeLicence: React.FC = () => {
     const navigate = useNavigate();
-    const somefunction = () => {
-        console.log("Button clicked!");
-    };
+    useEffect(() => {
+            const registrationData = sessionStorage.getItem("registrationData");
+            console.log("Registration Data:", registrationData);
+            if (!registrationData) {
+                navigate("/register");
+            }
+            else if (JSON.parse(registrationData).userType !== "Judge") {
+                navigate("/register");
+            }
+        }, [navigate]);
     const [licences, setLicences] = useState([
         { licenceNumber: "", discipline: "tenis" },
     ]);
@@ -131,9 +138,7 @@ const JudgeLicence: React.FC = () => {
                                 className="auth-button"
                                 style={{ width: "35%" }}
                                 onClick={() => {
-                                    navigate(
-                                        "/register/information"
-                                    );
+                                    navigate("/register/information");
                                 }}
                             >
                                 Dalej
