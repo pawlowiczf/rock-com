@@ -14,7 +14,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public User getUserByUserId(Long userId) {
+    public User getUserByUserId(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 

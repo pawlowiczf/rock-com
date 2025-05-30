@@ -18,7 +18,7 @@ public abstract class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = FieldNames.ID)
-    private Long userId;
+    private Integer userId;
 
     @Column(name = FieldNames.FIRST_NAME, nullable = false, length = 50)
     private String firstName;
