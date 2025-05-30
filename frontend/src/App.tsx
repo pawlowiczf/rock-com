@@ -5,7 +5,7 @@ import TopBar from "./pages/TopBar";
 import Login from "./pages/Login";
 import Register from "./pages/register/Register";
 import AccountCreating from "./pages/register/AccountCreating";
-import UserTypeChooser from "./pages/register/UserTypeChooser.tsx";
+import UserTypeChooser from "./pages/register/UserTypeChooser";
 import JudgeLicence from "./pages/register/JudgeLicence";
 import RegisterInformation from "./pages/register/RegisterInformation";
 import CreateTournament from "./pages/organizer/CreateTournament";
