@@ -10,6 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,31 @@ public class CompetitionDateService {
     public List<CompetitionDateResponseDto> getCompetitionDates(Integer competitionId) {
         List<CompetitionDate> competitionDates = dateRepository.findAllByCompetitionId(competitionId);
         return competitionDates.stream().map(CompetitionDateResponseDto::fromModel).collect(Collectors.toList());
+    }
+
+    public List<LocalDateTime> generateTimeSlots(Competition competition) {
+        List<CompetitionDate> dates = dateRepository.findAllByCompetitionId(competition.getCompetitionId());
+        List<LocalDateTime> slots = new ArrayList<>();
+        for (CompetitionDate date : dates) {
+            LocalDateTime current = date.getStartTime();
+            while (current.plusMinutes(competition.getMatchDurationMinutes()).isBefore(date.getEndTime()) ||
+                    current.plusMinutes(competition.getMatchDurationMinutes()).isEqual(date.getEndTime())) {
+                for (int court = 1; court <= competition.getAvailableCourts(); court++) {
+                    slots.add(current);
+                }
+                current = current.plusMinutes(competition.getMatchDurationMinutes());
+            }
+        }
+        return slots;
+    }
+
+    public long getTotalCompetitionDurationMinutes(Competition competition) {
+        List<CompetitionDate> dates = dateRepository.findAllByCompetitionId(competition.getCompetitionId());
+        long totalDurationMinutes = 0;
+        for (CompetitionDate date : dates) {
+            totalDurationMinutes += Duration.between(date.getStartTime(), date.getEndTime()).toMinutes();
+        }
+        return totalDurationMinutes;
     }
 
 }

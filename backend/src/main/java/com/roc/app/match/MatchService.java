@@ -7,6 +7,7 @@ import com.roc.app.match.dto.*;
 import com.roc.app.match.exception.MatchNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,6 +37,27 @@ public class MatchService {
         return matchRepository.save(match).getMatchId();
     }
 
+    public Integer createByeMatch(Competition competition, Integer playerId){
+        Match match = Match.builder()
+                .competition(competition)
+                .player1Id(playerId)
+                .status(MatchStatus.BYE)
+                .winnerId(playerId)
+                .build();
+        return matchRepository.save(match).getMatchId();
+    }
+
+    public Integer createScheduledMatch(Competition competition, Integer player1Id, Integer player2Id, Integer refereeId, LocalDateTime matchDate){
+        Match match = Match.builder()
+                .competition(competition)
+                .player1Id(player1Id)
+                .player2Id(player2Id)
+                .refereeId(null)
+                .matchDate(matchDate)
+                .status(MatchStatus.SCHEDULED)
+                .build();
+        return matchRepository.save(match).getMatchId();
+    }
 
 
     public void updateMatch(Integer matchId, MatchUpdateRequestDto dto) {

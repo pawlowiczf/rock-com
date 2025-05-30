@@ -88,11 +88,18 @@ public class CompetitionController {
         CompetitionParticipantResponseDto responseDto = competitionParticipantService.enroll(competition, participant);
 
         return ResponseEntity.ok(responseDto);
-      
+    }
+
     @GetMapping("/{id}/dates")
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
         return ResponseEntity.ok(competitionDateResponseDtoList);
+    }
+
+    @PostMapping("/{id}/start")
+    public ResponseEntity<Void> startCompetition(@PathVariable Integer id) {
+        competitionService.startCompetition(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
