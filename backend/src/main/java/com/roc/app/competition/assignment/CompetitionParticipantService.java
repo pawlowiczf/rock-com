@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class CompetitionParticipantService {
     private final CompetitionParticipantRepository competitionParticipantRepository;
 
+
     public CompetitionParticipantResponseDto enroll(Competition competition, Participant participant) {
         Integer competitionId = competition.getCompetitionId();
 
@@ -39,5 +40,32 @@ public class CompetitionParticipantService {
         ParticipantResponseDto participantResponseDto = ParticipantResponseDto.fromModel(participant);
 
         return CompetitionParticipantResponseDto.fromModel(competitionParticipant, participantResponseDto);
+    }
+    
+
+
+    public CompetitionParticipantResponseDto resignation(Competition competition, Participant participant) {
+        CompetitionParticipant.CompetitionParticipantId id =
+                new CompetitionParticipant.CompetitionParticipantId(competition.getCompetitionId(),participant.getUserId());
+
+        CompetitionParticipant competitionParticipant = competitionParticipantRepository.findById(id)
+                .orElseThrow(() -> new CompetitionParticipantNotFoundException(id));
+
+        checkStatus(competitionParticipant, id);
+
+        competitionParticipant.setParticipantStatus(ParticipantStatus.WITHDRAWN);
+        competitionParticipant.setStatusChangeDate(LocalDateTime.now());
+
+        competitionParticipantRepository.save(competitionParticipant);
+
+        ParticipantResponseDto participantResponseDto = ParticipantResponseDto.fromModel(participant);
+
+        return CompetitionParticipantResponseDto.fromModel(competitionParticipant, participantResponseDto);
+    }
+
+    private static void checkStatus(CompetitionParticipant competitionParticipant, CompetitionParticipant.CompetitionParticipantId id) {
+        if (competitionParticipant.getParticipantStatus() == ParticipantStatus.WITHDRAWN ){
+            throw new ParticipantAlreadyWithdrawnException(id);
+        }
     }
 }

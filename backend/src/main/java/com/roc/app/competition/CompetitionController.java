@@ -75,6 +75,7 @@ public class CompetitionController {
         competitionService.deleteCompetition(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/upcoming")
     public List<UpcomingCompetitionDto> getUpcomingCompetitions() {
         return competitionService.getUpcomingCompetitions();
@@ -82,13 +83,24 @@ public class CompetitionController {
 
     @PostMapping("/{id}/enroll")
     public ResponseEntity<CompetitionParticipantResponseDto> enrollIntoCompetition(@PathVariable Integer id, Authentication authentication) {
-        Participant participant= (Participant) authentication.getPrincipal();
+        Participant participant = (Participant) authentication.getPrincipal();
         Competition competition = competitionService.getCompetitionById(id).toModel();
 
         CompetitionParticipantResponseDto responseDto = competitionParticipantService.enroll(competition, participant);
 
         return ResponseEntity.ok(responseDto);
-      
+    }
+
+    @PutMapping({"/{id}/resignation"})
+    public ResponseEntity<CompetitionParticipantResponseDto> resignation(@PathVariable Integer id, Authentication authentication){
+        Participant participant = (Participant) authentication.getPrincipal();
+        Competition competition = competitionService.getCompetitionById(id).toModel();
+
+        CompetitionParticipantResponseDto responseDto = competitionParticipantService.resignation(competition, participant);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/{id}/dates")
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
