@@ -3,7 +3,7 @@ package com.roc.app.user.referee.general.dto;
 import com.roc.app.user.referee.general.Referee;
 
 public record RefereeResponseDto(
-        Long userId,
+        Integer userId,
         String firstName,
         String lastName,
         String email,

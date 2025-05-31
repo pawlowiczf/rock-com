@@ -23,7 +23,7 @@ public class ParticipantService {
         return participantRepository.findAll();
     }
 
-    public ParticipantResponseDto findById(Long id) {
+    public ParticipantResponseDto findById(Integer id) {
         Participant participant = participantRepository.findById(id).orElseThrow(() -> new ParticipantNotFoundException(id));
 
         return ParticipantResponseDto.fromModel(participant);
