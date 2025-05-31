@@ -13,5 +13,7 @@ public interface CompetitionParticipantRepository extends JpaRepository<Competit
     }
     Integer countByCompetitionId(Integer competitionId);
 
+    List<CompetitionParticipant> findCompetitionParticipantsByCompetitionId(Integer competitionId);
+
     List<CompetitionParticipant> findByCompetitionId(Integer competitionId);
 }
