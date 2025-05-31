@@ -96,6 +96,11 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 
+    @PostMapping("/{id}/openRegistration")
+    public ResponseEntity<Integer> calculateParticipantsLimit(@PathVariable Integer id) {
+        return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
+    }
+
     @PostMapping("/{id}/start")
     public ResponseEntity<Void> startCompetition(@PathVariable Integer id) {
         competitionService.startCompetition(id);

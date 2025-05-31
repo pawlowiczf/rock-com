@@ -1,5 +1,6 @@
 package com.roc.app.bracket;
 
+import com.roc.app.match.Match;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +13,14 @@ public class BracketService {
 
     private final BracketRepository bracketRepository;
 
-    public void saveRound(List<Integer> matchIds, List<Integer> nextMatchIds) {
+    public void saveRound(List<Match> matches, List<Match> nextMatches) {
         Random random = new Random();
-        for(Integer nextMatchId : nextMatchIds) {
+        for(Match nextMatch : nextMatches) {
             for(int i = 0; i < 2; i++) {
-                Integer matchId = matchIds.remove(random.nextInt(matchIds.size()));
+                Match match = matches.remove(random.nextInt(matches.size()));
                 Bracket bracket = Bracket.builder()
-                        .nextMatchId(nextMatchId)
-                        .matchId(matchId)
+                        .nextMatchId(nextMatch.getMatchId())
+                        .matchId(match.getMatchId())
                         .build();
                 bracketRepository.save(bracket);
             }
