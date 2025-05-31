@@ -19,6 +19,10 @@ public class CompetitionParticipantService {
     public CompetitionParticipantResponseDto enroll(Competition competition, Participant participant) {
         Integer competitionId = competition.getCompetitionId();
 
+        if (!competition.getRegistrationOpen()) {
+            throw new RegistrationIsClosedException(competitionId);
+        }
+
         if (competitionParticipantRepository.isEnrolled(competitionId, participant.getUserId())) {
             throw new ParticipantAlreadyEnrolledException(participant.getUserId(), competitionId);
         }
