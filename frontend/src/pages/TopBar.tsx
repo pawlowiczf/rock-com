@@ -29,7 +29,8 @@ const TopBar: React.FC = () => {
         if (registrationData) {
             setPermissions(registrationData.toLowerCase());
             let paths: string[] = [];
-            if (window.location.pathname === "/login") {
+            const location = window.location.pathname;
+            if (location === "/login" || location.startsWith("/register")) {
                 paths = [];
             }
             else{
@@ -70,7 +71,7 @@ const TopBar: React.FC = () => {
     return (
         <AppBar position="static" color="default">
             <Toolbar>
-                {window.location.pathname !== "/login" && (
+                {window.location.pathname !== "/login" && !window.location.pathname.startsWith("/register") && (
                     <>
                         <IconButton
                             edge="start"

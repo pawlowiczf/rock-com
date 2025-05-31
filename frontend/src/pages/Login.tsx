@@ -37,7 +37,7 @@ const Login: React.FC = () => {
             console.log("Zalogowano pomyślnie:", response);
             try {
                 const permissionsResponse = await fetch(
-                    `${HTTP_ADDRESS}/api/users/authorities/${email}`,
+                    `${HTTP_ADDRESS}/api/users/authorities`,
                     {
                         method: "GET",
                         credentials: "include",
@@ -47,10 +47,10 @@ const Login: React.FC = () => {
                     throw new Error("Błąd podczas pobierania uprawnień");
                 }
                 const permissions = await permissionsResponse.text();
-
+                console.log("Pobrane uprawnienia:", permissions);
 
                 const idResponse = await fetch(
-                    `${HTTP_ADDRESS}/api/users/id/${email}`,
+                    `${HTTP_ADDRESS}/api/users/id`,
                     {
                         method: "GET",
                         credentials: "include",
@@ -60,6 +60,7 @@ const Login: React.FC = () => {
                     throw new Error("Błąd podczas pobierania ID użytkownika");
                 }
                 const userId = await idResponse.text();
+                console.log("Pobrane ID użytkownika:", userId);
                 sessionStorage.setItem("userId", userId);
                 sessionStorage.setItem("isLoggedIn", "true");
                 sessionStorage.setItem("permissions", permissions);

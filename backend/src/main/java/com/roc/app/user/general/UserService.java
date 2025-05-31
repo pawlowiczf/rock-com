@@ -24,12 +24,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 
-    public Long getUserIdByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(User::getUserId)
-                .orElseThrow(() -> new UserNotFoundException(email));
-    }
-
     public String getUserRole(Long userId) {
         User user = getUserByUserId(userId);
         return user.getAuthorities().stream()
