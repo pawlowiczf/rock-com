@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoadScript } from "@react-google-maps/api";
 
 import TopBar from "./pages/TopBar";
 import Login from "./pages/Login";
@@ -20,67 +19,49 @@ import JudgeScore from "./pages/judge/JudgeScore";
 
 function App() {
     return (
-        <>
-                <Router>
-                    <div className="App">
-                        <TopBar />
-                        <Routes>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route
-                                path="/register/account-creating"
-                                element={<AccountCreating />}
-                            />
-                            <Route
-                                path="/register/chose-user-type"
-                                element={<UserTypeChoser />}
-                            />
-                            <Route
-                                path="/register/judge"
-                                element={<JudgeLicence />}
-                            />
-                            <Route
-                                path="/register/information"
-                                element={<RegisterInformation />}
-                            />
-                            <Route
-                                path="/tournaments/create"
-                                element={<CreateTournament />}
-                            />
-                            <Route
-                                path="/tournaments/edit/:id"
-                                element={<EditTournament />}
-                            />
-                            <Route
-                                path="/matches/edit"
-                                element={<EditMatch />}
-                            />
-                            <Route
-                                path="/profile"
-                                element={<ParticipantProfile />}
-                            />
-                            <Route
-                                element={<UserTournaments />}
-                                path="/tournaments"
-                            />
-                            <Route
-                                element={<OrganizerTournaments />}
-                                path="/organizer/tournaments"
-                            />
-                            <Route
-                                path="/matches"
-                                element={<UpcomingMatches />}
-                            />
-                            <Route
-                                path="/judge/score"
-                                element={<JudgeScore />}
-                            />
-                            <Route path="*" element={<Login />} />{" "}
-                            {/* Fallback */}
-                        </Routes>
-                    </div>
-                </Router>
-        </>
+        <Router>
+            <div className="App">
+                <TopBar />
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route
+                        path="/register/account-creating"
+                        element={<AccountCreating />}
+                    />
+                    <Route
+                        path="/register/chose-user-type"
+                        element={<UserTypeChoser />}
+                    />
+                    <Route
+                        path="/register/judge"
+                        element={<JudgeLicence />}
+                    />
+                    <Route
+                        path="/register/information"
+                        element={<RegisterInformation />}
+                    />
+                    <Route
+                        path="/tournaments/create"
+                        element={<CreateTournament />}
+                    />
+                    <Route
+                        path="/tournaments/edit/:id"
+                        element={<EditTournament />}
+                    />
+                    <Route path="/matches/edit" element={<EditMatch />} />
+                    <Route path="/profile" element={<ParticipantProfile />} />
+                    <Route path="/tournaments" element={<UserTournaments />} />
+                    <Route
+                        path="/organizer/tournaments"
+                        element={<OrganizerTournaments />}
+                    />
+                    <Route path="/matches" element={<UpcomingMatches />} />
+                    <Route path="/judge/score" element={<JudgeScore />} />
+                    <Route path="*" element={<Login />} />
+                </Routes>
+            </div>
+        </Router>
     );
 }
 

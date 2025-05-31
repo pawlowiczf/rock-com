@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography, Tabs, Tab } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+    Card,
+    CardContent,
+    Typography,
+    Tabs,
+    Tab,
+    CircularProgress,
+    Snackbar,
+    Alert,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../../styles/UserSite.css";
 import { HTTP_ADDRESS } from "../../config.ts";
@@ -8,11 +17,22 @@ import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
 import pages from "../Guard/Guard";
 
+interface Tournament {
+    competitionId: number;
+    name: string;
+    type: string;
+    startTime: string;
+    endTime: string;
+    registrationOpen: boolean;
+    city: string;
+}
+
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState(0);
-    const [upcomingTournaments, setUpcomingTournaments] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [upcomingTournaments, setUpcomingTournaments] = useState<Tournament[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
@@ -38,33 +58,30 @@ const OrganizerTournaments = () => {
         }
     }, []);
 
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            ...options,
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || "Błąd połączenia z serwerem");
+        }
+        return response.json();
+    };
+
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(
-                `${HTTP_ADDRESS}/api/competitions/upcoming`,
-                {
-                    credentials: "include",
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    "Nie udało się pobrać danych o nadchodzących turniejach.",
-                );
-            }
-            const data = await response.json();
-            console.log(data);
+            const data = await apiFetch("/api/competitions/upcoming");
             setUpcomingTournaments(data);
-        } catch (error) {
-            alert(error);
+        } catch (err: any) {
+            setError(err.message);
         } finally {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchUpcomingTournaments();
-    }, []);
 
     const handleEditTournament = (id: number) => {
         navigate("/tournaments/edit/" + id);
@@ -76,33 +93,21 @@ const OrganizerTournaments = () => {
         return false;
     });
 
-    function getIcon(type: string): object {
+    const getIcon = (type: string): string => {
         switch (type) {
             case "TENNIS_OUTDOOR":
-                return TennisIcon;
+                return TennisIcon as string;
             case "TABLE_TENNIS":
-                return PingPongIcon;
+                return PingPongIcon as string;
             case "BADMINTON":
-                return BadmintonIcon;
+                return BadmintonIcon as string;
         }
-    }
+    };
 
     return (
-        <div
-            className="user-site-container"
-            style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "flex-start",
-            }}
-        >
+        <div className="user-site-container" style={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
             <div className="user-site-window">
-                <Typography
-                    textAlign="center"
-                    color="#a020f0"
-                    variant="h6"
-                    gutterBottom
-                >
+                <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
                     Turnieje
                 </Typography>
                 <Tabs
@@ -118,12 +123,12 @@ const OrganizerTournaments = () => {
                 </Tabs>
                 <div className="tournament-list">
                     {isLoading ? (
-                        <Typography
-                            variant="h6"
-                            color="primary"
-                            textAlign="center"
-                        >
-                            Ładowanie turniejów...
+                        <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+                            <CircularProgress color="primary" />
+                        </div>
+                    ) : filteredTournaments.length === 0 ? (
+                        <Typography variant="body1" textAlign="center" style={{ marginTop: "2rem" }}>
+                            Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
                         filteredTournaments.map((tournament) => (
@@ -205,6 +210,13 @@ const OrganizerTournaments = () => {
                     )}
                 </div>
             </div>
+
+            {/* Snackbar for error display */}
+            <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
+                <Alert onClose={() => setError(null)} severity="error">
+                    {error}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

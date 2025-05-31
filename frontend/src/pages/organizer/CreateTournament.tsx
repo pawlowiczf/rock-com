@@ -174,6 +174,7 @@ const CreateTournament = () => {
                 type: formData.type,
                 matchDurationMinutes: timeToMinutes(formData.matchTime),
                 availableCourts: Number(formData.courts),
+                participantsLimit: 12,
                 streetAddress: formData.streetAddress,
                 city: formData.city,
                 postalCode: formData.postalCode,
