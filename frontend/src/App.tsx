@@ -5,7 +5,7 @@ import TopBar from "./pages/TopBar";
 import Login from "./pages/Login";
 import Register from "./pages/register/Register";
 import AccountCreating from "./pages/register/AccountCreating";
-import UserTypeChoser from "./pages/register/UserTypeChoser";
+import UserTypeChooser from "./pages/register/UserTypeChooser";
 import JudgeLicence from "./pages/register/JudgeLicence";
 import RegisterInformation from "./pages/register/RegisterInformation";
 import CreateTournament from "./pages/organizer/CreateTournament";
@@ -35,7 +35,7 @@ function App() {
                           />
                           <Route
                               path="/register/chose-user-type"
-                              element={<UserTypeChoser />}
+                              element={<UserTypeChooser />}
                           />
                           <Route
                               path="/register/judge"
