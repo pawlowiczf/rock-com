@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -108,9 +107,6 @@ public class CompetitionService {
     public int openRegistrationAndSetParticipantsLimit(Integer competitionId) {
         Competition competition = competitionRepository.findById(competitionId)
                 .orElseThrow(() -> new CompetitionNotFoundException(competitionId));
-        competition.setRegistrationOpen(true);
-        competitionRepository.save(competition);
-
         int rounds = 0;
         long usedMinutes = 0;
         long totalAvailableMinutes = competitionDateService.getTotalCompetitionDurationMinutes(competition);
@@ -128,7 +124,11 @@ public class CompetitionService {
             rounds++;
         }
 
-        return (int) Math.pow(2, rounds);
+        int participantsLimit = (int) Math.pow(2, rounds-1);
+        competition.setRegistrationOpen(true);
+        competition.setParticipantsLimit(participantsLimit);
+        competitionRepository.save(competition);
+        return participantsLimit;
     }
 
     public void startCompetition(Integer id) {

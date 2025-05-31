@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +24,8 @@ class CompetitionServiceTest {
 
     @Mock
     private CompetitionRepository competitionRepository;
+    @Mock
+    private CompetitionDateService competitionDateService;
 
     @InjectMocks
     private CompetitionService competitionService;
@@ -81,5 +84,36 @@ class CompetitionServiceTest {
 
         assertThat(exception.getMessage()).contains("Competition not found with id: 999");
         verify(competitionRepository, times(1)).findById(999);
+    }
+
+    @Test
+    void openRegistrationAndSetParticipantsLimit_ShouldReturnParticipantsLimit() {
+        // Given
+        Integer competitionId = 1;
+        int availableCourts = 10;
+        int matchDurationMinutes = 60;
+        int expectedParticipantsLimit = 16;
+        Competition competition = Competition.builder()
+                .competitionId(competitionId)
+                .availableCourts(availableCourts)
+                .matchDurationMinutes(matchDurationMinutes)
+                .registrationOpen(false)
+                .build();
+        Competition resultCompetition = Competition.builder()
+                .competitionId(competitionId)
+                .availableCourts(availableCourts)
+                .matchDurationMinutes(matchDurationMinutes)
+                .registrationOpen(true)
+                .participantsLimit(expectedParticipantsLimit)
+                .build();
+        when(competitionRepository.findById(competitionId)).thenReturn(Optional.of(competition));
+        when(competitionDateService.getTotalCompetitionDurationMinutes(competition)).thenReturn(400L);
+
+        // When
+        int result = competitionService.openRegistrationAndSetParticipantsLimit(competitionId);
+
+        // Then
+        assertEquals(expectedParticipantsLimit, result);
+        verify(competitionRepository).save(resultCompetition);
     }
 }

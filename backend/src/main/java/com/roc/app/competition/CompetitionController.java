@@ -97,7 +97,7 @@ public class CompetitionController {
     }
 
     @PostMapping("/{id}/openRegistration")
-    public ResponseEntity<Integer> calculateParticipantsLimit(@PathVariable Integer id) {
+    public ResponseEntity<Integer> openRegistrationAndSetParticipantsLimit(@PathVariable Integer id) {
         return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
     }
 
