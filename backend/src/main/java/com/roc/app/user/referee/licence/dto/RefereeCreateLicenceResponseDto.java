@@ -9,7 +9,7 @@ public record RefereeCreateLicenceResponseDto(
         @NotNull
         CompetitionType licenceType,
         @NotNull
-        Long refereeId,
+        Integer refereeId,
         @NotBlank
         String license
 ) {

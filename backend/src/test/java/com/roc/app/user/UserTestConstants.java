@@ -1,7 +1,7 @@
 package com.roc.app.user;
 
 public class UserTestConstants {
-    public static final long USER_ID = 1L;
+    public static final Integer USER_ID = 1;
     public static final String FIRST_NAME = "John";
     public static final String LAST_NAME = "Doe";
     public static final String EMAIL = "john.doe@example.com";

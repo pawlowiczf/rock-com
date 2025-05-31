@@ -6,7 +6,7 @@ import com.roc.app.user.referee.licence.RefereeLicence;
 public record RefereeLicenceResponseDto(
         Long refereeLicenceId,
         CompetitionType licenceType,
-        Long refereeId,
+        Integer refereeId,
         String license
 ) {
     public static RefereeLicenceResponseDto fromModel(RefereeLicence refereeLicence) {

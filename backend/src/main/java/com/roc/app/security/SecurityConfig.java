@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(HttpMethod.POST,"/api/participants", "/api/referees", "/api/licences").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/competitions").hasAuthority(UserRole.ORGANIZER.getAuthority())
+                        .requestMatchers(HttpMethod.POST, "/api/matches").hasAnyAuthority(UserRole.ORGANIZER.getAuthority(), UserRole.REFEREE.getAuthority())
+                        .requestMatchers(HttpMethod.PUT, "/api/matches").hasAnyAuthority(UserRole.ORGANIZER.getAuthority(), UserRole.REFEREE.getAuthority())
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginProcessingUrl("/api/login")

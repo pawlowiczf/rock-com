@@ -3,6 +3,7 @@ package com.roc.app.match;
 import com.roc.app.match.dto.MatchCreateRequestDto;
 import com.roc.app.match.dto.MatchUpdateRequestDto;
 import com.roc.app.match.dto.RefereeMatchResponseDto;
+import com.roc.app.match.dto.ScoreCreateRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,4 +40,9 @@ public class MatchController {
         return ResponseEntity.ok("Match deleted successfully.");
     }
 
+    @PutMapping("/{matchId}/results")
+    public ResponseEntity<?> updateMatchResults(@PathVariable Integer matchId, @Valid @RequestBody ScoreCreateRequestDto requestDto){
+        matchService.updateMatchScore(matchId, requestDto);
+        return ResponseEntity.ok().build();
+    }
 }
