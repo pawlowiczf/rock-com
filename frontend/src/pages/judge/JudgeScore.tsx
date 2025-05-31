@@ -1,6 +1,7 @@
 import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import React, { useState } from "react";
 import "../../styles/UserSite.css";
+import {HTTP_ADDRESS} from "../../config.ts";
 
 const matches = [
     {
@@ -50,12 +51,23 @@ const JudgeScore = () => {
         setInputScore({ player1: "", player2: "" });
     };
 
-    const handleAddingScore = () => {
+    const handleAddingScore = async () => {
         if (selectedTournament) {
             setScores((prevScores) => ({
                 ...prevScores,
                 [selectedTournament.index]: `${inputScore.player1} - ${inputScore.player2}`,
             }));
+            const response = await fetch(`${HTTP_ADDRESS}/api/matches/${selectedTournament.id}/results`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(inputScore),
+                credentials: "include"
+            })
+            if (!response.ok) {
+                alert("Wystąpił błąd podczas zapisywania wyniku.")
+            }
         }
         handleCloseDialog();
     };
