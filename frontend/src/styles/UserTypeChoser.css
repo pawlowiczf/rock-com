@@ -14,3 +14,7 @@
 .auth-user-type-button-group .auth-button {
     width: 100%;
 }
+
+.auth-button:hover {
+    color: white;
+}
