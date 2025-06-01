@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo,useEffect } from "react";
 import "../../styles/CreateTournament.css";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
@@ -7,6 +7,8 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import z from "zod";
 import { HTTP_ADDRESS } from "../../config";
+import { useNavigate } from "react-router-dom";
+import pages from "../Guard/Guard";
 
 const BaseSchema = z.object({
     type: z.string(),
@@ -14,29 +16,32 @@ const BaseSchema = z.object({
     fromDate: z.string().min(1, "Data rozpoczęcia jest wymagana"),
     toDate: z.string().min(1, "Data zakończenia jest wymagana"),
     courts: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: "Liczba boisk musi być większa od 0"
+        message: "Liczba boisk musi być większa od 0",
     }),
     matchTime: z.string().min(1, "Czas trwania meczu jest wymagany"),
     streetAddress: z.string().min(1, "Adres ulicy jest wymagany"),
     city: z.string().min(1, "Miasto jest wymagane"),
     postalCode: z
         .string()
-        .regex(/^[0-9]{2}-[0-9]{3}$/, "Kod pocztowy musi być w formacie xx-xxx, gdzie x oznacza cyfrę")
+        .regex(
+            /^[0-9]{2}-[0-9]{3}$/,
+            "Kod pocztowy musi być w formacie xx-xxx, gdzie x oznacza cyfrę",
+        ),
 });
 
 const StepOneSchema = BaseSchema.pick({
     name: true,
     fromDate: true,
     toDate: true,
-    matchTime: true
+    matchTime: true,
 })
     .refine((data) => new Date(data.toDate) >= new Date(data.fromDate), {
         message: "Data zakończenia musi być po dacie rozpoczęcia",
-        path: ["toDate"]
+        path: ["toDate"],
     })
     .refine((data) => new Date(data.fromDate) >= new Date(), {
         message: "Data rozpoczęcia musi być w przyszłości",
-        path: ["fromDate"]
+        path: ["fromDate"],
     });
 
 const StepTwoSchema = z.record(
@@ -44,19 +49,19 @@ const StepTwoSchema = z.record(
     z
         .object({
             from: z.string().min(1, "Godzina rozpoczęcia jest wymagana"),
-            to: z.string().min(1, "Godzina zakończenia jest wymagana")
+            to: z.string().min(1, "Godzina zakończenia jest wymagana"),
         })
         .refine((data) => data.from < data.to, {
             message: "Godzina zakończenia musi być po godzinie rozpoczęcia",
-            path: ["to"]
-        })
+            path: ["to"],
+        }),
 );
 
 const StepThreeSchema = BaseSchema.pick({
     streetAddress: true,
     postalCode: true,
     city: true,
-    courts: true
+    courts: true,
 });
 
 const timeToMinutes = (time) => {
@@ -67,7 +72,7 @@ const timeToMinutes = (time) => {
 const disciplineIcons = [
     { name: "TENNIS_OUTDOOR", src: TennisIcon },
     { name: "TABLE_TENNIS", src: PingPongIcon },
-    { name: "BADMINTON", src: BadmintonIcon }
+    { name: "BADMINTON", src: BadmintonIcon },
 ];
 
 const initialFormState = {
@@ -80,7 +85,7 @@ const initialFormState = {
     matchTime: "",
     streetAddress: "",
     city: "",
-    postalCode: ""
+    postalCode: "",
 };
 
 const CreateTournament = () => {
@@ -89,6 +94,31 @@ const CreateTournament = () => {
     const [errors, setErrors] = useState({});
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+        const navigate = useNavigate();
+
+    useEffect(() => {
+        const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+        console.log("Permissions:", registrationData);
+        if (!isLoggedIn || isLoggedIn !== "true") {
+            navigate("/login");
+        }
+        if (registrationData) {
+            if (
+                !pages
+                    .filter((page) =>
+                        page.permissions.includes(registrationData),
+                    )
+                    .flatMap((page) => page.path)
+                    .includes("/tournaments/create")
+            ) {
+                navigate("/profile");
+            }
+        }
+        if (!registrationData) {
+            navigate("/login");
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -111,7 +141,7 @@ const CreateTournament = () => {
             if (field) {
                 newErrors[day] = {
                     ...newErrors[day],
-                    [field]: err.message
+                    [field]: err.message,
                 };
             } else {
                 newErrors[day] = err.message;
@@ -144,34 +174,37 @@ const CreateTournament = () => {
                 type: formData.type,
                 matchDurationMinutes: timeToMinutes(formData.matchTime),
                 availableCourts: Number(formData.courts),
+                participantsLimit: 12,
                 streetAddress: formData.streetAddress,
                 city: formData.city,
                 postalCode: formData.postalCode,
-                registrationOpen: true
+                registrationOpen: true,
             };
 
             const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(competitionData),
-                credentials: "include"
+                credentials: "include",
             });
 
             if (!response.ok) throw new Error("Błąd przy tworzeniu turnieju");
 
             const { competitionId } = await response.json();
 
-            const competitionDates = Object.entries(dailyTimes).map(([date, times]) => ({
-                competitionId,
-                startTime: new Date(`${date}T${times.from}`).toISOString(),
-                endTime: new Date(`${date}T${times.to}`).toISOString()
-            }));
+            const competitionDates = Object.entries(dailyTimes).map(
+                ([date, times]) => ({
+                    competitionId,
+                    startTime: new Date(`${date}T${times.from}`).toISOString(),
+                    endTime: new Date(`${date}T${times.to}`).toISOString(),
+                }),
+            );
 
             await fetch(`${HTTP_ADDRESS}/api/competitions-dates`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(competitionDates),
-                credentials: "include"
+                credentials: "include",
             });
 
             alert("Turniej został pomyślnie stworzony!");
@@ -212,12 +245,18 @@ const CreateTournament = () => {
                             name === "name"
                                 ? "Nazwa"
                                 : name === "fromDate"
-                                    ? "Od"
-                                    : name === "toDate"
-                                        ? "Do"
-                                        : "Czas trwania meczu"
+                                  ? "Od"
+                                  : name === "toDate"
+                                    ? "Do"
+                                    : "Czas trwania meczu"
                         }
-                        type={name.includes("Date") ? "date" : name === "matchTime" ? "time" : "text"}
+                        type={
+                            name.includes("Date")
+                                ? "date"
+                                : name === "matchTime"
+                                  ? "time"
+                                  : "text"
+                        }
                         value={formData[name]}
                         onChange={handleChange}
                         error={!!errors[name]}
@@ -253,7 +292,10 @@ const CreateTournament = () => {
                             onChange={(e) =>
                                 setDailyTimes((prev) => ({
                                     ...prev,
-                                    [day]: { ...prev[day], from: e.target.value }
+                                    [day]: {
+                                        ...prev[day],
+                                        from: e.target.value,
+                                    },
                                 }))
                             }
                             error={!!errors[day]?.from}
@@ -270,7 +312,7 @@ const CreateTournament = () => {
                             onChange={(e) =>
                                 setDailyTimes((prev) => ({
                                     ...prev,
-                                    [day]: { ...prev[day], to: e.target.value }
+                                    [day]: { ...prev[day], to: e.target.value },
                                 }))
                             }
                             error={!!errors[day]?.to}
@@ -282,7 +324,11 @@ const CreateTournament = () => {
                 </div>
             ))}
             <div className="create-tournament-button-group">
-                <button type="button" onClick={() => setStep(1)} className="create-tournament-button">
+                <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="create-tournament-button"
+                >
                     Wróć
                 </button>
                 <button type="submit" className="create-tournament-button">
@@ -343,10 +389,18 @@ const CreateTournament = () => {
                 />
             </div>
             <div className="create-tournament-button-group">
-                <button type="button" onClick={() => setStep(2)} className="create-tournament-button">
+                <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="create-tournament-button"
+                >
                     Wróć
                 </button>
-                <button type="submit" className="create-tournament-button" disabled={isLoading}>
+                <button
+                    type="submit"
+                    className="create-tournament-button"
+                    disabled={isLoading}
+                >
                     {isLoading ? <CircularProgress size={20} /> : "Utwórz"}
                 </button>
             </div>
