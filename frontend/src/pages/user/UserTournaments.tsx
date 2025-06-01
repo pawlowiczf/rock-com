@@ -1,45 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
+    Button,
     Card,
     CardContent,
-    Typography,
-    Tabs,
-    Tab,
     Dialog,
-    DialogTitle,
-    DialogContent,
     DialogActions,
-    Button,
+    DialogContent,
+    DialogTitle,
+    Tab,
+    Tabs,
+    Typography,
+    CircularProgress,
+    Snackbar,
+    Alert
 } from "@mui/material";
 import "../../styles/UserSite.css";
 import { HTTP_ADDRESS } from "../../config.ts";
+import TennisIcon from "../../assets/icons/tennis.svg";
+import PingPongIcon from "../../assets/icons/pingpong.svg";
+import BadmintonIcon from "../../assets/icons/badminton.svg";
+
+interface Tournament {
+    competitionId: number;
+    name: string;
+    type: string;
+    startTime: string;
+    endTime: string;
+    registrationOpen: boolean;
+    city: string;
+}
 
 const UserTournaments = () => {
     const [tab, setTab] = useState(0);
     const [openDialog, setOpenDialog] = useState(false);
-    const [selectedTournament, setSelectedTournament] = useState<any>(null);
-    const [upcomingTournaments, setUpcomingTournaments] = useState<any[]>([]);
+    const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
+    const [upcomingTournaments, setUpcomingTournaments] = useState<Tournament[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            ...options,
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Wystąpił błąd");
+        }
+        return response.json();
+    };
 
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(
-                `${HTTP_ADDRESS}/api/competitions/upcoming`,
-                {
-                    credentials: "include",
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    "Nie udało się pobrać danych o nadchodzących turniejach.",
-                );
-            }
-            const data = await response.json();
-            console.log(data);
+            const data = await apiFetch("/api/competitions/upcoming");
             setUpcomingTournaments(data);
-        } catch (error) {
-            alert(error);
+        } catch (err: any) {
+            setError(err.message);
         } finally {
             setIsLoading(false);
         }
@@ -49,7 +68,7 @@ const UserTournaments = () => {
         fetchUpcomingTournaments();
     }, []);
 
-    const handleOpenDialog = (tournament: any) => {
+    const handleOpenDialog = (tournament: Tournament) => {
         setSelectedTournament(tournament);
         setOpenDialog(true);
     };
@@ -59,14 +78,18 @@ const UserTournaments = () => {
         setSelectedTournament(null);
     };
 
-    const handleProceedToPayment = () => {
-        console.log(`Proceeding to payment for: ${selectedTournament.name}`);
-        handleJoinTournament(selectedTournament.competitionId);
-        handleCloseDialog();
-    };
-
-    const handleJoinTournament = (tournamentId: number) => {
-        console.log(`Dołączono do turnieju o ID: ${tournamentId}`);
+    const handleProceedToPayment = async () => {
+        if (!selectedTournament) return;
+        try {
+            await apiFetch(`/api/competitions/${selectedTournament.competitionId}/enroll`, {
+                method: "POST",
+            });
+            setSuccessMessage("Pomyślnie dołączono do turnieju!");
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            handleCloseDialog();
+        }
     };
 
     const filteredTournaments = upcomingTournaments.filter((tournament) => {
@@ -74,6 +97,19 @@ const UserTournaments = () => {
         if (tab === 1) return !tournament.registrationOpen;
         return false;
     });
+
+    const getIcon = (type: string): string => {
+        switch (type) {
+            case "TENNIS_OUTDOOR":
+                return TennisIcon;
+            case "TABLE_TENNIS":
+                return PingPongIcon;
+            case "BADMINTON":
+                return BadmintonIcon;
+            default:
+                return "";
+        }
+    };
 
     return (
         <div
@@ -85,33 +121,22 @@ const UserTournaments = () => {
             }}
         >
             <div className="user-site-window">
-                <Typography
-                    textAlign="center"
-                    color="primary"
-                    variant="h6"
-                    gutterBottom
-                >
-                    Turnieje tenisa ziemnego
+                <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
+                    Turnieje
                 </Typography>
-                <Tabs
-                    value={tab}
-                    onChange={(e, newVal) => setTab(newVal)}
-                    centered
-                    textColor="primary"
-                    indicatorColor="primary"
-                >
+                <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} centered textColor="primary" indicatorColor="primary">
                     <Tab label="NADCHODZĄCE" />
                     <Tab label="W TOKU" />
                     <Tab label="ZAKOŃCZONE" />
                 </Tabs>
                 <div className="tournament-list">
                     {isLoading ? (
-                        <Typography
-                            variant="h6"
-                            color="primary"
-                            textAlign="center"
-                        >
-                            Ładowanie turniejów...
+                        <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+                            <CircularProgress color="primary" />
+                        </div>
+                    ) : filteredTournaments.length === 0 ? (
+                        <Typography variant="body1" textAlign="center" style={{ marginTop: "2rem" }}>
+                            Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
                         filteredTournaments.map((tournament) => (
@@ -120,9 +145,22 @@ const UserTournaments = () => {
                                 sx={{ margin: "16px 0" }}
                             >
                                 <CardContent className="card-content">
-                                    <Typography variant="h6" color="secondary">
-                                        {tournament.type} {tournament.name}
-                                    </Typography>
+                                    <div>
+                                        <img
+                                            src={getIcon(tournament.type)}
+                                            alt={tournament.type}
+                                            style={{
+                                                width: "24px",
+                                                height: "24px"
+                                            }}
+                                        />
+                                        <Typography
+                                            variant="h6"
+                                            color="secondary"
+                                        >
+                                            {tournament.name}
+                                        </Typography>
+                                    </div>
                                     <div>
                                         <Typography
                                             variant="body2"
@@ -131,11 +169,11 @@ const UserTournaments = () => {
                                             Data:{" "}
                                             <span style={{ color: "purple" }}>
                                                 {new Date(
-                                                    tournament.startTime,
+                                                    tournament.startTime
                                                 ).toLocaleDateString()}{" "}
                                                 -{" "}
                                                 {new Date(
-                                                    tournament.endTime,
+                                                    tournament.endTime
                                                 ).toLocaleDateString()}
                                             </span>
                                         </Typography>
@@ -145,9 +183,7 @@ const UserTournaments = () => {
                                         >
                                             Status:{" "}
                                             <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen
-                                                    ? "Otwarte"
-                                                    : "Zakończone"}
+                                                {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
                                             </span>
                                         </Typography>
                                     </div>
@@ -179,6 +215,8 @@ const UserTournaments = () => {
                         ))
                     )}
                 </div>
+
+                {/* Dialog */}
                 <Dialog open={openDialog} onClose={handleCloseDialog}>
                     <DialogTitle>Dołącz do turnieju</DialogTitle>
                     <DialogContent>
@@ -210,6 +248,18 @@ const UserTournaments = () => {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                {/* Snackbar Notifications */}
+                <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
+                    <Alert onClose={() => setError(null)} severity="error">
+                        {error}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
+                    <Alert onClose={() => setSuccessMessage(null)} severity="success">
+                        {successMessage}
+                    </Alert>
+                </Snackbar>
             </div>
         </div>
     );
