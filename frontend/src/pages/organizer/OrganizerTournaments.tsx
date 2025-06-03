@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
     Card,
     CardContent,
@@ -16,6 +16,7 @@ import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
 import pages from "../Guard/Guard";
+import { set } from "zod";
 
 interface Tournament {
     competitionId: number;
@@ -27,10 +28,20 @@ interface Tournament {
     city: string;
 }
 
+interface Match {
+    matchId: number;
+    tournamentId: number;
+    player1: string;
+    player2: string;
+    score: string;
+    status: string;
+}
+
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState(0);
-    const [upcomingTournaments, setUpcomingTournaments] = useState<Tournament[]>([]);
+    const [tournaments, setTournaments] = useState<Tournament[]>([]);
+    const [matches, setMatches] = useState<Match[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -58,24 +69,57 @@ const OrganizerTournaments = () => {
         }
     }, []);
 
-    const apiFetch = async (url: string, options: RequestInit = {}) => {
-        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+    useEffect(() => {
+        fetchAllTournaments();
+    }, []);
+
+    const apiFetchMatches = async () => {
+        for (const tournament of tournaments) {
+            const response = await fetch(`${HTTP_ADDRESS}/api/matches`, {
+                method: "GET",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Błąd połączenia z serwerem");
+            }
+            const data = await response.json();
+            setMatches([...matches, ...data]);
+        }
+        return matches;
+    }
+
+    const apiFetchCompetitions = async () => {
+        const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
+            method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            ...options,
         });
         if (!response.ok) {
             const text = await response.text();
             throw new Error(text || "Błąd połączenia z serwerem");
         }
-        return response.json();
+        const data = await response.json();
+        setTournaments(data);
     };
 
-    const fetchUpcomingTournaments = async () => {
+    const fetchAllMatches = async () => {
         setIsLoading(true);
         try {
-            const data = await apiFetch("/api/competitions/upcoming");
-            setUpcomingTournaments(data);
+            const data = await apiFetchMatches();
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+
+    const fetchAllTournaments = async () => {
+        setIsLoading(true);
+        try {
+            const data = await apiFetchCompetitions();
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -87,7 +131,7 @@ const OrganizerTournaments = () => {
         navigate("/tournaments/edit/" + id);
     };
 
-    const filteredTournaments = upcomingTournaments.filter((tournament) => {
+    const filteredTournaments = tournaments.filter((tournament) => {
         if (tab === 0) return tournament.registrationOpen;
         if (tab === 1) return !tournament.registrationOpen;
         return false;
