@@ -76,15 +76,15 @@ public class CompetitionService {
         Competition competition = competitionRepository.findById(id)
                 .orElseThrow(() -> new CompetitionNotFoundException(id));
 
-        competition.setName(competitionDTO.name());
-        competition.setType(competitionDTO.type());
-        competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
-        competition.setAvailableCourts(competitionDTO.availableCourts());
-        competition.setParticipantsLimit(competitionDTO.participantsLimit());
-        competition.setStreetAddress(competitionDTO.streetAddress());
-        competition.setCity(competitionDTO.city());
-        competition.setPostalCode(competitionDTO.postalCode());
-        competition.setRegistrationOpen(competitionDTO.registrationOpen());
+        if (competitionDTO.name() != null) competition.setName(competitionDTO.name());
+        if (competitionDTO.type() != null) competition.setType(competitionDTO.type());
+        if (competitionDTO.matchDurationMinutes() != null) competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
+        if (competitionDTO.availableCourts() != null) competition.setAvailableCourts(competitionDTO.availableCourts());
+        if (competitionDTO.participantsLimit() != null) competition.setParticipantsLimit(competitionDTO.participantsLimit());
+        if (competitionDTO.streetAddress() != null) competition.setStreetAddress(competitionDTO.streetAddress());
+        if (competitionDTO.city() != null) competition.setCity(competitionDTO.city());
+        if (competitionDTO.postalCode() != null) competition.setPostalCode(competitionDTO.postalCode());
+        if (competitionDTO.registrationOpen() != null ) competition.setRegistrationOpen(competitionDTO.registrationOpen());
 
         Competition updatedCompetition = competitionRepository.save(competition);
         return CompetitionResponseDto.fromModel(updatedCompetition);

@@ -103,12 +103,12 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 
-    @PostMapping("/{id}/openRegistration")
+    @PutMapping("/{id}/openRegistration")
     public ResponseEntity<Integer> openRegistrationAndSetParticipantsLimit(@PathVariable Integer id) {
         return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
     }
 
-    @PostMapping("/{id}/start")
+    @PutMapping("/{id}/start")
     public ResponseEntity<Void> startCompetition(@PathVariable Integer id) {
         competitionService.startCompetition(id);
         return ResponseEntity.noContent().build();
