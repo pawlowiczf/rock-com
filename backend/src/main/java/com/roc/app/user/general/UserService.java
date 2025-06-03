@@ -23,4 +23,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
+
+    public String getUserRole(Integer userId) {
+        User user = getUserByUserId(userId);
+        return user.getAuthorities().stream()
+                .findFirst()
+                .map(Object::toString)
+                .orElse("ROLE_USER");
+    }
 }

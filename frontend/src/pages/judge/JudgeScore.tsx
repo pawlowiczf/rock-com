@@ -1,6 +1,17 @@
-import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import React, { useState } from "react";
+import {
+    Card,
+    CardContent,
+    Typography,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from "@mui/material";
+import React, { useState, useEffect } from "react";
 import "../../styles/UserSite.css";
+import { useNavigate } from "react-router-dom";
+import pages from "../Guard/Guard";
 
 const matches = [
     {
@@ -38,6 +49,31 @@ const JudgeScore = () => {
     const [selectedTournament, setSelectedTournament] = useState<any>(null);
     const [scores, setScores] = useState<{ [key: number]: string }>({});
     const [inputScore, setInputScore] = useState({ player1: "", player2: "" });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+        console.log("Permissions:", registrationData);
+        if (!isLoggedIn || isLoggedIn !== "true") {
+            navigate("/login");
+        }
+        if (registrationData) {
+            if (
+                !pages
+                    .filter((page) =>
+                        page.permissions.includes(registrationData),
+                    )
+                    .flatMap((page) => page.path)
+                    .includes("/judge/score")
+            ) {
+                navigate("/profile");
+            }
+        }
+        if (!registrationData) {
+            navigate("/login");
+        }
+    }, []);
 
     const handleOpenDialog = (tournament: any, index: number) => {
         setSelectedTournament({ ...tournament, index });
@@ -123,14 +159,16 @@ const JudgeScore = () => {
                                     >
                                         Wynik:
                                         <p style={{ color: "gray" }}>
-                                        {scores[idx]}
+                                            {scores[idx]}
                                         </p>
                                     </Typography>
                                 ) : (
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        onClick={() => handleOpenDialog(match, idx)}
+                                        onClick={() =>
+                                            handleOpenDialog(match, idx)
+                                        }
                                         style={{
                                             marginTop: "16px",
                                             backgroundColor: "#A020F0",
@@ -155,7 +193,8 @@ const JudgeScore = () => {
                                 Data: {selectedTournament.date} <br />
                                 Gracz 1: {selectedTournament.opponent} <br />
                                 Gracz 2: {selectedTournament.referee} <br />
-                                Lokalizacja: {selectedTournament.location} <br />
+                                Lokalizacja: {selectedTournament.location}{" "}
+                                <br />
                                 <br />
                             </Typography>
                         )}
@@ -180,7 +219,10 @@ const JudgeScore = () => {
                                 }}
                             />
                         </Typography>
-                        <Typography variant="body1" style={{ marginTop: "16px" }}>
+                        <Typography
+                            variant="body1"
+                            style={{ marginTop: "16px" }}
+                        >
                             Wynik Gracza 2:
                             <input
                                 type="text"

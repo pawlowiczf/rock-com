@@ -1,13 +1,13 @@
 import "../../styles/Auth.css";
 import "../../styles/UserTypeChoser.css";
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { HTTP_ADDRESS } from '../../config.ts';
+import { HTTP_ADDRESS } from "../../config.ts";
 
-type UserType = "Participant" | "Judge" | "Organizer" | "";
+type UserType = "Participant" | "Judge" | "";
 
-const UserTypeChoser: React.FC = () => {
+const UserTypeChooser: () => JSX.Element = () => {
     const navigate = useNavigate();
     const [userType, setUserType] = useState<UserType>("");
     const [error, setError] = useState<string>("");
@@ -36,11 +36,11 @@ const UserTypeChoser: React.FC = () => {
             return;
         }
         const prevData = JSON.parse(
-            sessionStorage.getItem("registrationData") || "{}",
+            sessionStorage.getItem("registrationData") || "{}"
         );
         const updatedData = { ...prevData, userType };
         sessionStorage.setItem("registrationData", JSON.stringify(updatedData));
-
+        console.log("Updated registration data:", updatedData);
         if (userType === "Judge") {
             navigate("/register/judge");
         } else {
@@ -67,7 +67,7 @@ const UserTypeChoser: React.FC = () => {
                     password: data.password,
                     city: "Kraków",
                     phoneNumber: "123456789",
-                    birthDate: data.birthdate,
+                    birthDate: data.birthdate
                 };
 
                 const response = await fetch(
@@ -76,23 +76,22 @@ const UserTypeChoser: React.FC = () => {
                     {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json",
+                            "Content-Type": "application/json"
                         },
-                        body: JSON.stringify(participantData),
-                    },
+                        body: JSON.stringify(participantData)
+                    }
                 );
                 navigate("/login");
                 if (!response.ok) {
                     throw new Error("Failed to register participant");
                 }
-            }
-            else{
+            } else {
                 navigate("/register/information");
             }
         } catch (error) {
             console.error("Error during registration:", error);
             setError(
-                "Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie.",
+                "Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie."
             );
         }
     };
@@ -116,14 +115,6 @@ const UserTypeChoser: React.FC = () => {
                             className={`auth-button ${userType !== "Judge" ? "selected-button" : ""}`}
                         >
                             Sędzia
-                        </button>
-                    </div>
-                    <div className="auth-input-group" style={{ width: "50%" }}>
-                        <button
-                            onClick={() => handleButtonClick("Organizer")}
-                            className={`auth-button ${userType !== "Organizer" ? "selected-button" : ""}`}
-                        >
-                            Organizator
                         </button>
                     </div>
                     {error && <p className="auth-error">{error}</p>}
@@ -153,4 +144,4 @@ const UserTypeChoser: React.FC = () => {
     );
 };
 
-export default UserTypeChoser;
+export default UserTypeChooser;
