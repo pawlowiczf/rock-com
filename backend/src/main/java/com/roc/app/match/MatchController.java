@@ -1,6 +1,7 @@
 package com.roc.app.match;
 
 import com.roc.app.match.dto.MatchCreateRequestDto;
+import com.roc.app.match.dto.MatchResponseDto;
 import com.roc.app.match.dto.MatchUpdateRequestDto;
 import com.roc.app.match.dto.RefereeMatchResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,17 @@ public class MatchController {
     public ResponseEntity<?> deleteMatch(@PathVariable Integer matchId) {
         matchService.deleteMatch(matchId);
         return ResponseEntity.ok("Match deleted successfully.");
+    }
+
+    // Returns a list of matches during a particular competition, refereed by refereeId
+    // /api/matches/competitions/12/referees/9
+    @GetMapping("/competitions/{competitionId}/referees/{refereeId}")
+    public ResponseEntity<List<MatchResponseDto>> getMatchesByRefereeId(
+            @PathVariable(name = "competitionId") Integer competitionId,
+            @PathVariable(name = "refereeId") Integer refereeId
+    ) {
+        List<MatchResponseDto> matches = matchService.getCompetitionMatchesByRefereeId(competitionId, refereeId);
+        return ResponseEntity.ok(matches);
     }
 
 }

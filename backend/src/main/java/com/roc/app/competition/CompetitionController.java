@@ -106,11 +106,13 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 
+
     @GetMapping("/{id}/matches/results")
     public ResponseEntity<Map<MatchStatus, List<MatchResponseDto>>> getCompetitionMatchResults(@PathVariable Integer id) {
 
         Map<MatchStatus, List<MatchResponseDto>> matches = competitionService.getMatchesByCompetitionIdGroupedByStatus(id);
         return ResponseEntity.ok(matches);
     }
+
 }
 
