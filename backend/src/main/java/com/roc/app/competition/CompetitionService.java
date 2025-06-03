@@ -27,7 +27,6 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionDateRepository competitionDateRepository;
-    private final MatchService matchService;
 
     public List<CompetitionResponseDto> getAllCompetitions() {
         return competitionRepository.findAll().stream()
@@ -106,7 +105,4 @@ public class CompetitionService {
         return competitionDateRepository.findUpcomingCompetitions();
     }
 
-    public Map<MatchStatus, List<MatchResponseDto>> getMatchesByCompetitionIdGroupedByStatus(Integer competitionId) {
-        return matchService.getMatchesByCompetitionIdGroupedByStatus(competitionId);
-    }
 }

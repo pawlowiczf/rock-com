@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/matches")
@@ -48,6 +49,13 @@ public class MatchController {
             @PathVariable(name = "refereeId") Integer refereeId
     ) {
         List<MatchResponseDto> matches = matchService.getCompetitionMatchesByRefereeId(competitionId, refereeId);
+        return ResponseEntity.ok(matches);
+    }
+
+    @GetMapping("/competitions/{competitionId}")
+    public ResponseEntity<Map<MatchStatus, List<MatchResponseDto>>> getCompetitionMatchResults(@PathVariable Integer competitionId) {
+
+        Map<MatchStatus, List<MatchResponseDto>> matches = matchService.getMatchesByCompetitionIdGroupedByStatus(competitionId);
         return ResponseEntity.ok(matches);
     }
 
