@@ -40,4 +40,6 @@ public class CompetitionRefereeController {
         CompetitionRefereeListResponseDto response = new CompetitionRefereeListResponseDto(referees);
         return ResponseEntity.ok(response);
     }
+
+
 }

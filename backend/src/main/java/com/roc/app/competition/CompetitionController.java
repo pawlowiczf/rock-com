@@ -102,5 +102,6 @@ public class CompetitionController {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
+
 }
 
