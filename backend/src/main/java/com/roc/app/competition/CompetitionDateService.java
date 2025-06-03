@@ -54,11 +54,6 @@ public class CompetitionDateService {
         return competitionDates.stream().map(CompetitionDateResponseDto::fromModel).collect(Collectors.toList());
     }
 
-    public TimeSlots generateTimeSlots(Competition competition) {
-        List<CompetitionDateResponseDto> dates = getCompetitionDates(competition.getCompetitionId());
-        return new TimeSlots(competition, dates);
-    }
-
     public long getTotalCompetitionDurationMinutes(Competition competition) {
         List<CompetitionDate> dates = dateRepository.findAllByCompetitionId(competition.getCompetitionId());
         long totalDurationMinutes = 0;
