@@ -52,6 +52,7 @@ const OrganizerTournaments = () => {
             ) {
                 navigate("/profile");
             }
+            fetchUpcomingTournaments();
         }
         if (!registrationData) {
             navigate("/login");
