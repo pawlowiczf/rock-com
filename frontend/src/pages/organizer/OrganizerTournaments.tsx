@@ -41,10 +41,15 @@ const OrganizerTournaments = () => {
         navigate("/tournaments/edit/"+id);
     };
 
-    const filteredTournaments = upcomingTournaments.filter((tournament) => {
-        if (tab === 0) return tournament.registrationOpen;
-        if (tab === 1) return !tournament.registrationOpen; 
-        return false; 
+    const now = new Date();
+
+    const filteredTournaments = upcomingTournaments.filter((t) => {
+        const start = new Date(t.startTime);
+        const end = new Date(t.endTime);
+
+        if (tab === 0) return now < start;
+        if (tab === 1) return now >= start && now <= end;
+        if (tab === 2) return now > end;
     });
 
     function getIcon(type: string): object {
@@ -94,12 +99,15 @@ const OrganizerTournaments = () => {
                             Ładowanie turniejów...
                         </Typography>
                     ) : (
-                        filteredTournaments.map((tournament) => (
-                            <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
+                        filteredTournaments.map((tournament) => {
+                            const start = new Date(tournament.startTime);
+                            const editable = now < start;
+
+                            return (<Card key={tournament.competitionId} sx={{margin: "16px 0"}}>
                                 <CardContent className="card-content">
                                     <div>
                                         <img src={getIcon(tournament.type)} alt={tournament.type}
-                                             style={{ width: "24px", height: "24px" }} />
+                                             style={{width: "24px", height: "24px"}}/>
                                         <Typography variant="h6" color="secondary">
                                             {tournament.name}
                                         </Typography>
@@ -107,36 +115,38 @@ const OrganizerTournaments = () => {
                                     <div>
                                         <Typography variant="body2" color="textSecondary">
                                             Data:{" "}
-                                            <span style={{ color: "purple" }}>
+                                            <span style={{color: "purple"}}>
                                                 {new Date(tournament.startTime).toLocaleDateString()} - {new Date(tournament.endTime).toLocaleDateString()}
                                             </span>
                                         </Typography>
                                         <Typography variant="body2" color="textSecondary">
                                             Status:{" "}
-                                            <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
+                                            <span style={{color: "purple"}}>
+                                                {now < new Date(tournament.startTime)
+                                                    ? "Nadchodzący"
+                                                    : now > new Date(tournament.endTime)
+                                                        ? "Zakończony"
+                                                        : "W toku"}
                                             </span>
                                         </Typography>
                                     </div>
                                     <button
                                         className="user-button"
-                                        onClick={
-                                            !tournament.registrationOpen
-                                                ? undefined
-                                                : () => handleEditTournament(tournament.competitionId)
+                                        onClick={() =>
+                                            handleEditTournament(tournament.competitionId)
                                         }
                                         style={{
                                             backgroundColor:
-                                                !tournament.registrationOpen ? "gray" : undefined,
-                                            cursor: !tournament.registrationOpen ? "not-allowed" : "pointer",
+                                                !editable ? "gray" : undefined,
+                                            cursor: !editable ? "not-allowed" : "pointer",
                                         }}
-                                        disabled={!tournament.registrationOpen}
+                                        disabled={!editable}
                                     >
                                         Edytuj
                                     </button>
                                 </CardContent>
-                            </Card>
-                        ))
+                            </Card>)
+                        })
                     )}
                 </div>
             
