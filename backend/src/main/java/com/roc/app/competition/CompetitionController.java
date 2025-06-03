@@ -7,6 +7,8 @@ import com.roc.app.competition.dto.CompetitionDateResponseDto;
 import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
+import com.roc.app.match.MatchStatus;
+import com.roc.app.match.dto.MatchResponseDto;
 import com.roc.app.user.participant.Participant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/competitions")
@@ -101,6 +104,13 @@ public class CompetitionController {
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
         return ResponseEntity.ok(competitionDateResponseDtoList);
+    }
+
+    @GetMapping("/{id}/matches/results")
+    public ResponseEntity<Map<MatchStatus, List<MatchResponseDto>>> getCompetitionMatchResults(@PathVariable Integer id) {
+
+        Map<MatchStatus, List<MatchResponseDto>> matches = competitionService.getMatchesByCompetitionIdGroupedByStatus(id);
+        return ResponseEntity.ok(matches);
     }
 }
 

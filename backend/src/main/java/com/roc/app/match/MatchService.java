@@ -8,6 +8,8 @@ import com.roc.app.match.exception.MatchNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
@@ -57,4 +59,16 @@ public class MatchService {
         matchRepository.deleteById(matchId);
     }
 
+    public Map<MatchStatus, List<MatchResponseDto>> getMatchesByCompetitionIdGroupedByStatus(Integer competitionId) {
+        List<MatchResponseDto> matches = matchRepository.findByCompetitionCompetitionId(competitionId)
+                .stream()
+                .map(MatchResponseDto::fromModel)
+                .toList();
+
+        Map<MatchStatus, List<MatchResponseDto>> grouped = matches
+                .stream()
+                .collect(Collectors.groupingBy(MatchResponseDto::status));
+
+        return grouped;
+    }
 }

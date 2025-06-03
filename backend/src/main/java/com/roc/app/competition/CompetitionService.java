@@ -5,11 +5,16 @@ import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
+import com.roc.app.match.MatchRepository;
+import com.roc.app.match.MatchService;
+import com.roc.app.match.MatchStatus;
+import com.roc.app.match.dto.MatchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +23,7 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionDateRepository competitionDateRepository;
+    private final MatchService matchService;
 
     public List<CompetitionResponseDto> getAllCompetitions() {
         return competitionRepository.findAll().stream()
@@ -94,5 +100,9 @@ public class CompetitionService {
     }
     public List<UpcomingCompetitionDto> getUpcomingCompetitions() {
         return competitionDateRepository.findUpcomingCompetitions();
+    }
+
+    public Map<MatchStatus, List<MatchResponseDto>> getMatchesByCompetitionIdGroupedByStatus(Integer competitionId) {
+        return matchService.getMatchesByCompetitionIdGroupedByStatus(competitionId);
     }
 }
