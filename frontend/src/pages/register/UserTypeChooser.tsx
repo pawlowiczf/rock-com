@@ -53,8 +53,6 @@ const UserTypeChooser: () => JSX.Element = () => {
         firstName: string;
         lastName: string;
         email: string;
-        city: string;
-        phoneNumber: string;
         password: string;
         birthdate: string;
     }
@@ -67,8 +65,8 @@ const UserTypeChooser: () => JSX.Element = () => {
                     lastName: data.lastName,
                     email: data.email,
                     password: data.password,
-                    city: data.city,
-                    phoneNumber: data.phoneNumber,
+                    city: "Kraków",
+                    phoneNumber: "123456789",
                     birthDate: data.birthdate
                 };
 

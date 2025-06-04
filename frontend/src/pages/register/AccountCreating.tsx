@@ -9,11 +9,6 @@ import TextField from "@mui/material/TextField";
 const accountSchema = z.object({
     firstName: z.string().min(1, "Imię jest wymagane"),
     lastName: z.string().min(1, "Nazwisko jest wymagane"),
-    city: z.string().min(1, "Miasto jest wymagane"),
-    phoneNumber: z
-        .string()
-        .regex(/^\d{9}$/, "Numer telefonu musi składać się z 9 cyfr")
-        .refine(num => !isNaN(Number(num)), "Numer telefonu musi być liczbą"),
     birthdate: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, "Data urodzenia musi być w formacie YYYY-MM-DD")
@@ -28,8 +23,6 @@ const AccountCreating: React.FC = () => {
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [city, setCity] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
     const [birthdate, setBirthdate] = useState("");
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -43,7 +36,7 @@ const AccountCreating: React.FC = () => {
     }, [navigate]);
 
     const validateForm = () => {
-        const result = accountSchema.safeParse({ firstName, lastName, city, phoneNumber, birthdate, termsAccepted });
+        const result = accountSchema.safeParse({ firstName, lastName, birthdate, termsAccepted });
         if (result.success) {
             setErrors({});
             return true;
@@ -67,8 +60,6 @@ const AccountCreating: React.FC = () => {
             ...prevData,
             firstName,
             lastName,
-            city,
-            phoneNumber,
             birthdate,
             termsAccepted
         };
@@ -103,30 +94,6 @@ const AccountCreating: React.FC = () => {
                     </div>
                     <div className="auth-input-group">
                         <TextField
-                            label="Miasto"
-                            type="text"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                            error={!!errors.city}
-                            helperText={errors.city}
-                            InputLabelProps={{ shrink: true }}
-                            fullWidth
-                        />
-                    </div>
-                    <div className="auth-input-group">
-                        <TextField
-                            label="Phone Number"
-                            type="tel"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            error={!!errors.phoneNumber}
-                            helperText={errors.phoneNumber}
-                            InputLabelProps={{ shrink: true }}
-                            fullWidth
-                        />
-                    </div>
-                    <div className="auth-input-group">
-                        <TextField
                             label="Data urodzenia"
                             type="date"
                             value={birthdate}
@@ -137,7 +104,6 @@ const AccountCreating: React.FC = () => {
                             fullWidth
                         />
                     </div>
-                    
                     <div className="auth-terms">
                         <input
                             type="checkbox"
