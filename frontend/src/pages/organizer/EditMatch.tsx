@@ -114,13 +114,8 @@ const EditMatch: () => JSX.Element = () => {
         }
 
         try {
-            const updatedMatch = {
-                player1Id: Number(formData.player1Id),
-                player2Id: Number(formData.player2Id),
-                refereeId: Number(formData.refereeId),
+            const updatedScore = {
                 score: formData.score,
-                winnerId: formData.winnerId ? Number(formData.winnerId) : null,
-                status: formData.status,
             };
 
             const response = await fetch(`${HTTP_ADDRESS}/api/matches/${id}`, {
@@ -129,22 +124,23 @@ const EditMatch: () => JSX.Element = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(updatedMatch),
+                body: JSON.stringify(updatedScore),
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
-            console.error(errorText);
+                console.error(errorText);
                 return;
             }
 
-            alert("Mecz został pomyślnie zaktualizowany.");
-            navigate(`/tournaments/${formData.competitionId}`); // np. przekierowanie po sukcesie
+            alert("Wynik meczu został pomyślnie zaktualizowany.");
+            navigate(`/tournaments/${formData.competitionId}`); // przekierowanie po sukcesie
 
         } catch (error: any) {
             alert("Wystąpił błąd podczas aktualizacji: " + error.message);
         }
     };
+
 
 
     return (
