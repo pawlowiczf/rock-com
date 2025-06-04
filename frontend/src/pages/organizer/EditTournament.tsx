@@ -158,16 +158,71 @@ const EditTournament: () => JSX.Element = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent, open: boolean) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
         setIsLoading(true);
-        await submitTournamentData(formData, open);
+        await submitTournamentData(formData);
+    };
+
+    const handleOpening = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/openRegistration`, {
+                method: "PUT",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                const participantsLimit = await response.json();
+                setFormData({ ...formData, participantsLimit: participantsLimit })
+                setIsLoading(false);
+                alert("Turniej został otwarty!");
+                navigate("/organizer/tournaments");
+            } else {
+                const error = await response.json();
+                console.error("Błąd:", error);
+                setIsLoading(false);
+                alert("Wystąpił błąd przy aktualizacji turnieju.");
+            }
+        } catch (error) {
+            console.error("Błąd połączenia:", error);
+            setIsLoading(false);
+            alert("Błąd połączenia z serwerem.");
+        }
+    };
+
+    const handleStarting = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/start`, {
+                method: "PUT",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                setIsLoading(false);
+                alert("Turniej został rozpoczęty!");
+                navigate("/organizer/tournaments");
+            } else {
+                const error = await response.json();
+                console.error("Błąd:", error);
+                setIsLoading(false);
+                alert("Wystąpił błąd przy aktualizacji turnieju.");
+            }
+        } catch (error) {
+            console.error("Błąd połączenia:", error);
+            setIsLoading(false);
+            alert("Błąd połączenia z serwerem.");
+        }
     };
 
     const submitTournamentData = async (
-        data: typeof formData,
-        open: boolean,
+        data: typeof formData
     ) => {
         const competitionData = {
             competitionId: id,
@@ -179,7 +234,6 @@ const EditTournament: () => JSX.Element = () => {
             matchDurationMinutes: timeToMinutes(data.matchDurationMinutes),
             city: data.city,
             postalCode: data.postalCode,
-            registrationOpen: open,
         };
 
         console.log(competitionData);
@@ -408,14 +462,22 @@ const EditTournament: () => JSX.Element = () => {
                     <div className="edit-tournament-button-group">
                         <button
                             className="edit-tournament-button accept"
-                            onClick={(e) => handleSubmit(e, true)}
+                            onClick={(e) => handleSubmit(e)}
                             type="submit"
                         >
                             AKCEPTUJ
                         </button>
                         <button
                             className="edit-tournament-button start"
-                            onClick={(e) => handleSubmit(e, false)}
+                            onClick={(e) => handleOpening(e)}
+
+                            type="submit"
+                        >
+                            OTWÓRZ ZAPISY
+                        </button>
+                        <button
+                            className="edit-tournament-button accept"
+                            onClick={(e) => handleStarting(e)}
                             type="submit"
                         >
                             ROZPOCZNIJ

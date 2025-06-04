@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/id")
-    public ResponseEntity<Long> getUserId(Authentication authentication) {
+    public ResponseEntity<Integer> getUserId(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(user.getUserId());
     }

@@ -21,7 +21,7 @@ public class CompetitionParticipant {
 
     @Id
     @Column(name = FieldNames.PARTICIPANT_ID)
-    private Long participantId;
+    private Integer participantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = FieldNames.PARTICIPANT_STATUS, nullable = false)
@@ -35,7 +35,7 @@ public class CompetitionParticipant {
     @AllArgsConstructor
     public static class CompetitionParticipantId implements Serializable {
         private Integer competitionId;
-        private Long participantId;
+        private Integer participantId;
     }
 
     public static final class FieldNames {
