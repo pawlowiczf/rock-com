@@ -59,7 +59,7 @@ const JudgeCompetition = () => {
                         page.permissions.includes(registrationData),
                     )
                     .flatMap((page) => page.path)
-                    .includes("/organizer/tournaments")
+                    .includes("/judge/competition")
             ) {
                 navigate("/profile");
             }
