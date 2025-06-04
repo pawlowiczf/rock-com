@@ -468,7 +468,7 @@ const EditTournament: () => JSX.Element = () => {
                             AKCEPTUJ
                         </button>
                         <button
-                            className="edit-tournament-button accept"
+                            className="edit-tournament-button start"
                             onClick={(e) => handleOpening(e)}
 
                             type="submit"
@@ -476,7 +476,7 @@ const EditTournament: () => JSX.Element = () => {
                             OTWÓRZ ZAPISY
                         </button>
                         <button
-                            className="edit-tournament-button start"
+                            className="edit-tournament-button accept"
                             onClick={(e) => handleStarting(e)}
                             type="submit"
                         >
