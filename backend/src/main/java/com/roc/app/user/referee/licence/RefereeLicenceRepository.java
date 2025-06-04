@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface RefereeLicenceRepository extends JpaRepository<RefereeLicence, Long> {
 
-    List<RefereeLicence> findByRefereeUserId(Long userId);
+    List<RefereeLicence> findByRefereeUserId(Integer userId);
     RefereeLicence findByLicense(String license);
 }

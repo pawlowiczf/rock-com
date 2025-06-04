@@ -32,7 +32,7 @@ public class RefereeLicenceService {
         return RefereeCreateLicenceResponseDto.fromModel(refereeLicence);
     }
 
-    public List<RefereeLicenceResponseDto> getRefereeLicencesByRefereeId(Long refereeId) {
+    public List<RefereeLicenceResponseDto> getRefereeLicencesByRefereeId(Integer refereeId) {
         return refereeLicenceRepository.findByRefereeUserId(refereeId)
                 .stream()
                 .map(RefereeLicenceResponseDto::fromModel)

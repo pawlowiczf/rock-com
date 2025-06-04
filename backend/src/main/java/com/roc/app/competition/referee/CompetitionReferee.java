@@ -23,7 +23,7 @@ public class CompetitionReferee {
 
     @Id
     @Column(name = FieldNames.REFEREE_ID)
-    private Long refereeId;
+    private Integer refereeId;
 
     public static final class FieldNames {
         public static final String TABLE_NAME = "competition_referees";
@@ -36,7 +36,7 @@ public class CompetitionReferee {
     @AllArgsConstructor
     public static class CompetitionRefereeId implements Serializable {
         private Integer competitionId;
-        private Long refereeId;
+        private Integer refereeId;
     }
 }
 
