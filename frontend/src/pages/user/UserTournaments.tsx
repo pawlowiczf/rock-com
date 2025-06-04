@@ -38,6 +38,7 @@ const UserTournaments = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [joinedTournaments, setJoinedTournaments] = useState<number[]>([]);
 
     const apiFetch = async (url: string, options: RequestInit = {}) => {
         const response = await fetch(`${HTTP_ADDRESS}${url}`, {
@@ -51,6 +52,31 @@ const UserTournaments = () => {
         }
         return response.json();
     };
+
+    const checkIfUserIsJoined = async (tournaments: Tournament[]) => {
+        const userId = sessionStorage.getItem("userId");
+        if (!userId) return;
+
+        const joined: number[] = [];
+
+        await Promise.all(
+            tournaments.map(async (tournament) => {
+                try {
+                    const data = await apiFetch(`/api/competitions/${tournament.competitionId}/participants`);
+                    const allParticipants = [...data.confirmed, ...data.waiting];
+                    const isUserIn = allParticipants.some((p: any) => String(p.userId) === userId);
+                    if (isUserIn) {
+                        joined.push(tournament.competitionId);
+                    }
+                } catch (err) {
+                    console.error(`Błąd przy sprawdzaniu turnieju ${tournament.competitionId}:`, err);
+                }
+            })
+        );
+
+        setJoinedTournaments(joined);
+    };
+
 
     const fetchUpcomingTournaments = async () => {
         setIsLoading(true);
@@ -67,6 +93,12 @@ const UserTournaments = () => {
     useEffect(() => {
         fetchUpcomingTournaments();
     }, []);
+
+    useEffect(() => {
+        if (upcomingTournaments.length > 0) {
+            checkIfUserIsJoined(upcomingTournaments);
+        }
+    }, [upcomingTournaments]);
 
     const handleOpenDialog = (tournament: Tournament) => {
         setSelectedTournament(tournament);
@@ -85,6 +117,7 @@ const UserTournaments = () => {
                 method: "POST",
             });
             setSuccessMessage("Pomyślnie dołączono do turnieju!");
+            window.location.reload();
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -139,80 +172,60 @@ const UserTournaments = () => {
                             Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
-                        filteredTournaments.map((tournament) => (
-                            <Card
-                                key={tournament.competitionId}
-                                sx={{ margin: "16px 0" }}
-                            >
-                                <CardContent className="card-content">
-                                    <div>
-                                        <img
-                                            src={getIcon(tournament.type)}
-                                            alt={tournament.type}
+                        filteredTournaments.map((tournament) => {
+                            const isJoined = joinedTournaments.includes(tournament.competitionId);
+                            return (
+                                <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
+                                    <CardContent className="card-content">
+                                        <div>
+                                            <img
+                                                src={getIcon(tournament.type)}
+                                                alt={tournament.type}
+                                                style={{
+                                                    width: "24px",
+                                                    height: "24px"
+                                                }}
+                                            />
+                                            <Typography variant="h6" color="secondary">
+                                                {tournament.name}
+                                            </Typography>
+                                        </div>
+                                        <div>
+                                            <Typography variant="body2" color="textSecondary">
+                                                Data:{" "}
+                                                <span style={{ color: "purple" }}>
+                            {new Date(tournament.startTime).toLocaleDateString()} -{" "}
+                                                    {new Date(tournament.endTime).toLocaleDateString()}
+                        </span>
+                                            </Typography>
+                                            <Typography variant="body2" color="textSecondary">
+                                                Status:{" "}
+                                                <span style={{ color: "purple" }}>
+                            {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
+                        </span>
+                                            </Typography>
+                                        </div>
+                                        <button
+                                            className="user-button"
+                                            onClick={
+                                                tournament.registrationOpen && !isJoined
+                                                    ? () => handleOpenDialog(tournament)
+                                                    : undefined
+                                            }
                                             style={{
-                                                width: "24px",
-                                                height: "24px"
+                                                backgroundColor:
+                                                    !tournament.registrationOpen || isJoined ? "gray" : undefined,
+                                                cursor:
+                                                    !tournament.registrationOpen || isJoined ? "not-allowed" : "pointer"
                                             }}
-                                        />
-                                        <Typography
-                                            variant="h6"
-                                            color="secondary"
+                                            disabled={!tournament.registrationOpen || isJoined}
                                         >
-                                            {tournament.name}
-                                        </Typography>
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                        >
-                                            Data:{" "}
-                                            <span style={{ color: "purple" }}>
-                                                {new Date(
-                                                    tournament.startTime
-                                                ).toLocaleDateString()}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    tournament.endTime
-                                                ).toLocaleDateString()}
-                                            </span>
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                        >
-                                            Status:{" "}
-                                            <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
-                                            </span>
-                                        </Typography>
-                                    </div>
-                                    <button
-                                        className="user-button"
-                                        onClick={
-                                            !tournament.registrationOpen
-                                                ? undefined
-                                                : () =>
-                                                      handleOpenDialog(
-                                                          tournament,
-                                                      )
-                                        }
-                                        style={{
-                                            backgroundColor:
-                                                !tournament.registrationOpen
-                                                    ? "gray"
-                                                    : undefined,
-                                            cursor: !tournament.registrationOpen
-                                                ? "not-allowed"
-                                                : "pointer",
-                                        }}
-                                        disabled={!tournament.registrationOpen}
-                                    >
-                                        Dołącz
-                                    </button>
-                                </CardContent>
-                            </Card>
-                        ))
+                                            {isJoined ? "Zapisano" : "Dołącz"}
+                                        </button>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
                     )}
                 </div>
 

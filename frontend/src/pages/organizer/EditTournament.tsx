@@ -34,6 +34,16 @@ const TournamentSchema = z.object({
         ),
 });
 
+interface Participant {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    city: string;
+    phoneNumber: string;
+    birthDate: string;
+}
+
 declare global {
     interface Window {
         google: any;
@@ -43,6 +53,19 @@ declare global {
 const EditTournament: () => JSX.Element = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            ...options,
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Wystąpił błąd");
+        }
+        return response.json();
+    };
 
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
@@ -79,13 +102,8 @@ const EditTournament: () => JSX.Element = () => {
         postalCode: "",
     });
 
-    const [participantsLimit, setParticipants] = useState([
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-    ]);
+    const [participants, setParticipants] = useState<Participant[]>([]);
+    const [removedParticipants, setRemovedParticipants] = useState<Participant[]>([]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(false);
@@ -93,17 +111,7 @@ const EditTournament: () => JSX.Element = () => {
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
-                const response = await fetch(
-                    `${HTTP_ADDRESS}/api/competitions/` + id,
-                    {
-                        credentials: "include",
-                    },
-                );
-
-                if (!response.ok)
-                    throw new Error("Błąd przy pobieraniu danych turnieju");
-
-                const data = await response.json();
+                const data = await apiFetch(`/api/competitions/${id}`);
 
                 setFormData((prev) => ({
                     ...prev,
@@ -128,11 +136,30 @@ const EditTournament: () => JSX.Element = () => {
             }
         };
 
+        const fetchParticipants = async () => {
+            try {
+                const data = await apiFetch(`/api/competitions/${id}/participants`);
+                console.log(data);
+                const allParticipants = [...data.confirmed, ...data.waiting];
+                setParticipants(allParticipants);
+            } catch (error) {
+                console.error("Błąd pobierania uczestników:", error);
+            }
+        };
+
         fetchTournamentData();
-    }, []);
+        fetchParticipants();
+    }, [id]);
 
     const removeParticipant = (index: number) => {
-        setParticipants((prev) => prev.filter((_, i) => i !== index));
+        const participantToRemove = participants[index];
+        const confirmed = window.confirm(
+            `Czy na pewno chcesz usunąć uczestnika ${participantToRemove.firstName} ${participantToRemove.lastName}?`
+        );
+        if (confirmed) {
+            setParticipants((prev) => prev.filter((_, i) => i !== index));
+            setRemovedParticipants((prev) => [...prev, participantToRemove]);
+        }
     };
 
     const handleDisciplineSelect = (discipline: string) => {
@@ -158,11 +185,31 @@ const EditTournament: () => JSX.Element = () => {
         }
     };
 
+    const sendResignations = async () => {
+        for (const participant of removedParticipants) {
+            try {
+                const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/resignation`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ userId: participant.userId }),
+                    }
+                );
+                if (!response.ok) {
+                    console.error(`Błąd rezygnacji uczestnika ${participant.userId}`);
+                }
+            } catch (error) {
+                console.error("Błąd połączenia:", error);
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
         setIsLoading(true);
         await submitTournamentData(formData);
+        await sendResignations();
     };
 
     const handleOpening = async (e: React.FormEvent) => {
@@ -267,6 +314,23 @@ const EditTournament: () => JSX.Element = () => {
             alert("Błąd połączenia z serwerem.");
         }
     };
+
+    function getAge(birthDate: string | Date): number {
+        const birth = new Date(birthDate);
+        const today = new Date();
+
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        const dayDiff = today.getDate() - birth.getDate();
+
+        // Jeśli jeszcze nie obchodziliśmy urodzin w tym roku, odejmij 1
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+
+        return age;
+    }
+
 
     const timeToMinutes = (time: string): number => {
         const [hours, minutes] = time.split(":").map(Number);
@@ -442,12 +506,10 @@ const EditTournament: () => JSX.Element = () => {
                                 Lista uczestników
                             </div>
 
-                            {participantsLimit.map((p, i) => (
-                                <div
-                                    key={i}
-                                    className="edit-tournament-participant-item"
-                                >
-                                    <span>{p}</span>
+                            {participants.map((participant, i) => (
+                                <div key={participant.userId }
+                                     className="edit-tournament-participant-item">
+                                    <span>{participant.firstName} {participant.lastName}, {getAge(participant.birthDate)}</span>
                                     <img
                                         src={DeleteIcon}
                                         alt="Usuń"

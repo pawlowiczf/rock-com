@@ -84,6 +84,10 @@ const OrganizerTournaments = () => {
         }
     };
 
+    useEffect(() => {
+        fetchUpcomingTournaments();
+    }, []);
+
     const handleEditTournament = (id: number) => {
         navigate("/tournaments/edit/" + id);
     };
