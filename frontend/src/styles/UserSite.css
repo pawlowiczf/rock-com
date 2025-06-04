@@ -64,6 +64,14 @@
     align-items: left;
 }
 
+.filter-input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+
 .MuiDialogActions-root .MuiButton-root.MuiButton-textSecondary {
     color: #a020f0;
 }

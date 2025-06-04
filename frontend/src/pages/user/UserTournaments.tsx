@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import {
+    Alert,
     Button,
     Card,
     CardContent,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Snackbar,
     Tab,
     Tabs,
-    Typography,
-    CircularProgress,
-    Snackbar,
-    Alert
+    Typography
 } from "@mui/material";
 import "../../styles/UserSite.css";
 import { HTTP_ADDRESS } from "../../config.ts";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
+import TextField from "@mui/material/TextField";
 
 interface Tournament {
     competitionId: number;
@@ -38,12 +39,19 @@ const UserTournaments = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [showFilters, setShowFilters] = useState(true);
+    const [filterName, setFilterName] = useState("");
+    const [filterCity, setFilterCity] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState("");
+    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterType, setFilterType] = useState("");
+
 
     const apiFetch = async (url: string, options: RequestInit = {}) => {
         const response = await fetch(`${HTTP_ADDRESS}${url}`, {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            ...options,
+            ...options
         });
         if (!response.ok) {
             const errorText = await response.text();
@@ -82,7 +90,7 @@ const UserTournaments = () => {
         if (!selectedTournament) return;
         try {
             await apiFetch(`/api/competitions/${selectedTournament.competitionId}/enroll`, {
-                method: "POST",
+                method: "POST"
             });
             setSuccessMessage("Pomyślnie dołączono do turnieju!");
         } catch (err: any) {
@@ -93,21 +101,27 @@ const UserTournaments = () => {
     };
 
     const filteredTournaments = upcomingTournaments.filter((tournament) => {
-        if (tab === 0) return tournament.registrationOpen;
-        if (tab === 1) return !tournament.registrationOpen;
-        return false;
+        const tabMatch =
+            (tab === 0 && tournament.registrationOpen) ||
+            (tab === 1 && !tournament.registrationOpen) ||
+            (tab === 2 && !tournament.registrationOpen);
+
+        const nameMatch = tournament.name.toLowerCase().includes(filterName.toLowerCase());
+        const cityMatch = tournament.city.toLowerCase().includes(filterCity.toLowerCase());
+        const typeMatch = filterType === "" || tournament.type === filterType;
+
+        return tabMatch && nameMatch && cityMatch && typeMatch;
     });
+
 
     const getIcon = (type: string): string => {
         switch (type) {
             case "TENNIS_OUTDOOR":
-                return TennisIcon;
+                return TennisIcon as string;
             case "TABLE_TENNIS":
-                return PingPongIcon;
+                return PingPongIcon as string;
             case "BADMINTON":
-                return BadmintonIcon;
-            default:
-                return "";
+                return BadmintonIcon as string;
         }
     };
 
@@ -117,32 +131,81 @@ const UserTournaments = () => {
             style={{
                 display: "flex",
                 flexDirection: "row",
-                alignItems: "flex-start",
+                alignItems: "flex-start"
             }}
         >
             <div className="user-site-window">
                 <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
                     Turnieje
                 </Typography>
-                <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} centered textColor="primary" indicatorColor="primary">
+                <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} centered textColor="primary"
+                      indicatorColor="primary">
                     <Tab label="NADCHODZĄCE" />
                     <Tab label="W TOKU" />
                     <Tab label="ZAKOŃCZONE" />
                 </Tabs>
+
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setShowFilters((prev) => !prev)}
+                    style={{ marginBottom: "1rem", marginTop: "1rem" }}
+                >
+                    {showFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                </Button>
+
+                {showFilters && (
+                    <div style={{ display: "flex", gap: "12px", marginBottom: "1rem", flexWrap: "wrap" }}>
+                        <TextField
+                            label="Nazwa"
+                            variant="outlined"
+                            size="small"
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
+                        />
+                        <TextField
+                            label="Miasto"
+                            variant="outlined"
+                            size="small"
+                            value={filterCity}
+                            onChange={(e) => setFilterCity(e.target.value)}
+                        />
+                        <TextField
+                            label="Data od"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterStartDate}
+                            onChange={(e) => setFilterStartDate(e.target.value)}
+                        />
+                        <TextField
+                            label="Data do"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterEndDate}
+                            onChange={(e) => setFilterEndDate(e.target.value)}
+                        />
+                    </div>
+                )}
+
+
                 <div className="tournament-list">
                     {isLoading ? (
                         <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
                             <CircularProgress color="primary" />
                         </div>
                     ) : filteredTournaments.length === 0 ? (
-                        <Typography variant="body1" textAlign="center" style={{ marginTop: "2rem" }}>
+                        <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
                             Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
                         filteredTournaments.map((tournament) => (
                             <Card
                                 key={tournament.competitionId}
-                                sx={{ margin: "16px 0" }}
+                                sx={{ margin: "0px 0" }}
                             >
                                 <CardContent className="card-content">
                                     <div>
@@ -177,13 +240,27 @@ const UserTournaments = () => {
                                                 ).toLocaleDateString()}
                                             </span>
                                         </Typography>
+                                        <div>
+                                            <Typography
+                                                variant="body2"
+                                                color="textSecondary"
+                                            >
+                                                Miasto:{" "}
+                                                <span style={{ color: "purple" }}>
+
+                                                    {tournament.city}
+                                            </span>
+                                            </Typography>
+                                        </div>
                                         <Typography
                                             variant="body2"
                                             color="textSecondary"
                                         >
                                             Status:{" "}
                                             <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
+                                                {tournament.registrationOpen
+                                                    ? "Otwarte"
+                                                    : "Zakończone"}
                                             </span>
                                         </Typography>
                                     </div>
@@ -193,9 +270,9 @@ const UserTournaments = () => {
                                             !tournament.registrationOpen
                                                 ? undefined
                                                 : () =>
-                                                      handleOpenDialog(
-                                                          tournament,
-                                                      )
+                                                    handleOpenDialog(
+                                                        tournament
+                                                    )
                                         }
                                         style={{
                                             backgroundColor:
@@ -204,7 +281,7 @@ const UserTournaments = () => {
                                                     : undefined,
                                             cursor: !tournament.registrationOpen
                                                 ? "not-allowed"
-                                                : "pointer",
+                                                : "pointer"
                                         }}
                                         disabled={!tournament.registrationOpen}
                                     >
@@ -227,7 +304,7 @@ const UserTournaments = () => {
                                 <br />
                                 Data:{" "}
                                 {new Date(
-                                    selectedTournament.startTime,
+                                    selectedTournament.startTime
                                 ).toLocaleDateString()}{" "}
                                 <br />
                                 Lokalizacja: {selectedTournament.city} <br />
