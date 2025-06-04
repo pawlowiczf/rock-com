@@ -75,7 +75,8 @@ const OrganizerTournaments = () => {
 
     const apiFetchMatches = async () => {
         for (const tournament of tournaments) {
-            const response = await fetch(`${HTTP_ADDRESS}/api/matches`, {
+            const competitionId = tournament.competitionId;
+            const response = await fetch(`${HTTP_ADDRESS}/api/matches/competitions/${competitionId}`, {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
