@@ -15,6 +15,23 @@ const Login: React.FC = () => {
         sessionStorage.setItem("userId", "");
     }, []);
 
+    const getUserId = async () => {
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/users/id`, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (!response.ok) {
+                throw new Error("Błąd podczas pobierania ID użytkownika");
+            }
+            const userId = await response.text();
+            console.log("Pobrane ID użytkownika:", userId);
+            sessionStorage.setItem("userId", userId);
+        } catch (error) {
+            console.error("Błąd podczas pobierania ID użytkownika:", error);
+        }
+    }
+
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
         setError(""); // Reset error message
@@ -64,6 +81,7 @@ const Login: React.FC = () => {
                 sessionStorage.setItem("userId", userId);
                 sessionStorage.setItem("isLoggedIn", "true");
                 sessionStorage.setItem("permissions", permissions);
+                await getUserId();
                 navigate("/profile");
             } catch (error) {
                 console.error("Błąd podczas ustawiania sesji:", error);

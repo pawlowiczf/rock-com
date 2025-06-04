@@ -75,6 +75,36 @@ const JudgeScore = () => {
         }
     }, []);
 
+
+    useEffect(() => {
+        const fetchMatchResults = async () => {
+            const userId = sessionStorage.getItem("userId");
+            if (!userId) {
+                navigate("/login");
+                return;
+            }
+            try {
+                const response = await fetch(
+                    `${userId}/matches/results`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                    },
+                );
+                if (!response.ok) {
+                    throw new Error("Błąd podczas pobierania wyników meczów");
+                }
+                const data = await response.json();
+                console.log("Pobrane wyniki meczów:", data);
+                // Update the matches state with fetched data
+            } catch (error) {
+                console.error("Błąd podczas pobierania wyników meczów:", error);
+                navigate("/login");
+            }
+        };
+        fetchMatchResults();
+    }, [navigate]);
+
     const handleOpenDialog = (tournament: any, index: number) => {
         setSelectedTournament({ ...tournament, index });
         setOpenDialog(true);
@@ -86,6 +116,9 @@ const JudgeScore = () => {
         setInputScore({ player1: "", player2: "" });
     };
 
+    const handleScore = (index: number) => {
+    }
+
     const handleAddingScore = () => {
         if (selectedTournament) {
             setScores((prevScores) => ({
@@ -93,6 +126,7 @@ const JudgeScore = () => {
                 [selectedTournament.index]: `${inputScore.player1} - ${inputScore.player2}`,
             }));
         }
+
         handleCloseDialog();
     };
 

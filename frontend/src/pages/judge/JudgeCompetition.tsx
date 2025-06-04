@@ -37,7 +37,7 @@ interface Match {
     status: string;
 }
 
-const OrganizerTournaments = () => {
+const JudgeCompetition = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState(0);
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -71,6 +71,7 @@ const OrganizerTournaments = () => {
 
     useEffect(() => {
         fetchAllTournaments();
+        fetchAllMatches();
     }, []);
 
     const apiFetchMatches = async () => {
@@ -90,8 +91,8 @@ const OrganizerTournaments = () => {
         return matches;
     }
 
-    const apiFetchCompetitions = async () => {
-        const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
+    const apiFetchTournaments = async () => {
+        const response = await fetch(`${HTTP_ADDRESS}/api/competitions/upcoming`, {
             method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
@@ -119,7 +120,7 @@ const OrganizerTournaments = () => {
     const fetchAllTournaments = async () => {
         setIsLoading(true);
         try {
-            const data = await apiFetchCompetitions();
+            const data = await apiFetchTournaments();
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -127,9 +128,29 @@ const OrganizerTournaments = () => {
         }
     };
 
-    const handleEditTournament = (id: number) => {
-        navigate("/tournaments/edit/" + id);
-    };
+    const handleJudgeEnroll = async (competitionId: number) => {
+    
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${competitionId}/referee`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Błąd podczas zapisywania się do sędziowania");
+            }
+            const data = await response.json();
+            setError(null);
+            alert("Zostałeś zapisany do sędziowania turnieju!");
+            fetchAllTournaments();
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const filteredTournaments = tournaments.filter((tournament) => {
         if (tab === 0) return tournament.registrationOpen;
@@ -154,17 +175,6 @@ const OrganizerTournaments = () => {
                 <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
                     Turnieje
                 </Typography>
-                <Tabs
-                    value={tab}
-                    onChange={(e, newVal) => setTab(newVal)}
-                    centered
-                    textColor="primary"
-                    indicatorColor="primary"
-                >
-                    <Tab label="NADCHODZĄCE" />
-                    <Tab label="W TOKU" />
-                    <Tab label="ZAKOŃCZONE" />
-                </Tabs>
                 <div className="tournament-list">
                     {isLoading ? (
                         <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
@@ -231,7 +241,7 @@ const OrganizerTournaments = () => {
                                             !tournament.registrationOpen
                                                 ? undefined
                                                 : () =>
-                                                      handleEditTournament(
+                                                      handleJudgeEnroll(
                                                           tournament.competitionId,
                                                       )
                                         }
@@ -246,7 +256,7 @@ const OrganizerTournaments = () => {
                                         }}
                                         disabled={!tournament.registrationOpen}
                                     >
-                                        Edytuj
+                                        Zapisz sie do sędziowania
                                     </button>
                                 </CardContent>
                             </Card>
@@ -265,4 +275,4 @@ const OrganizerTournaments = () => {
     );
 };
 
-export default OrganizerTournaments;
+export default JudgeCompetition;
