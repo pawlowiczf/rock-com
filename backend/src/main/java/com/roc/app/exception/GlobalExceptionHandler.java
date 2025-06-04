@@ -3,6 +3,7 @@ package com.roc.app.exception;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
 
+import com.roc.app.competition.referee.RefereeNotEligibleException;
 import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,17 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RefereeNotEligibleException.class)
+    public ResponseEntity<ErrorResponse> handleRefereeNotEligibleException(RefereeNotEligibleException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Referee not eligible",
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

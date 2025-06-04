@@ -3,9 +3,9 @@ package com.roc.app.competition;
 import com.roc.app.competition.assignment.CompetitionParticipantService;
 import com.roc.app.competition.assignment.dto.CompetitionParticipantResponseDto;
 import com.roc.app.competition.assignment.dto.CompetitionParticipantsListResponseDto;
+import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.CompetitionDateResponseDto;
 import com.roc.app.competition.dto.CompetitionResponseDto;
-import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.user.participant.Participant;
 import jakarta.validation.Valid;
@@ -114,4 +114,3 @@ public class CompetitionController {
         return ResponseEntity.noContent().build();
     }
 }
-

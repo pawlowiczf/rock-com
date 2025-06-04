@@ -2,8 +2,8 @@ package com.roc.app.competition;
 
 import com.roc.app.competition.assignment.CompetitionParticipant;
 import com.roc.app.competition.assignment.CompetitionParticipantRepository;
-import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.CompetitionCreateRequestDto;
+import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,9 +34,9 @@ public class CompetitionService {
 
     public List<CompetitionResponseDto> getCompetitionsByType(String competitionType) {
         CompetitionType competitionTypeEnum;
-        try{
+        try {
             competitionTypeEnum = CompetitionType.valueOf(competitionType);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new CompetitionTypeNotFoundException(competitionType);
         }
 
@@ -78,13 +78,16 @@ public class CompetitionService {
 
         if (competitionDTO.name() != null) competition.setName(competitionDTO.name());
         if (competitionDTO.type() != null) competition.setType(competitionDTO.type());
-        if (competitionDTO.matchDurationMinutes() != null) competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
+        if (competitionDTO.matchDurationMinutes() != null)
+            competition.setMatchDurationMinutes(competitionDTO.matchDurationMinutes());
         if (competitionDTO.availableCourts() != null) competition.setAvailableCourts(competitionDTO.availableCourts());
-        if (competitionDTO.participantsLimit() != null) competition.setParticipantsLimit(competitionDTO.participantsLimit());
+        if (competitionDTO.participantsLimit() != null)
+            competition.setParticipantsLimit(competitionDTO.participantsLimit());
         if (competitionDTO.streetAddress() != null) competition.setStreetAddress(competitionDTO.streetAddress());
         if (competitionDTO.city() != null) competition.setCity(competitionDTO.city());
         if (competitionDTO.postalCode() != null) competition.setPostalCode(competitionDTO.postalCode());
-        if (competitionDTO.registrationOpen() != null ) competition.setRegistrationOpen(competitionDTO.registrationOpen());
+        if (competitionDTO.registrationOpen() != null)
+            competition.setRegistrationOpen(competitionDTO.registrationOpen());
 
         Competition updatedCompetition = competitionRepository.save(competition);
         return CompetitionResponseDto.fromModel(updatedCompetition);
@@ -97,6 +100,7 @@ public class CompetitionService {
         }
         competitionRepository.deleteById(id);
     }
+
     public List<UpcomingCompetitionDto> getUpcomingCompetitions() {
         return competitionDateRepository.findUpcomingCompetitions();
     }
