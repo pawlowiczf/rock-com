@@ -49,4 +49,6 @@ ORDER BY m.matchDate DESC
 """)
     List<RefereeMatchResponseDto> findRefereeMatches(@Param("refereeId") Integer refereeId);
 
+    List<Match> findByCompetition_CompetitionIdAndStatus(Integer competitionId, MatchStatus status);
+
 }

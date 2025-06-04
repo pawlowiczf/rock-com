@@ -26,10 +26,10 @@ public class Match {
     @JoinColumn(name = FieldNames.COMPETITION_ID, nullable = false)
     private Competition competition;
 
-    @Column(name = FieldNames.PLAYER1_ID, nullable = false)
+    @Column(name = FieldNames.PLAYER1_ID)
     private Integer player1Id;
 
-    @Column(name = FieldNames.PLAYER2_ID, nullable = false)
+    @Column(name = FieldNames.PLAYER2_ID)
     private Integer player2Id;
 
     @Column(name = FieldNames.REFEREE_ID)
