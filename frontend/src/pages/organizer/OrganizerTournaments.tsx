@@ -71,6 +71,7 @@ const OrganizerTournaments = () => {
 
     useEffect(() => {
         fetchAllTournaments();
+        fetchAllMatches();
     }, []);
 
     const apiFetchMatches = async () => {
