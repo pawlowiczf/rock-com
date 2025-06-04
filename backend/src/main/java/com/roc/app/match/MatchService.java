@@ -38,7 +38,12 @@ public class MatchService {
         return matchRepository.save(match).getMatchId();
     }
 
-
+    public List<MatchResponseDto> getCompetitionMatchesByRefereeId(Integer competitionId, Integer refereeId) {
+        return matchRepository.findByRefereeIdAndCompetitionCompetitionId(refereeId, competitionId)
+                .stream()
+                .map(MatchResponseDto::fromModel)
+                .toList();
+    }
 
     public void updateMatch(Integer matchId, MatchUpdateRequestDto dto) {
         Match match = matchRepository.findById(matchId)
