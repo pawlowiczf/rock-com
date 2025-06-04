@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import z from "zod";
 import { HTTP_ADDRESS } from "../../config.ts";
 import pages from "../Guard/Guard";
+import { Button } from "@mui/material";
 
 const TournamentSchema = z.object({
     type: z.string(),
@@ -368,6 +369,14 @@ const EditTournament: () => JSX.Element = () => {
         return age;
     }
 
+    const getNameById = (id: string) => {
+        for (const participant of participants) {
+            if (String(participant.userId) === String(id)) {
+                return `${participant.firstName} ${participant.lastName}`;
+            }
+        }
+        return id; // fallback jeśli nie znaleziono
+    };
 
     const timeToMinutes = (time: string): number => {
         const [hours, minutes] = time.split(":").map(Number);
@@ -540,18 +549,24 @@ const EditTournament: () => JSX.Element = () => {
                             </div>
 
                             <div className="edit-tournament-tabs">
-                                <button
+                                <Button
                                     className={`edit-tournament-tab ${activeTab === "participants" ? "active" : ""}`}
+                                    variant="outlined"
+                                    size="small"
+                                    style={{ marginBottom: "1rem", marginTop: "1rem"}}
                                     onClick={() => setActiveTab("participants")}
                                 >
                                     Uczestnicy
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     className={`edit-tournament-tab ${activeTab === "matches" ? "active" : ""}`}
+                                    variant="outlined"
+                                    size="small"
+                                    style={{ marginBottom: "1rem", marginTop: "1rem"}}
                                     onClick={() => setActiveTab("matches")}
                                 >
                                     Mecze
-                                </button>
+                                </Button>
                             </div>
 
 
@@ -581,7 +596,7 @@ const EditTournament: () => JSX.Element = () => {
                                     </div>
                                     {matches.map((match, i) => (
                                         <div key={i} className="edit-tournament-participant-item">
-                                            <span>mecz</span>
+                                            <span>{getNameById(match.player1Id)} vs {getNameById(match.player2Id)}</span>
                                             <img
                                                 src={EditIcon}
                                                 alt="Edytuj"
