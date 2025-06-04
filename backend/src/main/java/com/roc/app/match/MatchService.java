@@ -26,6 +26,12 @@ public class MatchService {
         this.bracketRepository = bracketRepository;
     }
 
+    public MatchResponseDto getMatchById(Integer matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchNotFoundException(matchId));
+        return MatchResponseDto.fromModel(match);
+    }
+
     public List<ParticipantMatchResponseDto> getParticipantMatches(Integer participantId) {
         return matchRepository.findParticipantMatches(participantId);
     }

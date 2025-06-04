@@ -2,6 +2,7 @@ import "../../styles/EditTournament.css";
 import { useState, useEffect, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/icons/cross.svg";
+import EditIcon from "@mui/icons-material/Edit";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
@@ -81,7 +82,7 @@ const EditTournament: () => JSX.Element = () => {
                         page.permissions.includes(registrationData),
                     )
                     .flatMap((page) => page.path)
-                    .includes("/tournaments/edit/:id")
+                    .includes("/tournaments/:id")
             ) {
                 navigate("/profile");
             }
@@ -106,7 +107,43 @@ const EditTournament: () => JSX.Element = () => {
     const [removedParticipants, setRemovedParticipants] = useState<Participant[]>([]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const [activeTab, setActiveTab] = useState<"participants" | "matches">("participants");
+    const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const fetchMatches = async () => {
+        try {
+            setIsLoading(true);
+            const allMatches = [];
+
+                const response = await fetch(`${HTTP_ADDRESS}/api/matches/competitions/${id}`, {
+                    method: "GET",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || "Błąd połączenia z serwerem");
+                }
+                const data = await response.json();
+
+            allMatches.push(...data["SCHEDULED"]);
+
+            setMatches(allMatches);
+        } catch (error) {
+            console.error("Błąd podczas pobierania meczów:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "matches" && matches.length === 0) {
+            fetchMatches();
+        }
+    }, [activeTab]);
+
 
     useEffect(() => {
         const fetchTournamentData = async () => {
@@ -383,7 +420,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            name: e.target.value,
+                                            name: e.target.value
                                         })
                                     }
                                     error={!!errors.name}
@@ -399,7 +436,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            streetAddress: e.target.value,
+                                            streetAddress: e.target.value
                                         })
                                     }
                                     error={!!errors.streetAddress}
@@ -418,7 +455,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            postalCode: e.target.value,
+                                            postalCode: e.target.value
                                         })
                                     }
                                     fullWidth
@@ -434,7 +471,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            city: e.target.value,
+                                            city: e.target.value
                                         })
                                     }
                                     fullWidth
@@ -451,7 +488,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            availableCourts: e.target.value,
+                                            availableCourts: e.target.value
                                         })
                                     }
                                     error={!!errors.availableCourts}
@@ -468,7 +505,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            participantsLimit: e.target.value,
+                                            participantsLimit: e.target.value
                                         })
                                     }
                                     error={!!errors.participantsLimit}
@@ -489,7 +526,7 @@ const EditTournament: () => JSX.Element = () => {
                                         setFormData({
                                             ...formData,
                                             matchDurationMinutes:
-                                                e.target.value,
+                                            e.target.value
                                         })
                                     }
                                     InputLabelProps={{ shrink: true }}
@@ -502,22 +539,60 @@ const EditTournament: () => JSX.Element = () => {
                                 </button>
                             </div>
 
-                            <div className="edit-tournament-participantsLimit-header">
-                                Lista uczestników
+                            <div className="edit-tournament-tabs">
+                                <button
+                                    className={`edit-tournament-tab ${activeTab === "participants" ? "active" : ""}`}
+                                    onClick={() => setActiveTab("participants")}
+                                >
+                                    Uczestnicy
+                                </button>
+                                <button
+                                    className={`edit-tournament-tab ${activeTab === "matches" ? "active" : ""}`}
+                                    onClick={() => setActiveTab("matches")}
+                                >
+                                    Mecze
+                                </button>
                             </div>
 
-                            {participants.map((participant, i) => (
-                                <div key={participant.userId }
-                                     className="edit-tournament-participant-item">
-                                    <span>{participant.firstName} {participant.lastName}, {getAge(participant.birthDate)}</span>
-                                    <img
-                                        src={DeleteIcon}
-                                        alt="Usuń"
-                                        className="participant-remove-icon"
-                                        onClick={() => removeParticipant(i)}
-                                    />
-                                </div>
-                            ))}
+
+                            {activeTab === "participants" && (
+                                <>
+                                    <div className="edit-tournament-participantsLimit-header">
+                                        Lista uczestników
+                                    </div>
+                                    {participants.map((participant, i) => (
+                                        <div key={participant.userId} className="edit-tournament-participant-item">
+                                            <span>{participant.firstName} {participant.lastName}, {getAge(participant.birthDate)}</span>
+                                            <img
+                                                src={DeleteIcon}
+                                                alt="Usuń"
+                                                className="participant-remove-icon"
+                                                onClick={() => removeParticipant(i)}
+                                            />
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+
+                            {activeTab === "matches" && (
+                                <>
+                                    <div className="edit-tournament-participantsLimit-header">
+                                        Lista meczów
+                                    </div>
+                                    {matches.map((match, i) => (
+                                        <div key={i} className="edit-tournament-participant-item">
+                                            <span>mecz</span>
+                                            <img
+                                                src={EditIcon}
+                                                alt="Edytuj"
+                                                className="participant-remove-icon"
+                                                onClick={() => navigate("/matches/" +match.matchId)}
+                                            />
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+
                         </div>
                     </div>
 

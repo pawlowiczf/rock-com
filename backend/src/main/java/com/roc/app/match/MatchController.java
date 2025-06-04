@@ -22,6 +22,12 @@ public class MatchController {
         this.matchService = matchService;
     }
 
+    @GetMapping("/{matchId}")
+    public ResponseEntity<MatchResponseDto> getMatchById(@PathVariable Integer matchId) {
+        MatchResponseDto match = matchService.getMatchById(matchId);
+        return ResponseEntity.ok(match);
+    }
+
     @PostMapping
     public ResponseEntity<?> createMatch(@Valid @RequestBody MatchCreateRequestDto requestDto) {
         Integer createdMatchId = matchService.createMatch(requestDto);
