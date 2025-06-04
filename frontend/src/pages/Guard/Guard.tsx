@@ -19,7 +19,7 @@ const pages = [
         constraints: "normal",
     },
     {
-        path: ["/register/judge", "/register/information", "judge/score"],
+        path: ["/register/judge", "/register/information", "judge/score","judge/competition"],
         permissions: ["judge"],
         constraints: "normal",
     },
