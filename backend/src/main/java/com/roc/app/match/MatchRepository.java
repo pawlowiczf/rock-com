@@ -51,4 +51,8 @@ ORDER BY m.matchDate DESC
 
     List<Match> findByCompetition_CompetitionIdAndStatus(Integer competitionId, MatchStatus status);
 
+    List<Match> findByCompetitionCompetitionId(Integer competitionId);
+
+    List<Match> findByRefereeIdAndCompetitionCompetitionId(Integer refereeId, Integer competitionId);
+
 }

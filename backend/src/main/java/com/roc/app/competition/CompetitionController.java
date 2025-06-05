@@ -114,4 +114,3 @@ public class CompetitionController {
         return ResponseEntity.noContent().build();
     }
 }
-

@@ -1,6 +1,8 @@
 package com.roc.app.match;
 
 import com.roc.app.bracket.BracketRepository;
+import com.roc.app.bracket.BracketRepository;
+import com.roc.app.bracket.BracketService;
 import com.roc.app.competition.Competition;
 import com.roc.app.competition.CompetitionRepository;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
@@ -17,11 +21,19 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final CompetitionRepository competitionRepository;
     private final BracketRepository bracketRepository;
+    private final BracketService bracketService;
 
-    public MatchService(MatchRepository matchRepository, CompetitionRepository competitionRepository, BracketRepository bracketRepository) {
+    public MatchService(MatchRepository matchRepository, CompetitionRepository competitionRepository, BracketRepository bracketRepository, BracketService bracketService) {
         this.matchRepository = matchRepository;
         this.competitionRepository = competitionRepository;
         this.bracketRepository = bracketRepository;
+        this.bracketService = bracketService;
+    }
+
+    public MatchResponseDto getMatchById(Integer matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchNotFoundException(matchId));
+        return MatchResponseDto.fromModel(match);
     }
 
     public List<ParticipantMatchResponseDto> getParticipantMatches(Integer participantId) {
@@ -38,6 +50,13 @@ public class MatchService {
 
         Match match = dto.toModel(competition);
         return matchRepository.save(match).getMatchId();
+    }
+
+    public List<MatchResponseDto> getCompetitionMatchesByRefereeId(Integer competitionId, Integer refereeId) {
+        return matchRepository.findByRefereeIdAndCompetitionCompetitionId(refereeId, competitionId)
+                .stream()
+                .map(MatchResponseDto::fromModel)
+                .toList();
     }
 
     public Match createByeMatch(Competition competition, Integer playerId) {
@@ -87,14 +106,37 @@ public class MatchService {
         if (dto.refereeId() != null) match.setRefereeId(dto.refereeId());
         if (dto.matchDate() != null) match.setMatchDate(dto.matchDate());
         if (dto.status() != null) match.setStatus(dto.status());
-        if (dto.score() != null) match.setScore(dto.score());
+        if (dto.score() != null) updateMatchScore(matchId, ScoreCreateRequestDto.toDto(dto.score()));
         if (dto.winnerId() != null) match.setWinnerId(dto.winnerId());
 
         matchRepository.save(match);
+    }
+
+    public void updateMatchScore(Integer matchId, ScoreCreateRequestDto scoreDto) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchNotFoundException(matchId));
+        match.setScore(scoreDto.getScore());
+        Integer winnerId = scoreDto.player1() > scoreDto.player2() ? match.getPlayer1Id() : match.getPlayer2Id();
+        match.setWinnerId(winnerId);
+        match.setStatus(MatchStatus.COMPLETED);
+        matchRepository.save(match);
+        bracketService.assignWinnerAndRefereeToNextMatch(matchId, winnerId, match.getRefereeId());
     }
 
     public void deleteMatch(Integer matchId) {
         matchRepository.deleteById(matchId);
     }
 
+    public Map<MatchStatus, List<MatchResponseDto>> getMatchesByCompetitionIdGroupedByStatus(Integer competitionId) {
+        List<MatchResponseDto> matches = matchRepository.findByCompetitionCompetitionId(competitionId)
+                .stream()
+                .map(MatchResponseDto::fromModel)
+                .toList();
+
+        Map<MatchStatus, List<MatchResponseDto>> grouped = matches
+                .stream()
+                .collect(Collectors.groupingBy(MatchResponseDto::status));
+
+        return grouped;
+    }
 }

@@ -14,12 +14,12 @@ public class TimeSlots {
     public TimeSlots(Competition competition, List<CompetitionDateResponseDto> dates) {
         // TODO: available or referees number
         this.slots = new TreeMap<>();
-        Integer matchDuration = competition.getMatchDurationMinutes();
         for (CompetitionDateResponseDto date : dates) {
-            LocalDateTime slotStartTime = date.startTime();
-            while (!slotStartTime.plusMinutes(matchDuration).isAfter(date.endTime())) {
-                slots.put(slotStartTime, competition.getAvailableCourts());
-                slotStartTime = slotStartTime.plusMinutes(matchDuration);
+            LocalDateTime current = date.startTime();
+            while (current.plusMinutes(competition.getMatchDurationMinutes()).isBefore(date.endTime()) ||
+                    current.plusMinutes(competition.getMatchDurationMinutes()).isEqual(date.endTime())) {
+                slots.put(current, competition.getAvailableCourts());
+                current = current.plusMinutes(competition.getMatchDurationMinutes());
             }
         }
     }

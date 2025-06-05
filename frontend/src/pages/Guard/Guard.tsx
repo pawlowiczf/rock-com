@@ -24,12 +24,12 @@ const pages = [
         constraints: "normal",
     },
     {
-        path: ["/tournaments/create", "/organizer/tournaments"],
+        path: ["/tournaments/create", "/organizer/tournaments", "/matches"],
         permissions: ["organizer"],
         constraints: "normal",
     },
     {
-        path: [ "/tournaments/edit/:id", "/matches/edit"],
+        path: [ "/tournaments/:id", "/matches/:id"],
         permissions: ["organizer"],
         constraints: "edit",
 

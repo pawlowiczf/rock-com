@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, CardContent, CircularProgress, Snackbar, Tab, Tabs, Typography } from "@mui/material";
+import {
+    Alert,
+    Button,
+    Card,
+    CardContent,
+    CircularProgress,
+    Snackbar,
+    Tab,
+    Tabs,
+    TextField,
+    Typography
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../../styles/UserSite.css";
 import { HTTP_ADDRESS } from "../../config.ts";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
-import TextField from "@mui/material/TextField";
 import pages from "../Guard/Guard";
 
 interface Tournament {
@@ -22,7 +32,7 @@ interface Tournament {
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState(0);
-    const [upcomingTournaments, setUpcomingTournaments] = useState<Tournament[]>([]);
+    const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -51,7 +61,7 @@ const OrganizerTournaments = () => {
             ) {
                 navigate("/profile");
             }
-            fetchUpcomingTournaments();
+            fetchAllTournaments();
         }
         if (!registrationData) {
             navigate("/login");
@@ -71,11 +81,11 @@ const OrganizerTournaments = () => {
         return response.json();
     };
 
-    const fetchUpcomingTournaments = async () => {
+    const fetchAllTournaments = async () => {
         setIsLoading(true);
         try {
             const data = await apiFetch("/api/competitions/upcoming");
-            setUpcomingTournaments(data);
+            setTournaments(data);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -84,23 +94,28 @@ const OrganizerTournaments = () => {
     };
 
     useEffect(() => {
-        fetchUpcomingTournaments();
+        fetchAllTournaments();
     }, []);
 
-
     const handleEditTournament = (id: number) => {
-        navigate("/tournaments/edit/" + id);
+        navigate("/tournaments/" + id);
     };
 
     const now = new Date();
 
-    const filteredTournaments = upcomingTournaments.filter((t) => {
-        const start = new Date(t.startTime);
-        const end = new Date(t.endTime);
+    const filteredTournaments = tournaments.filter((tournament) => {
+        const start = new Date(tournament.startTime);
+        const end = new Date(tournament.endTime);
+        const tabMatch =
+            (tab === 0 && now < start && tournament.registrationOpen) ||
+            (tab === 1 && now >= start && now < end) ||
+            (tab === 2 && now > end);
 
-        if (tab === 0) return now < start;
-        if (tab === 1) return now >= start && now <= end;
-        if (tab === 2) return now > end;
+        const nameMatch = tournament.name.toLowerCase().includes(filterName.toLowerCase());
+        const cityMatch = tournament.city.toLowerCase().includes(filterCity.toLowerCase());
+        const typeMatch = filterType === "" || tournament.type === filterType;
+
+        return tabMatch && nameMatch && cityMatch && typeMatch;
     });
 
     const getIcon = (type: string): string => {
@@ -200,7 +215,7 @@ const OrganizerTournaments = () => {
                             const start = new Date(tournament.startTime);
                             const editable = now < start;
 
-                            return (<Card key={tournament.competitionId} sx={{margin: "16px 0"}}>
+                            return (<Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
                                 <CardContent className="card-content">
                                     <div>
                                         <img
@@ -251,7 +266,7 @@ const OrganizerTournaments = () => {
                                             color="textSecondary"
                                         >
                                             Status:{" "}
-                                            <span style={{color: "purple"}}>
+                                            <span style={{ color: "purple" }}>
                                                 {now < new Date(tournament.startTime)
                                                     ? "Nadchodzący"
                                                     : now > new Date(tournament.endTime)
@@ -268,14 +283,14 @@ const OrganizerTournaments = () => {
                                         style={{
                                             backgroundColor:
                                                 !editable ? "gray" : undefined,
-                                            cursor: !editable ? "not-allowed" : "pointer",
+                                            cursor: !editable ? "not-allowed" : "pointer"
                                         }}
                                         disabled={!editable}
                                     >
                                         Edytuj
                                     </button>
                                 </CardContent>
-                            </Card>)
+                            </Card>);
                         })
                     )}
                 </div>

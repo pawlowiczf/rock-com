@@ -70,19 +70,6 @@ public class PlanningService {
         return matches;
     }
 
-    public void createNextRounds(Competition competition, List<Match> matches, TimeSlots slots) {
-        List<Match> nextMatches = new LinkedList<>();
-        while (matches.size() > 1) {
-            for (int i = 0; i < matches.size() / 2; i++) {
-                nextMatches.add(matchService.createScheduledMatch(competition, null, null, null, slots.getNext()));
-            }
-            slots.removeSlot(nextMatches.getLast().getMatchDate());
-            bracketService.generateBracketConnections(matches, nextMatches);
-            matches = nextMatches;
-            nextMatches = new LinkedList<>();
-        }
-    }
-
     private Integer drawRandomPlayerId(List<CompetitionParticipant> participants) {
         return participants.remove(random.nextInt(participants.size())).getParticipantId();
     }
