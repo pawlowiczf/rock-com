@@ -22,7 +22,7 @@ const JudgeLicence: React.FC = () => {
             }
         }, [navigate]);
     const [licences, setLicences] = useState([
-        { licenceNumber: "", discipline: "tenis" },
+        { licenceNumber: "", discipline: "TENNIS_OUTDOOR" },
     ]);
 
     const disciplineOptions = [
@@ -203,7 +203,7 @@ const JudgeLicence: React.FC = () => {
                                 style={{ width: "35%" }}
                                 onClick={() => {
                                     handleLicenceSubmit();
-                                    // navigate("/register/information");
+                                    navigate("/register/information");
                                 }}
                             >
                                 Dalej

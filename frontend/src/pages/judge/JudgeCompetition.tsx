@@ -47,6 +47,7 @@ const JudgeCompetition = () => {
 
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
+        console.log(registrationData);
         const isLoggedIn = sessionStorage.getItem("isLoggedIn");
         console.log("Permissions:", registrationData);
         if (!isLoggedIn || isLoggedIn !== "true") {
