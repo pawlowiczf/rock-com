@@ -5,7 +5,15 @@ const pages = [
             "/register/account-creating",
             "/register/chose-user-type",
         ],
-        permissions: ["participant", "judge", "organizer"],
+        permissions: ["participant", "referee", "organizer"],
+        constraints: "register",
+    },
+    {
+        path: [
+            "/register/judge",
+            "/register/information",
+        ],
+        permissions: ["referee", "organizer"],
         constraints: "register",
     },
     {
@@ -15,12 +23,12 @@ const pages = [
     },
     {
         path: ["/login", "/profile"],
-        permissions: ["participant", "judge", "organizer"],
+        permissions: ["participant", "referee", "organizer"],
         constraints: "normal",
     },
     {
-        path: ["/register/judge", "/register/information", "judge/score"],
-        permissions: ["judge"],
+        path: ["/judge/score", "/judge/competition"],
+        permissions: ["referee"],
         constraints: "normal",
     },
     {
