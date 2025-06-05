@@ -1,5 +1,5 @@
 import "../../styles/EditTournament.css";
-import { useState, useEffect, JSX } from "react";
+import React, { useState, useEffect, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/icons/cross.svg";
 import EditIcon from "@mui/icons-material/Edit";
@@ -10,7 +10,7 @@ import TextField from "@mui/material/TextField";
 import z from "zod";
 import { HTTP_ADDRESS } from "../../config.ts";
 import pages from "../Guard/Guard";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 const TournamentSchema = z.object({
     type: z.string(),
@@ -370,6 +370,10 @@ const EditTournament: () => JSX.Element = () => {
     }
 
     const getNameById = (id: string) => {
+        if (id == null){
+            return "TBD";
+        }
+
         for (const participant of participants) {
             if (String(participant.userId) === String(id)) {
                 return `${participant.firstName} ${participant.lastName}`;
@@ -575,7 +579,11 @@ const EditTournament: () => JSX.Element = () => {
                                     <div className="edit-tournament-participantsLimit-header">
                                         Lista uczestników
                                     </div>
-                                    {participants.map((participant, i) => (
+                                    {participants.length === 0 ? (
+                                        <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
+                                            Brak uczestników do wyświetlenia.
+                                        </Typography>
+                                    ) : (participants.map((participant, i) => (
                                         <div key={participant.userId} className="edit-tournament-participant-item">
                                             <span>{participant.firstName} {participant.lastName}, {getAge(participant.birthDate)}</span>
                                             <img
@@ -585,7 +593,7 @@ const EditTournament: () => JSX.Element = () => {
                                                 onClick={() => removeParticipant(i)}
                                             />
                                         </div>
-                                    ))}
+                                    )))}
                                 </>
                             )}
 
@@ -594,9 +602,13 @@ const EditTournament: () => JSX.Element = () => {
                                     <div className="edit-tournament-participantsLimit-header">
                                         Lista meczów
                                     </div>
-                                    {matches.map((match, i) => (
+                                    {matches.length === 0 ? (
+                                            <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
+                                                Brak meczów do wyświetlenia.
+                                            </Typography>
+                                        ) :matches.sort((a, b) => a.matchId - b.matchId).map((match, i) => (
                                         <div key={i} className="edit-tournament-participant-item">
-                                            <span>{getNameById(match.player1Id)} vs {getNameById(match.player2Id)}</span>
+                                            <span>{match.matchId}: {getNameById(match.player1Id)} vs {getNameById(match.player2Id)}</span>
                                             <img
                                                 src={EditIcon}
                                                 alt="Edytuj"

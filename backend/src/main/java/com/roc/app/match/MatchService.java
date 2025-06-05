@@ -106,7 +106,7 @@ public class MatchService {
         if (dto.refereeId() != null) match.setRefereeId(dto.refereeId());
         if (dto.matchDate() != null) match.setMatchDate(dto.matchDate());
         if (dto.status() != null) match.setStatus(dto.status());
-        if (dto.score() != null) match.setScore(dto.score());
+        if (dto.score() != null) updateMatchScore(matchId, ScoreCreateRequestDto.toDto(dto.score()));
         if (dto.winnerId() != null) match.setWinnerId(dto.winnerId());
 
         matchRepository.save(match);
