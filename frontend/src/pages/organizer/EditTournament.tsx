@@ -1,7 +1,8 @@
 import "../../styles/EditTournament.css";
-import { useState, useEffect, JSX } from "react";
+import React, { useState, useEffect, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/icons/cross.svg";
+import EditIcon from "@mui/icons-material/Edit";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
@@ -9,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import z from "zod";
 import { HTTP_ADDRESS } from "../../config.ts";
 import pages from "../Guard/Guard";
+import { Button, Typography } from "@mui/material";
 
 const TournamentSchema = z.object({
     type: z.string(),
@@ -34,6 +36,16 @@ const TournamentSchema = z.object({
         ),
 });
 
+interface Participant {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    city: string;
+    phoneNumber: string;
+    birthDate: string;
+}
+
 declare global {
     interface Window {
         google: any;
@@ -43,6 +55,19 @@ declare global {
 const EditTournament: () => JSX.Element = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            ...options,
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Wystąpił błąd");
+        }
+        return response.json();
+    };
 
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
@@ -58,7 +83,7 @@ const EditTournament: () => JSX.Element = () => {
                         page.permissions.includes(registrationData),
                     )
                     .flatMap((page) => page.path)
-                    .includes("/tournaments/edit/:id")
+                    .includes("/tournaments/:id")
             ) {
                 navigate("/profile");
             }
@@ -79,31 +104,52 @@ const EditTournament: () => JSX.Element = () => {
         postalCode: "",
     });
 
-    const [participantsLimit, setParticipants] = useState([
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-        "Piotr Budynek, M, 34l.",
-    ]);
+    const [participants, setParticipants] = useState<Participant[]>([]);
+    const [removedParticipants, setRemovedParticipants] = useState<Participant[]>([]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const [activeTab, setActiveTab] = useState<"participants" | "matches">("participants");
+    const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const fetchMatches = async () => {
+        try {
+            setIsLoading(true);
+            const allMatches = [];
+
+                const response = await fetch(`${HTTP_ADDRESS}/api/matches/competitions/${id}`, {
+                    method: "GET",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || "Błąd połączenia z serwerem");
+                }
+                const data = await response.json();
+
+            allMatches.push(...data["SCHEDULED"]);
+
+            setMatches(allMatches);
+        } catch (error) {
+            console.error("Błąd podczas pobierania meczów:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "matches" && matches.length === 0) {
+            fetchMatches();
+        }
+    }, [activeTab]);
+
 
     useEffect(() => {
         const fetchTournamentData = async () => {
             try {
-                const response = await fetch(
-                    `${HTTP_ADDRESS}/api/competitions/` + id,
-                    {
-                        credentials: "include",
-                    },
-                );
-
-                if (!response.ok)
-                    throw new Error("Błąd przy pobieraniu danych turnieju");
-
-                const data = await response.json();
+                const data = await apiFetch(`/api/competitions/${id}`);
 
                 setFormData((prev) => ({
                     ...prev,
@@ -128,11 +174,30 @@ const EditTournament: () => JSX.Element = () => {
             }
         };
 
+        const fetchParticipants = async () => {
+            try {
+                const data = await apiFetch(`/api/competitions/${id}/participants`);
+                console.log(data);
+                const allParticipants = [...data.confirmed, ...data.waiting];
+                setParticipants(allParticipants);
+            } catch (error) {
+                console.error("Błąd pobierania uczestników:", error);
+            }
+        };
+
         fetchTournamentData();
-    }, []);
+        fetchParticipants();
+    }, [id]);
 
     const removeParticipant = (index: number) => {
-        setParticipants((prev) => prev.filter((_, i) => i !== index));
+        const participantToRemove = participants[index];
+        const confirmed = window.confirm(
+            `Czy na pewno chcesz usunąć uczestnika ${participantToRemove.firstName} ${participantToRemove.lastName}?`
+        );
+        if (confirmed) {
+            setParticipants((prev) => prev.filter((_, i) => i !== index));
+            setRemovedParticipants((prev) => [...prev, participantToRemove]);
+        }
     };
 
     const handleDisciplineSelect = (discipline: string) => {
@@ -158,16 +223,91 @@ const EditTournament: () => JSX.Element = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent, open: boolean) => {
+    const sendResignations = async () => {
+        for (const participant of removedParticipants) {
+            try {
+                const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/resignation`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ userId: participant.userId }),
+                    }
+                );
+                if (!response.ok) {
+                    console.error(`Błąd rezygnacji uczestnika ${participant.userId}`);
+                }
+            } catch (error) {
+                console.error("Błąd połączenia:", error);
+            }
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
         setIsLoading(true);
-        await submitTournamentData(formData, open);
+        await submitTournamentData(formData);
+        await sendResignations();
+    };
+
+    const handleOpening = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/openRegistration`, {
+                method: "PUT",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                const participantsLimit = await response.json();
+                setFormData({ ...formData, participantsLimit: participantsLimit })
+                setIsLoading(false);
+                alert("Turniej został otwarty!");
+                navigate("/organizer/tournaments");
+            } else {
+                const error = await response.json();
+                console.error("Błąd:", error);
+                setIsLoading(false);
+                alert("Wystąpił błąd przy aktualizacji turnieju.");
+            }
+        } catch (error) {
+            console.error("Błąd połączenia:", error);
+            setIsLoading(false);
+            alert("Błąd połączenia z serwerem.");
+        }
+    };
+
+    const handleStarting = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${HTTP_ADDRESS}/api/competitions/${id}/start`, {
+                method: "PUT",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                setIsLoading(false);
+                alert("Turniej został rozpoczęty!");
+                navigate("/organizer/tournaments");
+            } else {
+                const error = await response.json();
+                console.error("Błąd:", error);
+                setIsLoading(false);
+                alert("Wystąpił błąd przy aktualizacji turnieju.");
+            }
+        } catch (error) {
+            console.error("Błąd połączenia:", error);
+            setIsLoading(false);
+            alert("Błąd połączenia z serwerem.");
+        }
     };
 
     const submitTournamentData = async (
-        data: typeof formData,
-        open: boolean,
+        data: typeof formData
     ) => {
         const competitionData = {
             competitionId: id,
@@ -179,7 +319,6 @@ const EditTournament: () => JSX.Element = () => {
             matchDurationMinutes: timeToMinutes(data.matchDurationMinutes),
             city: data.city,
             postalCode: data.postalCode,
-            registrationOpen: open,
         };
 
         console.log(competitionData);
@@ -212,6 +351,35 @@ const EditTournament: () => JSX.Element = () => {
             setIsLoading(false);
             alert("Błąd połączenia z serwerem.");
         }
+    };
+
+    function getAge(birthDate: string | Date): number {
+        const birth = new Date(birthDate);
+        const today = new Date();
+
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        const dayDiff = today.getDate() - birth.getDate();
+
+        // Jeśli jeszcze nie obchodziliśmy urodzin w tym roku, odejmij 1
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+
+        return age;
+    }
+
+    const getNameById = (id: string) => {
+        if (id == null){
+            return "TBD";
+        }
+
+        for (const participant of participants) {
+            if (String(participant.userId) === String(id)) {
+                return `${participant.firstName} ${participant.lastName}`;
+            }
+        }
+        return id; // fallback jeśli nie znaleziono
     };
 
     const timeToMinutes = (time: string): number => {
@@ -265,7 +433,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            name: e.target.value,
+                                            name: e.target.value
                                         })
                                     }
                                     error={!!errors.name}
@@ -281,7 +449,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            streetAddress: e.target.value,
+                                            streetAddress: e.target.value
                                         })
                                     }
                                     error={!!errors.streetAddress}
@@ -300,7 +468,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            postalCode: e.target.value,
+                                            postalCode: e.target.value
                                         })
                                     }
                                     fullWidth
@@ -316,7 +484,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            city: e.target.value,
+                                            city: e.target.value
                                         })
                                     }
                                     fullWidth
@@ -333,7 +501,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            availableCourts: e.target.value,
+                                            availableCourts: e.target.value
                                         })
                                     }
                                     error={!!errors.availableCourts}
@@ -350,7 +518,7 @@ const EditTournament: () => JSX.Element = () => {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            participantsLimit: e.target.value,
+                                            participantsLimit: e.target.value
                                         })
                                     }
                                     error={!!errors.participantsLimit}
@@ -371,7 +539,7 @@ const EditTournament: () => JSX.Element = () => {
                                         setFormData({
                                             ...formData,
                                             matchDurationMinutes:
-                                                e.target.value,
+                                            e.target.value
                                         })
                                     }
                                     InputLabelProps={{ shrink: true }}
@@ -384,38 +552,96 @@ const EditTournament: () => JSX.Element = () => {
                                 </button>
                             </div>
 
-                            <div className="edit-tournament-participantsLimit-header">
-                                Lista uczestników
+                            <div className="edit-tournament-tabs">
+                                <Button
+                                    className={`edit-tournament-tab ${activeTab === "participants" ? "active" : ""}`}
+                                    variant="outlined"
+                                    size="small"
+                                    style={{ marginBottom: "1rem", marginTop: "1rem"}}
+                                    onClick={() => setActiveTab("participants")}
+                                >
+                                    Uczestnicy
+                                </Button>
+                                <Button
+                                    className={`edit-tournament-tab ${activeTab === "matches" ? "active" : ""}`}
+                                    variant="outlined"
+                                    size="small"
+                                    style={{ marginBottom: "1rem", marginTop: "1rem"}}
+                                    onClick={() => setActiveTab("matches")}
+                                >
+                                    Mecze
+                                </Button>
                             </div>
 
-                            {participantsLimit.map((p, i) => (
-                                <div
-                                    key={i}
-                                    className="edit-tournament-participant-item"
-                                >
-                                    <span>{p}</span>
-                                    <img
-                                        src={DeleteIcon}
-                                        alt="Usuń"
-                                        className="participant-remove-icon"
-                                        onClick={() => removeParticipant(i)}
-                                    />
-                                </div>
-                            ))}
+
+                            {activeTab === "participants" && (
+                                <>
+                                    <div className="edit-tournament-participantsLimit-header">
+                                        Lista uczestników
+                                    </div>
+                                    {participants.length === 0 ? (
+                                        <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
+                                            Brak uczestników do wyświetlenia.
+                                        </Typography>
+                                    ) : (participants.map((participant, i) => (
+                                        <div key={participant.userId} className="edit-tournament-participant-item">
+                                            <span>{participant.firstName} {participant.lastName}, {getAge(participant.birthDate)}</span>
+                                            <img
+                                                src={DeleteIcon}
+                                                alt="Usuń"
+                                                className="participant-remove-icon"
+                                                onClick={() => removeParticipant(i)}
+                                            />
+                                        </div>
+                                    )))}
+                                </>
+                            )}
+
+                            {activeTab === "matches" && (
+                                <>
+                                    <div className="edit-tournament-participantsLimit-header">
+                                        Lista meczów
+                                    </div>
+                                    {matches.length === 0 ? (
+                                            <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
+                                                Brak meczów do wyświetlenia.
+                                            </Typography>
+                                        ) :matches.sort((a, b) => a.matchId - b.matchId).map((match, i) => (
+                                        <div key={i} className="edit-tournament-participant-item">
+                                            <span>{match.matchId}: {getNameById(match.player1Id)} vs {getNameById(match.player2Id)}</span>
+                                            <img
+                                                src={EditIcon}
+                                                alt="Edytuj"
+                                                className="participant-remove-icon"
+                                                onClick={() => navigate("/matches/" +match.matchId)}
+                                            />
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+
                         </div>
                     </div>
 
                     <div className="edit-tournament-button-group">
                         <button
                             className="edit-tournament-button accept"
-                            onClick={(e) => handleSubmit(e, true)}
+                            onClick={(e) => handleSubmit(e)}
                             type="submit"
                         >
                             AKCEPTUJ
                         </button>
                         <button
                             className="edit-tournament-button start"
-                            onClick={(e) => handleSubmit(e, false)}
+                            onClick={(e) => handleOpening(e)}
+
+                            type="submit"
+                        >
+                            OTWÓRZ ZAPISY
+                        </button>
+                        <button
+                            className="edit-tournament-button accept"
+                            onClick={(e) => handleStarting(e)}
                             type="submit"
                         >
                             ROZPOCZNIJ

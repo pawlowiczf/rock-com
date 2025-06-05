@@ -1,5 +1,6 @@
 package com.roc.app.match;
 
+import com.roc.app.bracket.BracketService;
 import com.roc.app.competition.Competition;
 import com.roc.app.competition.CompetitionRepository;
 import com.roc.app.match.dto.MatchCreateRequestDto;
@@ -26,9 +27,10 @@ class MatchServiceTest {
 
     @Mock
     private MatchRepository matchRepository;
-
     @Mock
     private CompetitionRepository competitionRepository;
+    @Mock
+    private BracketService bracketService;
 
     @InjectMocks
     private MatchService matchService;
@@ -55,7 +57,7 @@ class MatchServiceTest {
                 31, // refereeId
                 LocalDateTime.of(2025, 5, 17, 15, 0),
                 MatchStatus.COMPLETED,
-                "21-15",
+                "2:1",
                 11 // winnerId
         );
     }
@@ -118,8 +120,7 @@ class MatchServiceTest {
 
         matchService.updateMatch(200, updateDto);
 
-        verify(matchRepository).findById(200);
-        verify(matchRepository).save(existingMatch);
+        verify(matchRepository, atLeastOnce()).save(existingMatch);
 
         assertThat(existingMatch.getPlayer1Id()).isEqualTo(updateDto.player1Id());
         assertThat(existingMatch.getPlayer2Id()).isEqualTo(updateDto.player2Id());

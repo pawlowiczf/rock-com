@@ -6,13 +6,14 @@ import java.util.List;
 
 
 public interface CompetitionParticipantRepository extends JpaRepository<CompetitionParticipant, CompetitionParticipant.CompetitionParticipantId> {
-    boolean existsCompetitionParticipantByCompetitionIdAndParticipantId(Integer competitionId, Long participantId);
+    boolean existsCompetitionParticipantByCompetitionIdAndParticipantId(Integer competitionId, Integer participantId);
 
-    default boolean isEnrolled(Integer competitionId, Long participantId) {
+    default boolean isEnrolled(Integer competitionId, Integer participantId) {
         return existsCompetitionParticipantByCompetitionIdAndParticipantId(competitionId, participantId);
     }
-    Long countByCompetitionId(Integer competitionId);
-
+    Integer countByCompetitionId(Integer competitionId);
 
     List<CompetitionParticipant> findCompetitionParticipantsByCompetitionId(Integer competitionId);
+
+    List<CompetitionParticipant> findByCompetitionId(Integer competitionId);
 }

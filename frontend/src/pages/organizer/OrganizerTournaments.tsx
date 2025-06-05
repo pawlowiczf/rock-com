@@ -1,13 +1,15 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+    Alert,
+    Button,
     Card,
     CardContent,
-    Typography,
-    Tabs,
-    Tab,
     CircularProgress,
     Snackbar,
-    Alert,
+    Tab,
+    Tabs,
+    TextField,
+    Typography
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../../styles/UserSite.css";
@@ -16,7 +18,6 @@ import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
 import pages from "../Guard/Guard";
-import { set } from "zod";
 
 interface Tournament {
     competitionId: number;
@@ -28,22 +29,19 @@ interface Tournament {
     city: string;
 }
 
-interface Match {
-    matchId: number;
-    tournamentId: number;
-    player1: string;
-    player2: string;
-    score: string;
-    status: string;
-}
-
 const OrganizerTournaments = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState(0);
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
-    const [matches, setMatches] = useState<Match[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [showFilters, setShowFilters] = useState(true);
+    const [filterName, setFilterName] = useState("");
+    const [filterCity, setFilterCity] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState("");
+    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterType, setFilterType] = useState("");
 
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
@@ -56,72 +54,38 @@ const OrganizerTournaments = () => {
             if (
                 !pages
                     .filter((page) =>
-                        page.permissions.includes(registrationData),
+                        page.permissions.includes(registrationData)
                     )
                     .flatMap((page) => page.path)
                     .includes("/organizer/tournaments")
             ) {
                 navigate("/profile");
             }
+            fetchAllTournaments();
         }
         if (!registrationData) {
             navigate("/login");
         }
     }, []);
 
-    useEffect(() => {
-        fetchAllTournaments();
-        fetchAllMatches();
-    }, []);
-
-    const apiFetchMatches = async () => {
-        for (const tournament of tournaments) {
-            const competitionId = tournament.competitionId;
-            const response = await fetch(`${HTTP_ADDRESS}/api/matches/competitions/${competitionId}`, {
-                method: "GET",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-            });
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "Błąd połączenia z serwerem");
-            }
-            const data = await response.json();
-            setMatches([...matches, ...data]);
-        }
-        return matches;
-    }
-
-    const apiFetchCompetitions = async () => {
-        const response = await fetch(`${HTTP_ADDRESS}/api/competitions`, {
-            method: "GET",
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const response = await fetch(`${HTTP_ADDRESS}${url}`, {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            ...options
         });
         if (!response.ok) {
             const text = await response.text();
             throw new Error(text || "Błąd połączenia z serwerem");
         }
-        const data = await response.json();
-        setTournaments(data);
+        return response.json();
     };
-
-    const fetchAllMatches = async () => {
-        setIsLoading(true);
-        try {
-            const data = await apiFetchMatches();
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
 
     const fetchAllTournaments = async () => {
         setIsLoading(true);
         try {
-            const data = await apiFetchCompetitions();
+            const data = await apiFetch("/api/competitions/upcoming");
+            setTournaments(data);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -129,14 +93,29 @@ const OrganizerTournaments = () => {
         }
     };
 
+    useEffect(() => {
+        fetchAllTournaments();
+    }, []);
+
     const handleEditTournament = (id: number) => {
-        navigate("/tournaments/edit/" + id);
+        navigate("/tournaments/" + id);
     };
 
+    const now = new Date();
+
     const filteredTournaments = tournaments.filter((tournament) => {
-        if (tab === 0) return tournament.registrationOpen;
-        if (tab === 1) return !tournament.registrationOpen;
-        return false;
+        const start = new Date(tournament.startTime);
+        const end = new Date(tournament.endTime);
+        const tabMatch =
+            (tab === 0 && now < start && tournament.registrationOpen) ||
+            (tab === 1 && now >= start && now < end) ||
+            (tab === 2 && now > end);
+
+        const nameMatch = tournament.name.toLowerCase().includes(filterName.toLowerCase());
+        const cityMatch = tournament.city.toLowerCase().includes(filterCity.toLowerCase());
+        const typeMatch = filterType === "" || tournament.type === filterType;
+
+        return tabMatch && nameMatch && cityMatch && typeMatch;
     });
 
     const getIcon = (type: string): string => {
@@ -151,7 +130,14 @@ const OrganizerTournaments = () => {
     };
 
     return (
-        <div className="user-site-container" style={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+        <div
+            className="user-site-container"
+            style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "flex-start"
+            }}
+        >
             <div className="user-site-window">
                 <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
                     Turnieje
@@ -167,21 +153,69 @@ const OrganizerTournaments = () => {
                     <Tab label="W TOKU" />
                     <Tab label="ZAKOŃCZONE" />
                 </Tabs>
+
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setShowFilters((prev) => !prev)}
+                    style={{ marginBottom: "1rem", marginTop: "1rem" }}
+                >
+                    {showFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                </Button>
+
+                {showFilters && (
+                    <div style={{ display: "flex", gap: "12px", marginBottom: "1rem", flexWrap: "wrap" }}>
+                        <TextField
+                            label="Nazwa"
+                            variant="outlined"
+                            size="small"
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
+                        />
+                        <TextField
+                            label="Miasto"
+                            variant="outlined"
+                            size="small"
+                            value={filterCity}
+                            onChange={(e) => setFilterCity(e.target.value)}
+                        />
+                        <TextField
+                            label="Data od"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterStartDate}
+                            onChange={(e) => setFilterStartDate(e.target.value)}
+                        />
+                        <TextField
+                            label="Data do"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterEndDate}
+                            onChange={(e) => setFilterEndDate(e.target.value)}
+                        />
+                    </div>
+                )}
+
+
                 <div className="tournament-list">
                     {isLoading ? (
                         <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
                             <CircularProgress color="primary" />
                         </div>
                     ) : filteredTournaments.length === 0 ? (
-                        <Typography variant="body1" textAlign="center" style={{ marginTop: "2rem" }}>
+                        <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
                             Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
-                        filteredTournaments.map((tournament) => (
-                            <Card
-                                key={tournament.competitionId}
-                                sx={{ margin: "16px 0" }}
-                            >
+                        filteredTournaments.map((tournament) => {
+                            const start = new Date(tournament.startTime);
+                            const editable = now < start;
+
+                            return (<Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
                                 <CardContent className="card-content">
                                     <div>
                                         <img
@@ -189,7 +223,7 @@ const OrganizerTournaments = () => {
                                             alt={tournament.type}
                                             style={{
                                                 width: "24px",
-                                                height: "24px",
+                                                height: "24px"
                                             }}
                                         />
                                         <Typography
@@ -207,52 +241,57 @@ const OrganizerTournaments = () => {
                                             Data:{" "}
                                             <span style={{ color: "purple" }}>
                                                 {new Date(
-                                                    tournament.startTime,
+                                                    tournament.startTime
                                                 ).toLocaleDateString()}{" "}
                                                 -{" "}
                                                 {new Date(
-                                                    tournament.endTime,
+                                                    tournament.endTime
                                                 ).toLocaleDateString()}
                                             </span>
                                         </Typography>
+                                        <div>
+                                            <Typography
+                                                variant="body2"
+                                                color="textSecondary"
+                                            >
+                                                Miasto:{" "}
+                                                <span style={{ color: "purple" }}>
+
+                                                    {tournament.city}
+                                            </span>
+                                            </Typography>
+                                        </div>
                                         <Typography
                                             variant="body2"
                                             color="textSecondary"
                                         >
                                             Status:{" "}
                                             <span style={{ color: "purple" }}>
-                                                {tournament.registrationOpen
-                                                    ? "Otwarte"
-                                                    : "Zakończone"}
+                                                {now < new Date(tournament.startTime)
+                                                    ? "Nadchodzący"
+                                                    : now > new Date(tournament.endTime)
+                                                        ? "Zakończony"
+                                                        : "W toku"}
                                             </span>
                                         </Typography>
                                     </div>
                                     <button
                                         className="user-button"
-                                        onClick={
-                                            !tournament.registrationOpen
-                                                ? undefined
-                                                : () =>
-                                                      handleEditTournament(
-                                                          tournament.competitionId,
-                                                      )
+                                        onClick={() =>
+                                            handleEditTournament(tournament.competitionId)
                                         }
                                         style={{
                                             backgroundColor:
-                                                !tournament.registrationOpen
-                                                    ? "gray"
-                                                    : undefined,
-                                            cursor: !tournament.registrationOpen
-                                                ? "not-allowed"
-                                                : "pointer",
+                                                !editable ? "gray" : undefined,
+                                            cursor: !editable ? "not-allowed" : "pointer"
                                         }}
-                                        disabled={!tournament.registrationOpen}
+                                        disabled={!editable}
                                     >
                                         Edytuj
                                     </button>
                                 </CardContent>
-                            </Card>
-                        ))
+                            </Card>);
+                        })
                     )}
                 </div>
             </div>

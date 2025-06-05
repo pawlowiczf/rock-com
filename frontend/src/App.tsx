@@ -16,6 +16,7 @@ import UserTournaments from "./pages/user/UserTournaments";
 import OrganizerTournaments from "./pages/organizer/OrganizerTournaments";
 import UpcomingMatches from "./pages/user/UpcomingMatches";
 import JudgeScore from "./pages/judge/JudgeScore";
+import JudgeCompetition from "./pages/judge/JudgeCompetition";
 
 function App() {
     return (
@@ -46,10 +47,10 @@ function App() {
                         element={<CreateTournament />}
                     />
                     <Route
-                        path="/tournaments/edit/:id"
+                        path="/tournaments/:id"
                         element={<EditTournament />}
                     />
-                    <Route path="/matches/edit" element={<EditMatch />} />
+                    <Route path="/matches/:id" element={<EditMatch />} />
                     <Route path="/profile" element={<ParticipantProfile />} />
                     <Route path="/tournaments" element={<UserTournaments />} />
                     <Route
@@ -58,6 +59,11 @@ function App() {
                     />
                     <Route path="/matches" element={<UpcomingMatches />} />
                     <Route path="/judge/score" element={<JudgeScore />} />
+                    <Route
+                        path="/judge/competition"
+                        element={<JudgeCompetition />}
+                    />
+
                     <Route path="*" element={<Login />} />
                 </Routes>
             </div>

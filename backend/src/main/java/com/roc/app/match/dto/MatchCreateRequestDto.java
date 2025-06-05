@@ -11,8 +11,8 @@ import jakarta.validation.constraints.NotNull;
 
 public record MatchCreateRequestDto(
         @NotNull Integer competitionId,
-        @NotNull Integer player1Id,
-        @NotNull Integer player2Id,
+        Integer player1Id,
+        Integer player2Id,
         @NotNull Integer refereeId,
         @NotNull @Future(message = "Match date must be in the future") LocalDateTime matchDate,
         @NotNull MatchStatus status,

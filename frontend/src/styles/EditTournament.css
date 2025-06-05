@@ -13,6 +13,21 @@
     width: 100%;
 }
 
+.edit-tournament-tabs {
+    
+}
+
+.edit-tournament-tab.active {
+    color: #a020f0;
+    border-color: #a020f0;
+    margin-bottom: 2rem;
+}
+
+.edit-tournament-tab {
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+
 .edit-tournament-header {
     margin-top: 0rem;
     color: #a020f0;
@@ -55,11 +70,12 @@
 
 .edit-tournament-button {
     width: 48%;
-    padding: 0.75rem;
+    padding: 0.25rem;
     font-size: 1rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin: 0.5rem;
 }
 
 .edit-tournament-button.accept {

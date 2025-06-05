@@ -5,7 +5,7 @@ public class ParticipantNotFoundException extends RuntimeException {
         super(message);
     }
 
-    public ParticipantNotFoundException(Long id) {
+    public ParticipantNotFoundException(Integer id) {
         super("Participant with id " + id + " not found");
     }
 }
