@@ -2,7 +2,7 @@ import "../../styles/EditTournament.css";
 import React, { useState, useEffect, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/icons/cross.svg";
-import EditIcon from "@mui/icons-material/Edit";
+import EditIcon from "../../assets/icons/pencil.svg";
 import TennisIcon from "../../assets/icons/tennis.svg";
 import PingPongIcon from "../../assets/icons/pingpong.svg";
 import BadmintonIcon from "../../assets/icons/badminton.svg";
@@ -612,7 +612,7 @@ const EditTournament: () => JSX.Element = () => {
                                             <img
                                                 src={EditIcon}
                                                 alt="Edytuj"
-                                                className="participant-remove-icon"
+                                                className="match-edit-icon"
                                                 onClick={() => navigate("/matches/" +match.matchId)}
                                             />
                                         </div>

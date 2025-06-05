@@ -1,6 +1,7 @@
 package com.roc.app.user.referee.general;
 
 import com.roc.app.match.MatchService;
+import com.roc.app.match.dto.MatchResponseDto;
 import com.roc.app.match.dto.RefereeMatchResponseDto;
 import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import com.roc.app.user.referee.general.dto.RefereeCreateRequestDto;
@@ -25,6 +26,12 @@ public class RefereeController {
         this.refereeService = refereeService;
         this.refereeLicenceService = refereeLicenceService;
         this.matchService = matchService;
+    }
+
+    @GetMapping("/{refereeId}")
+    public ResponseEntity<RefereeResponseDto> getRefereeById(@PathVariable Integer refereeId) {
+        RefereeResponseDto referee = refereeService.getReferee(refereeId);
+        return ResponseEntity.ok(referee);
     }
 
     @PostMapping
