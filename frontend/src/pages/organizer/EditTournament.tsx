@@ -371,7 +371,7 @@ const EditTournament: () => JSX.Element = () => {
 
     const getNameById = (id: string) => {
         if (id == null){
-            return "bye";
+            return "TBD";
         }
 
         for (const participant of participants) {
@@ -598,7 +598,7 @@ const EditTournament: () => JSX.Element = () => {
                                     <div className="edit-tournament-participantsLimit-header">
                                         Lista meczów
                                     </div>
-                                    {matches.map((match, i) => (
+                                    {matches.sort((a, b) => a.matchId - b.matchId).map((match, i) => (
                                         <div key={i} className="edit-tournament-participant-item">
                                             <span>{match.matchId}: {getNameById(match.player1Id)} vs {getNameById(match.player2Id)}</span>
                                             <img
