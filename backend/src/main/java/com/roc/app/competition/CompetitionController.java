@@ -103,7 +103,7 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 
-    @PostMapping("/{id}/openRegistration")
+    @PutMapping("/{id}/openRegistration")
     public ResponseEntity<Integer> openRegistrationAndSetParticipantsLimit(@PathVariable Integer id) {
         return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
     }
