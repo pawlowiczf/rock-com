@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
+    Alert,
     Button,
     Card,
     CardContent,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Snackbar,
     Tab,
     Tabs,
-    Typography,
-    CircularProgress,
-    Snackbar,
-    Alert
+    TextField,
+    Typography
 } from "@mui/material";
 import "../../styles/UserSite.css";
 import { HTTP_ADDRESS } from "../../config.ts";
@@ -39,12 +40,19 @@ const UserTournaments = () => {
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [joinedTournaments, setJoinedTournaments] = useState<number[]>([]);
+    const [showFilters, setShowFilters] = useState(true);
+    const [filterName, setFilterName] = useState("");
+    const [filterCity, setFilterCity] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState("");
+    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterType, setFilterType] = useState("");
+
 
     const apiFetch = async (url: string, options: RequestInit = {}) => {
         const response = await fetch(`${HTTP_ADDRESS}${url}`, {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            ...options,
+            ...options
         });
         if (!response.ok) {
             const errorText = await response.text();
@@ -114,7 +122,7 @@ const UserTournaments = () => {
         if (!selectedTournament) return;
         try {
             await apiFetch(`/api/competitions/${selectedTournament.competitionId}/enroll`, {
-                method: "POST",
+                method: "POST"
             });
             setSuccessMessage("Pomyślnie dołączono do turnieju!");
             window.location.reload();
@@ -128,25 +136,29 @@ const UserTournaments = () => {
     const now = new Date();
 
 
-    const filteredTournaments = upcomingTournaments.filter((t) => {
-        const start = new Date(t.startTime);
-        const end = new Date(t.endTime);
+    const filteredTournaments = upcomingTournaments.filter((tournament) => {
+        const start = new Date(tournament.startTime);
+        const end = new Date(tournament.endTime);
+        const tabMatch =
+            (tab === 0 && now < start && tournament.registrationOpen) ||
+            (tab === 1 && now >= start && now < end) ||
+            (tab === 2 && now > end);
 
-        if (tab === 0) return now < start && t.registrationOpen;
-        if (tab === 1) return now >= start && now < end;
-        if (tab === 2) return now > end;
+        const nameMatch = tournament.name.toLowerCase().includes(filterName.toLowerCase());
+        const cityMatch = tournament.city.toLowerCase().includes(filterCity.toLowerCase());
+        const typeMatch = filterType === "" || tournament.type === filterType;
+
+        return tabMatch && nameMatch && cityMatch && typeMatch;
     });
 
     const getIcon = (type: string): string => {
         switch (type) {
             case "TENNIS_OUTDOOR":
-                return TennisIcon;
+                return TennisIcon as string;
             case "TABLE_TENNIS":
-                return PingPongIcon;
+                return PingPongIcon as string;
             case "BADMINTON":
-                return BadmintonIcon;
-            default:
-                return "";
+                return BadmintonIcon as string;
         }
     };
 
@@ -156,32 +168,81 @@ const UserTournaments = () => {
             style={{
                 display: "flex",
                 flexDirection: "row",
-                alignItems: "flex-start",
+                alignItems: "flex-start"
             }}
         >
             <div className="user-site-window">
                 <Typography textAlign="center" color="#a020f0" variant="h6" gutterBottom>
                     Turnieje
                 </Typography>
-                <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} centered textColor="primary" indicatorColor="primary">
+                <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} centered textColor="primary"
+                      indicatorColor="primary">
                     <Tab label="NADCHODZĄCE" />
                     <Tab label="W TOKU" />
                     <Tab label="ZAKOŃCZONE" />
                 </Tabs>
+
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setShowFilters((prev) => !prev)}
+                    style={{ marginBottom: "1rem", marginTop: "1rem" }}
+                >
+                    {showFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                </Button>
+
+                {showFilters && (
+                    <div style={{ display: "flex", gap: "12px", marginBottom: "1rem", flexWrap: "wrap" }}>
+                        <TextField
+                            label="Nazwa"
+                            variant="outlined"
+                            size="small"
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
+                        />
+                        <TextField
+                            label="Miasto"
+                            variant="outlined"
+                            size="small"
+                            value={filterCity}
+                            onChange={(e) => setFilterCity(e.target.value)}
+                        />
+                        <TextField
+                            label="Data od"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterStartDate}
+                            onChange={(e) => setFilterStartDate(e.target.value)}
+                        />
+                        <TextField
+                            label="Data do"
+                            type="date"
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterEndDate}
+                            onChange={(e) => setFilterEndDate(e.target.value)}
+                        />
+                    </div>
+                )}
+
+
                 <div className="tournament-list">
                     {isLoading ? (
                         <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
                             <CircularProgress color="primary" />
                         </div>
                     ) : filteredTournaments.length === 0 ? (
-                        <Typography variant="body1" textAlign="center" style={{ marginTop: "2rem" }}>
+                        <Typography variant="body1" textAlign="center" style={{ marginTop: "1rem" }}>
                             Brak turniejów do wyświetlenia.
                         </Typography>
                     ) : (
                         filteredTournaments.map((tournament) => {
                             const isJoined = joinedTournaments.includes(tournament.competitionId);
                             return (
-                                <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
+                                <Card key={tournament.competitionId} sx={{ margin: "0px 0" }}>
                                     <CardContent className="card-content">
                                         <div>
                                             <img
@@ -246,7 +307,7 @@ const UserTournaments = () => {
                                 <br />
                                 Data:{" "}
                                 {new Date(
-                                    selectedTournament.startTime,
+                                    selectedTournament.startTime
                                 ).toLocaleDateString()}{" "}
                                 <br />
                                 Lokalizacja: {selectedTournament.city} <br />
