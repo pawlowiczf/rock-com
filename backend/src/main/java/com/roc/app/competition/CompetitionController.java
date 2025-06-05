@@ -7,8 +7,6 @@ import com.roc.app.competition.dto.CompetitionDateResponseDto;
 import com.roc.app.competition.dto.CompetitionResponseDto;
 import com.roc.app.competition.dto.CompetitionCreateRequestDto;
 import com.roc.app.competition.dto.UpcomingCompetitionDto;
-import com.roc.app.match.MatchStatus;
-import com.roc.app.match.dto.MatchResponseDto;
 import com.roc.app.user.participant.Participant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/competitions")
@@ -99,12 +96,21 @@ public class CompetitionController {
         CompetitionParticipantsListResponseDto participants = competitionParticipantService.listCompetitionParticipants(id);
         return ResponseEntity.ok(participants);
     }
-      
+
     @GetMapping("/{id}/dates")
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
         return ResponseEntity.ok(competitionDateResponseDtoList);
     }
 
-}
+    @PostMapping("/{id}/openRegistration")
+    public ResponseEntity<Integer> openRegistrationAndSetParticipantsLimit(@PathVariable Integer id) {
+        return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
+    }
 
+    @PutMapping("/{id}/start")
+    public ResponseEntity<Void> startCompetition(@PathVariable Integer id) {
+        competitionService.startCompetition(id);
+        return ResponseEntity.noContent().build();
+    }
+}

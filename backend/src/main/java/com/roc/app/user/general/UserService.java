@@ -14,7 +14,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public User getUserByUserId(Long userId) {
+    public User getUserByUserId(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 
-    public String getUserRole(Long userId) {
+    public String getUserRole(Integer userId) {
         User user = getUserByUserId(userId);
         return user.getAuthorities().stream()
                 .findFirst()

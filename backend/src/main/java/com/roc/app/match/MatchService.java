@@ -1,5 +1,8 @@
 package com.roc.app.match;
 
+import com.roc.app.bracket.BracketRepository;
+import com.roc.app.bracket.BracketRepository;
+import com.roc.app.bracket.BracketService;
 import com.roc.app.competition.Competition;
 import com.roc.app.competition.CompetitionRepository;
 import com.roc.app.competition.exception.CompetitionNotFoundException;
@@ -7,6 +10,7 @@ import com.roc.app.match.dto.*;
 import com.roc.app.match.exception.MatchNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,10 +20,20 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final CompetitionRepository competitionRepository;
+    private final BracketRepository bracketRepository;
+    private final BracketService bracketService;
 
-    public MatchService(MatchRepository matchRepository, CompetitionRepository competitionRepository) {
+    public MatchService(MatchRepository matchRepository, CompetitionRepository competitionRepository, BracketRepository bracketRepository, BracketService bracketService) {
         this.matchRepository = matchRepository;
         this.competitionRepository = competitionRepository;
+        this.bracketRepository = bracketRepository;
+        this.bracketService = bracketService;
+    }
+
+    public MatchResponseDto getMatchById(Integer matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchNotFoundException(matchId));
+        return MatchResponseDto.fromModel(match);
     }
 
     public List<ParticipantMatchResponseDto> getParticipantMatches(Integer participantId) {
@@ -45,6 +59,44 @@ public class MatchService {
                 .toList();
     }
 
+    public Match createByeMatch(Competition competition, Integer playerId) {
+        Match match = Match.builder()
+                .competition(competition)
+                .player1Id(playerId)
+                .status(MatchStatus.BYE)
+                .winnerId(playerId)
+                .build();
+        return matchRepository.save(match);
+    }
+
+    public Match createScheduledMatch(Competition competition, Integer player1Id, Integer player2Id, Integer refereeId, LocalDateTime matchDate) {
+        Match match = Match.builder()
+                .competition(competition)
+                .player1Id(player1Id)
+                .player2Id(player2Id)
+                .refereeId(null)
+                .matchDate(matchDate)
+                .status(MatchStatus.SCHEDULED)
+                .build();
+        return matchRepository.save(match);
+    }
+
+    public void updateMatchesFollowingByeMatches(Integer competitionId) {
+        List<Match> byeMatches = matchRepository.findByCompetition_CompetitionIdAndStatus(competitionId, MatchStatus.BYE);
+        byeMatches.forEach(match -> {
+            Integer newMatchId = bracketRepository.findNextMatchIdByMatchId(match.getMatchId())
+                    .orElseThrow(() -> new MatchNotFoundException(match.getMatchId()));
+            Match newMatch = matchRepository.findById(newMatchId)
+                    .orElseThrow(() -> new MatchNotFoundException(newMatchId));
+            if (newMatch.getPlayer1Id() == null) {
+                newMatch.setPlayer1Id(match.getPlayer1Id());
+            } else {
+                newMatch.setPlayer2Id(match.getPlayer1Id());
+            }
+            matchRepository.save(newMatch);
+        });
+    }
+
     public void updateMatch(Integer matchId, MatchUpdateRequestDto dto) {
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchNotFoundException(matchId));
@@ -58,6 +110,17 @@ public class MatchService {
         if (dto.winnerId() != null) match.setWinnerId(dto.winnerId());
 
         matchRepository.save(match);
+    }
+
+    public void updateMatchScore(Integer matchId, ScoreCreateRequestDto scoreDto) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchNotFoundException(matchId));
+        match.setScore(scoreDto.getScore());
+        Integer winnerId = scoreDto.player1() > scoreDto.player2() ? match.getPlayer1Id() : match.getPlayer2Id();
+        match.setWinnerId(winnerId);
+        match.setStatus(MatchStatus.COMPLETED);
+        matchRepository.save(match);
+        bracketService.assignWinnerAndRefereeToNextMatch(matchId, winnerId, match.getRefereeId());
     }
 
     public void deleteMatch(Integer matchId) {
