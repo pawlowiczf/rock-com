@@ -34,7 +34,7 @@ public class RefereeController {
     }
 
     @GetMapping("/{refereeId}/licences")
-    public ResponseEntity<List<RefereeLicenceResponseDto>> getRefereeLicences(@PathVariable long refereeId) {
+    public ResponseEntity<List<RefereeLicenceResponseDto>> getRefereeLicences(@PathVariable Integer refereeId) {
         List<RefereeLicenceResponseDto> licences = refereeLicenceService.getRefereeLicencesByRefereeId(refereeId);
         return ResponseEntity.ok(licences);
     }

@@ -74,7 +74,7 @@ public class MatchService {
                 .competition(competition)
                 .player1Id(player1Id)
                 .player2Id(player2Id)
-                .refereeId(null)
+                .refereeId(refereeId)
                 .matchDate(matchDate)
                 .status(MatchStatus.SCHEDULED)
                 .build();

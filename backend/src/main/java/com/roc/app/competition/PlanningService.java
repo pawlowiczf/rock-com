@@ -3,6 +3,8 @@ package com.roc.app.competition;
 import com.roc.app.bracket.BracketService;
 import com.roc.app.competition.assignment.CompetitionParticipant;
 import com.roc.app.competition.dto.CompetitionDateResponseDto;
+import com.roc.app.competition.referee.CompetitionReferee;
+import com.roc.app.competition.referee.CompetitionRefereeRepository;
 import com.roc.app.match.Match;
 import com.roc.app.match.MatchService;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +21,19 @@ public class PlanningService {
     private final CompetitionDateService dateService;
     private final BracketService bracketService;
     private final MatchService matchService;
+    private final CompetitionRefereeRepository competitionRefereeRepository;
     private final Random random = new Random();
 
     public int calculateParticipantsLimit(Competition competition){
         int rounds = 0;
         long usedMinutes = 0;
         long totalAvailableMinutes = dateService.getTotalCompetitionDurationMinutes(competition);
+        int refereeNumber = competitionRefereeRepository.findByCompetitionId(competition.getCompetitionId()).size();
+        int matchesAtOnce = Math.min(competition.getAvailableCourts(), refereeNumber);
 
         while (true) {
             int matchesInRound = (int) Math.pow(2, rounds);
-            int batches = (int) Math.ceil((double) matchesInRound / competition.getAvailableCourts()); // TODO: change available courts to min from them and number of referees
+            int batches = (int) Math.ceil((double) matchesInRound / matchesAtOnce);
             int roundDuration = batches * competition.getMatchDurationMinutes();
 
             if (usedMinutes + roundDuration > totalAvailableMinutes) {
@@ -55,7 +60,7 @@ public class PlanningService {
         return new TimeSlots(competition, dates);
     }
 
-    public List<Match> createFirstRound(Competition competition, List<CompetitionParticipant> participants, int byeCount, int scheduledPlayers, TimeSlots slots) {
+    public List<Match> createFirstRound(Competition competition, List<CompetitionParticipant> participants, List<CompetitionReferee> referees, int byeCount, int scheduledPlayers, TimeSlots slots) {
         List<Match> matches = new LinkedList<>();
         for (int i = 0; i < byeCount; i++) {
             matches.add(matchService.createByeMatch(competition, drawRandomPlayerId(participants)));
@@ -64,13 +69,31 @@ public class PlanningService {
         for (int i = 0; i < scheduledPlayers / 2; i++) {
             Integer player1 = drawRandomPlayerId(participants);
             Integer player2 = drawRandomPlayerId(participants);
-            matches.add(matchService.createScheduledMatch(competition, player1, player2, null, slots.getNext()));
+            Integer referee = drawRandomRefereeId(referees);
+            matches.add(matchService.createScheduledMatch(competition, player1, player2, referee, slots.getNext()));
         }
         slots.removeSlot(matches.getLast().getMatchDate());
         return matches;
     }
 
+    public void createNextRounds(Competition competition, List<Match> matches, TimeSlots slots) {
+        List<Match> nextMatches = new LinkedList<>();
+        while (matches.size() > 1) {
+            for (int i = 0; i < matches.size() / 2; i++) {
+                nextMatches.add(matchService.createScheduledMatch(competition, null, null, null, slots.getNext()));
+            }
+            slots.removeSlot(nextMatches.getLast().getMatchDate());
+            bracketService.generateBracketConnections(matches, nextMatches);
+            matches = nextMatches;
+            nextMatches = new LinkedList<>();
+        }
+    }
+
     private Integer drawRandomPlayerId(List<CompetitionParticipant> participants) {
         return participants.remove(random.nextInt(participants.size())).getParticipantId();
+    }
+
+    private Integer drawRandomRefereeId(List<CompetitionReferee> referees) {
+        return referees.remove(random.nextInt(referees.size())).getRefereeId();
     }
 }

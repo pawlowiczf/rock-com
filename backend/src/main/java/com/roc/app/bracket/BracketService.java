@@ -16,10 +16,10 @@ public class BracketService {
     private final BracketRepository bracketRepository;
     private final MatchRepository matchRepository;
 
-    public void saveRound(List<Match> matches, List<Match> nextMatches) {
+    public void generateBracketConnections(List<Match> matches, List<Match> nextMatches) {
         Random random = new Random();
-        for (Match nextMatch : nextMatches) {
-            for (int i = 0; i < 2; i++) {
+        for(Match nextMatch : nextMatches) {
+            for(int i = 0; i < 2; i++) {
                 Match match = matches.remove(random.nextInt(matches.size()));
                 Bracket bracket = Bracket.builder()
                         .nextMatchId(nextMatch.getMatchId())

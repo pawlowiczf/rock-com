@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RefereeLicenceRepository extends JpaRepository<RefereeLicence, Long> {
+public interface RefereeLicenceRepository extends JpaRepository<RefereeLicence, Integer> {
 
-    List<RefereeLicence> findByRefereeUserId(Long userId);
+    List<RefereeLicence> findByRefereeUserId(Integer userId);
     RefereeLicence findByLicense(String license);
 }
