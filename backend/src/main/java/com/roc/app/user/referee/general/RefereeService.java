@@ -33,13 +33,13 @@ public class RefereeService {
         return RefereeResponseDto.fromModel(savedReferee);
     }
 
-    public Referee getRefereeByRefereeId(Long id) {
+    public Referee getRefereeByRefereeId(Integer id) {
         return refereeRepository.findById(id)
                 .orElseThrow(() -> new RefereeNotFoundException(id));
     }
 
     public RefereeResponseDto getReferee(Integer refereeId) {
-        Referee savedReferee =  getRefereeByRefereeId(Long.valueOf(refereeId));
+        Referee savedReferee =  getRefereeByRefereeId(refereeId);
         return RefereeResponseDto.fromModel(savedReferee);
     }
 }

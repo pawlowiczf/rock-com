@@ -88,6 +88,23 @@ const ParticipantProfile = () => {
         sessionStorage.setItem(field, value);
     };
 
+    const saveChanges = async () => {
+        try {
+            await fetch(`${HTTP_ADDRESS}/api/users/updateProfile`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(profileData),
+            });
+            console.log("Zapisano pomyślnie!");
+        } catch (error) {
+            console.error("Błąd przy zapisie:", error);
+            alert("Nie udało się zapisisać danych.");
+        }
+    };
+
     const fields: { label: string; key: keyof typeof profileData }[] = [
         { label: "First Name", key: "firstName" },
         { label: "Last Name", key: "lastName" },
@@ -122,9 +139,14 @@ const ParticipantProfile = () => {
                             />
                         )}
                         <IconButton
-                            onClick={() =>
-                                setEditField(editField === key ? null : key)
-                            }
+                            onClick={async () => {
+                                if (editField === key) {
+                                    await saveChanges();
+                                    setEditField(null);
+                                } else {
+                                    setEditField(key);
+                                }
+                            }}
                         >
                             {editField === key ? <CheckIcon /> : <EditIcon />}
                         </IconButton>

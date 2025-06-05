@@ -11,7 +11,7 @@ public record RefereeCreateLicenceRequestDto(
         @NotNull(message = "Provide correct licenceType: TENNIS_OUTDOOR | TABLE_TENNIS | BADMINTON")
         CompetitionType licenceType,
         @NotNull(message = "Provide correct refereeID") @Min(1)
-        Long userId,
+        Integer userId,
         @NotBlank(message = "Provide referee license")
         String license
 ) {

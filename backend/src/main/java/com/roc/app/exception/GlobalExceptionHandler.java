@@ -4,6 +4,7 @@ import com.roc.app.competition.exception.CompetitionNotFoundException;
 import com.roc.app.competition.exception.CompetitionTypeNotFoundException;
 
 import com.roc.app.competition.referee.RefereeNotEligibleException;
+import com.roc.app.user.general.exception.EmailAlreadyInUseException;
 import com.roc.app.user.referee.exception.RefereeNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,17 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Invalid data",
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<ErrorResponse> handleEmailTakenException(RefereeNotEligibleException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Email already in use",
                 ex.getMessage(),
                 LocalDateTime.now()
         );
