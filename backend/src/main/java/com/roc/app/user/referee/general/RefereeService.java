@@ -37,4 +37,9 @@ public class RefereeService {
         return refereeRepository.findById(id)
                 .orElseThrow(() -> new RefereeNotFoundException(id));
     }
+
+    public RefereeResponseDto getReferee(Integer refereeId) {
+        Referee savedReferee =  getRefereeByRefereeId(Long.valueOf(refereeId));
+        return RefereeResponseDto.fromModel(savedReferee);
+    }
 }

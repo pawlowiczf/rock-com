@@ -108,7 +108,7 @@ class CompetitionServiceTest {
                 .participantsLimit(expectedParticipantsLimit)
                 .build();
         when(competitionRepository.findById(competitionId)).thenReturn(Optional.of(competition));
-        when(competitionDateService.getTotalCompetitionDurationMinutes(competition)).thenReturn(400L);
+        when(planningService.calculateParticipantsLimit(competition)).thenReturn(expectedParticipantsLimit);
 
         // When
         int result = competitionService.openRegistrationAndSetParticipantsLimit(competitionId);

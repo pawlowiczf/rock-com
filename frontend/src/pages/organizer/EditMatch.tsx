@@ -38,6 +38,7 @@ const EditMatch: () => JSX.Element = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [participants, setParticipants] = useState<Participant[]>([]);
+    const [refereeName, setRefereeName] = useState<string>("");
 
     // Zmieniamy formData tak, by player1Id itd. przechowywały ID, a nie imię i nazwisko
     const [formData, setFormData] = useState({
@@ -50,6 +51,26 @@ const EditMatch: () => JSX.Element = () => {
         winnerId: "",
         status: "",
     });
+
+    useEffect(() => {
+        const fetchReferee = async () => {
+            if (!formData.refereeId) {
+                setRefereeName("Nieznany sędzia");
+                return;
+            };
+            try {
+                const referee = await apiFetch(`/api/referees/${formData.refereeId}`);
+                setRefereeName(`${referee.firstName} ${referee.lastName}`);
+                console.log(referee)
+            } catch (error) {
+                console.error("Nie udało się pobrać danych sędziego:", error);
+                setRefereeName("Nieznany sędzia");
+            }
+        };
+
+        fetchReferee();
+    }, [formData.refereeId]);
+
 
     useEffect(() => {
         if (!id) return;
@@ -148,29 +169,16 @@ const EditMatch: () => JSX.Element = () => {
             <div className="edit-match-window">
                 <h3 className="edit-match-header">Edytuj mecz</h3>
                 <div className="edit-match-form">
+                    <div className="edit-match-input-group">
 
-                    <FormControl fullWidth size="small" className="edit-match-input-group">
-                        <InputLabel id="referee-label" >Sędzia</InputLabel>
-                        <Select
-                            labelId="referee-label"
-                            value={formData.refereeId}
-                            label="Sędzia"
-                            className="edit-match-input-group"
-                            disabled
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    refereeId: e.target.value,
-                                })
-                            }
-                        >
-                            {participants.map((p) => (
-                                <MenuItem key={p.userId} value={String(p.userId)}>
-                                    {p.firstName} {p.lastName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <TextField
+                        label="Sędzia"
+                        value={refereeName}
+                        InputProps={{ readOnly: true }}
+                        className="edit-match-input-group"
+                        fullWidth
+                    />
+                    </div>
 
                     <FormControl fullWidth size="small" className="edit-match-input-group">
                         <InputLabel id="player1-label">Gracz 1</InputLabel>

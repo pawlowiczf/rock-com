@@ -34,7 +34,7 @@ public class CompetitionRefereeService {
 
         CompetitionReferee model = CompetitionReferee.builder()
                 .competitionId(competition.getCompetitionId())
-                .refereeId(Long.valueOf(referee.getUserId()))
+                .refereeId(referee.getUserId())
                 .build();
 
 
@@ -50,7 +50,7 @@ public class CompetitionRefereeService {
     }
 
     private boolean validateRefereeLicenceType(Competition competition, Referee referee) {
-        List<RefereeLicenceResponseDto> refereeLicence = refereeLicenceService.getRefereeLicencesByRefereeId(Long.valueOf(referee.getUserId()));
+        List<RefereeLicenceResponseDto> refereeLicence = refereeLicenceService.getRefereeLicencesByRefereeId(referee.getUserId());
 
         for (RefereeLicenceResponseDto licence : refereeLicence) {
             if (licence.licenceType() == competition.getType()) {

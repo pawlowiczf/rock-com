@@ -57,8 +57,12 @@
     width: 95%;
 }
 
+.match-edit-icon {
+    cursor: pointer;
+    height: 16px;
+}
+
 .participant-remove-icon {
-    color: #a020f0;
     cursor: pointer;
     height: 12px;
 }
