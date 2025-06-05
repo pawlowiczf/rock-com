@@ -107,7 +107,7 @@ const OrganizerTournaments = () => {
         const start = new Date(tournament.startTime);
         const end = new Date(tournament.endTime);
         const tabMatch =
-            (tab === 0 && now < start && tournament.registrationOpen) ||
+            (tab === 0 && now < start ) ||
             (tab === 1 && now >= start && now < end) ||
             (tab === 2 && now > end);
 
