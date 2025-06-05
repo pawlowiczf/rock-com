@@ -241,7 +241,9 @@ const EditMatch: () => JSX.Element = () => {
                     </div>
 
                     <div className="edit-match-button-group">
-                        <button className="edit-match-button">ANULUJ</button>
+                        <button className="edit-match-button"
+                                onClick={() => navigate("/tournaments/"+formData.competitionId)}
+                        >ANULUJ</button>
                         <button
                             className="edit-match-button"
                             onClick={handleSubmit}

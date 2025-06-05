@@ -125,10 +125,16 @@ const UserTournaments = () => {
         }
     };
 
-    const filteredTournaments = upcomingTournaments.filter((tournament) => {
-        if (tab === 0) return tournament.registrationOpen;
-        if (tab === 1) return !tournament.registrationOpen;
-        return false;
+    const now = new Date();
+
+
+    const filteredTournaments = upcomingTournaments.filter((t) => {
+        const start = new Date(t.startTime);
+        const end = new Date(t.endTime);
+
+        if (tab === 0) return now < start && t.registrationOpen;
+        if (tab === 1) return now >= start && now < end;
+        if (tab === 2) return now > end;
     });
 
     const getIcon = (type: string): string => {

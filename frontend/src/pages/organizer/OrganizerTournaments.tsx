@@ -98,8 +98,8 @@ const OrganizerTournaments = () => {
         const start = new Date(t.startTime);
         const end = new Date(t.endTime);
 
-        if (tab === 0) return t.registrationOpen;
-        if (tab === 1) return now < end && !t.registrationOpen;
+        if (tab === 0) return now < start;
+        if (tab === 1) return now >= start && now < end ;
         if (tab === 2) return now > end;
     });
 
