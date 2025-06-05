@@ -5,7 +5,7 @@ import com.roc.app.user.participant.Participant;
 import java.time.LocalDate;
 
 public record ParticipantResponseDto(
-        Long userId,
+        Integer userId,
         String firstName,
         String lastName,
         String email,

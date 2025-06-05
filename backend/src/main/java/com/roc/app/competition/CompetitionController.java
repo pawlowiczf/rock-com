@@ -96,11 +96,22 @@ public class CompetitionController {
         CompetitionParticipantsListResponseDto participants = competitionParticipantService.listCompetitionParticipants(id);
         return ResponseEntity.ok(participants);
     }
-      
+
     @GetMapping("/{id}/dates")
     public ResponseEntity<List<CompetitionDateResponseDto>> getCompetitionDates(@PathVariable Integer id) {
         List<CompetitionDateResponseDto> competitionDateResponseDtoList = competitionDateService.getCompetitionDates(id);
         return ResponseEntity.ok(competitionDateResponseDtoList);
+    }
+
+    @PutMapping("/{id}/openRegistration")
+    public ResponseEntity<Integer> openRegistrationAndSetParticipantsLimit(@PathVariable Integer id) {
+        return ResponseEntity.ok(competitionService.openRegistrationAndSetParticipantsLimit(id));
+    }
+
+    @PutMapping("/{id}/start")
+    public ResponseEntity<Void> startCompetition(@PathVariable Integer id) {
+        competitionService.startCompetition(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

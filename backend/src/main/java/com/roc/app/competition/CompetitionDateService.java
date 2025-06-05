@@ -10,7 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -51,6 +52,15 @@ public class CompetitionDateService {
     public List<CompetitionDateResponseDto> getCompetitionDates(Integer competitionId) {
         List<CompetitionDate> competitionDates = dateRepository.findAllByCompetitionId(competitionId);
         return competitionDates.stream().map(CompetitionDateResponseDto::fromModel).collect(Collectors.toList());
+    }
+
+    public long getTotalCompetitionDurationMinutes(Competition competition) {
+        List<CompetitionDate> dates = dateRepository.findAllByCompetitionId(competition.getCompetitionId());
+        long totalDurationMinutes = 0;
+        for (CompetitionDate date : dates) {
+            totalDurationMinutes += Duration.between(date.getStartTime(), date.getEndTime()).toMinutes();
+        }
+        return totalDurationMinutes;
     }
 
 }
