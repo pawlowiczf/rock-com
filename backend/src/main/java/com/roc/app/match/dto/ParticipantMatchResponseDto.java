@@ -5,12 +5,11 @@ import com.roc.app.match.MatchStatus;
 import java.time.LocalDateTime;
 
 public record ParticipantMatchResponseDto(
-        Integer matchId,
-        Integer competitionId,
+        String name,
         LocalDateTime matchDate,
         MatchStatus status,
-        String opponentName,
+        String opponent,
         String score,
         Boolean isWinner,
-        String refereeName
+        String referee
 ) {}

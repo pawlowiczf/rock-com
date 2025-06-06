@@ -1,42 +1,36 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import "../../styles/UserSite.css";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import pages from "../Guard/Guard";
+import {HTTP_ADDRESS} from "../../config.ts";
 
-const matches = [
-    {
-        name: "Wielki Tenis",
-        date: "12.05.2025",
-        opponent: "Barbara Kamienica",
-        referee: "Tomasz Szkieletor",
-        location: "Stadion Wisły, hala A",
-    },
-    {
-        name: "Wielki Tenis",
-        date: "15.05.2025",
-        opponent: "Jan Kowalski",
-        referee: "Anna Sędziowska",
-        location: "Stadion Narodowy, hala B",
-    },
-    {
-        name: "Wielki Tenis",
-        date: "20.05.2025",
-        opponent: "Marek Nowak",
-        referee: "Piotr Gwizdek",
-        location: "Arena Kraków, hala C",
-    },
-    {
-        name: "Wielki Tenis4",
-        date: "25.05.2025",
-        opponent: "Katarzyna Zielińska",
-        referee: "Joanna Piłka",
-        location: "Stadion Lecha, hala D",
-    },
-];
+interface Match {
+    name: number;
+    matchDate: string;
+    status: string;
+    opponent: string;
+    score: string;
+    referee: string;
+}
+
+const apiFetch = async (url: string, options: RequestInit = {}) => {
+    const response = await fetch(`${HTTP_ADDRESS}${url}`, {
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        ...options,
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Wystąpił błąd");
+    }
+    return response.json();
+};
 
 const UpcomingMatches = () => {
     const navigate = useNavigate();
+    const [matches, setMatches] = useState<Match[]>([]);
+
     useEffect(() => {
         const registrationData = sessionStorage.getItem("permissions")?.toLowerCase();
         const isLoggedIn = sessionStorage.getItem("isLoggedIn");
@@ -58,6 +52,15 @@ const UpcomingMatches = () => {
         if (!registrationData) {
             navigate("/login");
         }
+    }, []);
+
+    const fetchMatches = async () => {
+        const data = await apiFetch("/api/participants/matches");
+        setMatches(data);
+    }
+
+    useEffect(() => {
+        fetchMatches();
     }, []);
 
     return (
@@ -91,13 +94,7 @@ const UpcomingMatches = () => {
                                 </Typography>
                                 <div>
                                     <Typography variant="body2">
-                                        Data: {match.date}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Przeciwnik:{" "}
-                                        <span style={{ color: "#A020F0" }}>
-                                            {match.opponent}
-                                        </span>
+                                        Data: {match.matchDate.replace("T", " ")}
                                     </Typography>
                                     <Typography variant="body2">
                                         Sędzia:{" "}
@@ -106,9 +103,15 @@ const UpcomingMatches = () => {
                                         </span>
                                     </Typography>
                                     <Typography variant="body2">
-                                        Lokalizacja:{" "}
+                                        Przeciwnik:{" "}
                                         <span style={{ color: "#A020F0" }}>
-                                            {match.location}
+                                            {match.opponent?.trim() ? match.opponent : "TBD"}
+                                        </span>
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Wynik:{" "}
+                                        <span style={{ color: "#A020F0" }}>
+                                            {match.score?.trim() ? match.score : "TBD"}
                                         </span>
                                     </Typography>
                                 </div>
