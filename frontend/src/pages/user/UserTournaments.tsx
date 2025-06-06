@@ -140,7 +140,7 @@ const UserTournaments = () => {
         const start = new Date(tournament.startTime);
         const end = new Date(tournament.endTime);
         const tabMatch =
-            (tab === 0 && now < start && tournament.registrationOpen) ||
+            (tab === 0 && now < start) ||
             (tab === 1 && now >= start && now < end) ||
             (tab === 2 && now > end);
 
@@ -242,7 +242,7 @@ const UserTournaments = () => {
                         filteredTournaments.map((tournament) => {
                             const isJoined = joinedTournaments.includes(tournament.competitionId);
                             return (
-                                <Card key={tournament.competitionId} sx={{ margin: "0px 0" }}>
+                                <Card key={tournament.competitionId} sx={{ margin: "16px 0" }}>
                                     <CardContent className="card-content">
                                         <div>
                                             <img
@@ -266,9 +266,9 @@ const UserTournaments = () => {
                         </span>
                                             </Typography>
                                             <Typography variant="body2" color="textSecondary">
-                                                Status:{" "}
+                                                Zapisy:{" "}
                                                 <span style={{ color: "purple" }}>
-                            {tournament.registrationOpen ? "Otwarte" : "Zakończone"}
+                            {tournament.registrationOpen ? "Otwarte" : "Niemożliwe"}
                         </span>
                                             </Typography>
                                         </div>
@@ -324,7 +324,7 @@ const UserTournaments = () => {
                             variant="contained"
                             color="primary"
                         >
-                            Tak, przejdź do płatności
+                            Tak
                         </Button>
                     </DialogActions>
                 </Dialog>

@@ -7,6 +7,7 @@ import com.roc.app.user.participant.dto.ParticipantCreateRequestDto;
 import com.roc.app.user.participant.dto.ParticipantResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,9 @@ public class ParticipantController {
     }
 
 
-    @GetMapping("/{userId}/matches")
-    public List<ParticipantMatchResponseDto> getParticipantMatches(@PathVariable Integer userId) {
-        return matchService.getParticipantMatches(userId);
+    @GetMapping("/matches")
+    public List<ParticipantMatchResponseDto> getParticipantMatches(Authentication authentication) {
+        Participant participant = (Participant) authentication.getPrincipal();
+        return matchService.getParticipantMatches(participant.getUserId());
     }
 }

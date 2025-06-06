@@ -12,7 +12,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     @Query("""
 SELECT new com.roc.app.match.dto.ParticipantMatchResponseDto(
-    m.matchId, m.competition.competitionId, m.matchDate,
+    m.competition.name, m.matchDate,
     m.status,
     CONCAT(u.firstName, ' ', u.lastName),
     m.score,
@@ -24,7 +24,7 @@ JOIN CompetitionParticipant cp ON (
     (m.player1Id = cp.participantId OR m.player2Id = cp.participantId)
     AND m.competition.competitionId = cp.competitionId
 )
-JOIN User u ON (
+LEFT JOIN User u ON (
     (m.player1Id = cp.participantId AND m.player2Id = u.userId) OR
     (m.player2Id = cp.participantId AND m.player1Id = u.userId)
 )
